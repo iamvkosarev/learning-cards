@@ -68,7 +68,19 @@ grpc_validate:
 	@PATH=$(BIN_DIR):$$PATH \
 		protoc \
 			--proto_path=$(PROTO_DIR) \
-			--proto_path=$(GOOGLEAPIS_DIR) \
+			f--proto_path=$(GOOGLEAPIS_DIR) \
 			--validate_out=lang=go,paths=source_relative:$(PROTO_GEN_DIR) \
 			$(PROTO_FILES)
 	@echo "Validation code generated"
+
+docker_build:
+	docker-compose build
+
+docker_up:
+	docker-compose up -d
+
+docker_down:
+	docker-compose down
+
+docker_logs:
+	docker-compose logs -f
