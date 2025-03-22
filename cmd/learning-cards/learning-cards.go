@@ -1,1 +1,4 @@
-package learning_cards
+package main
+
+func main() {
+}
