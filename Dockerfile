@@ -1,4 +1,5 @@
-FROM golang:1.23
+# ==== Build ====
+FROM golang:1.23 AS builder
 
 WORKDIR /app
 
@@ -7,6 +8,18 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o server ./cmd/server
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o server ./cmd/server
 
-CMD ["./server"]
+# ==== Runtime ====
+FROM scratch
+
+WORKDIR /
+
+COPY --from=builder /app/server /server
+
+# REST
+EXPOSE 8080
+# gRPC
+EXPOSE 50051
+
+ENTRYPOINT ["/server"]
