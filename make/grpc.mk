@@ -1,4 +1,5 @@
-ROOT_DIR := $(CURDIR)
+include make/common.mk
+
 BIN_DIR := $(ROOT_DIR)/bin
 
 PROTO_DIR := $(ROOT_DIR)/api/proto
@@ -69,7 +70,7 @@ grpc_validate:
 	@PATH=$(BIN_DIR):$$PATH \
 		protoc \
 			--proto_path=$(PROTO_DIR) \
-			f--proto_path=$(GOOGLEAPIS_DIR) \
+			--proto_path=$(GOOGLEAPIS_DIR) \
 			--validate_out=lang=go,paths=source_relative:$(PROTO_GEN_DIR) \
 			$(PROTO_FILES)
 	@echo "Validation code generated"
