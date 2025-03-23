@@ -16,7 +16,7 @@
     "application/json"
   ],
   "paths": {
-    "/v1/cards/group": {
+    "/api/learning-cards/v1/cards/group": {
       "post": {
         "operationId": "LearningCards_CreateCardsGroup",
         "responses": {

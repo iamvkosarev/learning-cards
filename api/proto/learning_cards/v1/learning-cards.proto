@@ -9,7 +9,7 @@ import "google/api/annotations.proto";
 service LearningCards {
   rpc CreateCardsGroup(CreateCardsGroupRequest) returns (CreateCardsGroupResponse){
     option (google.api.http) = {
-      post: "/v1/cards/group"
+      post: "/api/learning-cards/v1/cards/group"
       body: "*"
     };
   };

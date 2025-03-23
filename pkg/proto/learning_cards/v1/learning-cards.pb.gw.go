@@ -71,7 +71,7 @@ func RegisterLearningCardsHandlerServer(ctx context.Context, mux *runtime.ServeM
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/learning_cards.LearningCards/CreateCardsGroup", runtime.WithHTTPPathPattern("/v1/cards/group"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/learning_cards.LearningCards/CreateCardsGroup", runtime.WithHTTPPathPattern("/api/learning-cards/v1/cards/group"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -129,7 +129,7 @@ func RegisterLearningCardsHandlerClient(ctx context.Context, mux *runtime.ServeM
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/learning_cards.LearningCards/CreateCardsGroup", runtime.WithHTTPPathPattern("/v1/cards/group"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/learning_cards.LearningCards/CreateCardsGroup", runtime.WithHTTPPathPattern("/api/learning-cards/v1/cards/group"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -146,7 +146,7 @@ func RegisterLearningCardsHandlerClient(ctx context.Context, mux *runtime.ServeM
 }
 
 var (
-	pattern_LearningCards_CreateCardsGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "cards", "group"}, ""))
+	pattern_LearningCards_CreateCardsGroup_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"api", "learning-cards", "v1", "cards", "group"}, ""))
 )
 
 var (
