@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package learning_cards;
 
-option go_package = "github.com/iamvkosarev/learning-cards/pkg/grpc/learning_cards/v1;learning_cards";
+option go_package = "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cards";
 
 import "google/api/annotations.proto";
 
