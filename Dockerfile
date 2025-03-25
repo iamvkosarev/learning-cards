@@ -21,9 +21,6 @@ WORKDIR /
 
 COPY --from=builder /app/server /server
 
-# REST
-EXPOSE 8080
-# gRPC
-EXPOSE 50051
+EXPOSE ${GRPC_PORT} ${REST_PORT}
 
 ENTRYPOINT ["/server"]

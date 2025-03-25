@@ -6,6 +6,7 @@ bin
 docs
 third_party
 make
+config
 
 # Pattern files
 *.md

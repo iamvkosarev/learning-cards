@@ -2,50 +2,78 @@ package main
 
 import (
 	"context"
-	"github.com/iamvkosarev/learning-cards/internal/handlers/cards"
+	"fmt"
+	"github.com/iamvkosarev/go-shared-utils/logger/sl"
+	"github.com/iamvkosarev/learning-cards/internal/app/usecase"
+	"github.com/iamvkosarev/learning-cards/internal/config"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/database/postgres"
+	server "github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc"
+	sqlRepository "github.com/iamvkosarev/learning-cards/internal/infrastructure/repository/postgres"
+	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
+	"github.com/joho/godotenv"
 	"log"
 	"net"
 	"net/http"
+	"os"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
-	grpcPort := ":50051"
-	restPort := ":8080"
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("No .env file found or failed to load")
+	}
 
-	lis, err := net.Listen("tcp", grpcPort)
+	cfg := config.MustLoad()
+	logger, err := sl.SetupLogger(cfg.Env)
+	if err != nil {
+		log.Fatalf("error setting up logger: %v\n", err)
+	}
+
+	ctx := context.Background()
+
+	dns := fmt.Sprintf(
+		"postgres://%v:%v@%v:%v/%v?sslmode=disable",
+		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_SERVICE_NAME"),
+		os.Getenv("DB_PORT_INTERNAL"), os.Getenv("DB_NAME"),
+	)
+	pool, err := postgres.NewPostgresPool(ctx, dns)
+	if err != nil {
+		log.Fatalf("error setting up sqlite: %v\n", err)
+	}
+	groupRepository := sqlRepository.NewGroupRepository(pool)
+
+	lis, err := net.Listen("tcp", cfg.Server.GRPCPort)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
-	cardHandler := cards.NewCardsHandler()
+	groupUseCase := usecase.NewGroupUseCase(groupRepository)
+	learningCardsServer := server.NewServer(groupUseCase, logger)
 
-	pb.RegisterLearningCardsServer(grpcServer, cardHandler)
+	pb.RegisterLearningCardsServer(grpcServer, learningCardsServer)
 
 	go func() {
-		log.Println("Starting gRPC server on", grpcPort)
+		log.Println("Starting gRPC server on", cfg.Server.GRPCPort)
 		if err := grpcServer.Serve(lis); err != nil {
 			log.Fatalf("failed to serve: %v", err)
 		}
 	}()
 
-	ctx := context.Background()
 	mux := runtime.NewServeMux()
 	err = pb.RegisterLearningCardsHandlerFromEndpoint(
-		ctx, mux, grpcPort,
+		ctx, mux, cfg.Server.GRPCPort,
 		[]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())},
 	)
 	if err != nil {
 		log.Fatalf("failed to start HTTP gateway: %v", err)
 	}
 
-	log.Println("Starting REST gateway on", restPort)
-	if err := http.ListenAndServe(restPort, mux); err != nil {
+	log.Println("Starting REST gateway on", cfg.Server.RESTPort)
+	if err := http.ListenAndServe(cfg.Server.RESTPort, mux); err != nil {
 		log.Fatalf("failed to serve HTTP: %v", err)
 	}
 }

@@ -5,7 +5,7 @@ local-docker-build:
 	docker-compose build
 
 local-docker-up:
-	@docker-compose up -d learning-cards postgres
+	@docker-compose up -d learning-cards learning-cards-postgres
 
 local-docker-down:
 	docker compose down

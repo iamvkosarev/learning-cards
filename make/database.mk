@@ -15,7 +15,7 @@ define goose-cmd
 endef
 
 database-migrate:
-	$(goose-cmd)
+	@$(goose-cmd)
 
 database-migrate-up:
 	$(MAKE) database-migrate DB_HOST=$(VPS_HOST) MIGRATE_CMD=status

@@ -1,10 +1,53 @@
 services:
+  learning-cards-postgres:
+    image: postgres:16.3
+    container_name: learning-cards-postgres-container
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:${DB_PORT_INTERNAL}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - net
+
   learning-cards:
+    container_name: learning-cards-container
+    image: ${IMAGE_NAME:-learning-cards:local}
+    volumes:
+      - ./.env:/app/.env
+      - ./config:/app/config/
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "50051:50051" # gRPC
-      - "8080:8080"   # REST
+      - "${GRPC_PORT}:${GRPC_PORT}" # gRPC
+      - "${REST_PORT}:${REST_PORT}" # REST
     working_dir: /app
+    environment:
+      DB_URL: "postgres://${DB_USER}:${DB_PASSWORD}@${DB_SERVICE_NAME}:${DB_PORT_INTERNAL}/${DB_NAME}?sslmode=disable"
+      GRPC_PORT: ${GRPC_PORT}
+      REST_PORT: ${REST_PORT}
+    depends_on:
+      learning-cards-postgres:
+        condition: service_healthy
     command: ["./server"]
+    networks:
+      - net
+
+volumes:
+  postgres_data:
+    name: learning_cards_postgres_data
+
+networks:
+  net:
+    name: learning_cards_network
