@@ -1,11 +1,14 @@
-local_docker_build:
+.PHONY: local-docker-down local-docker-build local-docker-up
+local-docker-restart: local-docker-down local-docker-build local-docker-up
+
+local-docker-build:
 	docker-compose build
 
-local_docker_up:
-	docker-compose up -d
+local-docker-up:
+	@docker-compose up -d learning-cards postgres
 
-local_docker_down:
-	docker-compose down
+local-docker-down:
+	docker compose down
 
-local_docker_logs:
+local-docker-logs:
 	docker-compose logs -f

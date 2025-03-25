@@ -1,16 +1,24 @@
-VPS_USER ?= root
-VPS_HOST ?= kosarev.app
-VPS_NAME ?= learning-cards
+LAST_TAG = $(shell go run $(ROOT_DIR)/pkg/tools/versiongen -file $(VERSION_FILE) -mode=last)
+REMOTE_IMAGE = $(DOCKER_REPO):$(LAST_TAG)
+REMOTE_DIR := /root/$(PROJECT_NAME)
 
-LAST_TAG := $(shell go run $(ROOT_DIR)/pkg/tools/versiongen -file $(VERSION_FILE) -mode=last)
-REMOTE_IMAGE ?= $(DOCKER_REPO):$(LAST_TAG)
+vps-deploy:
+	@echo "Uploading .env, docker-compose.yml and config/ to VPS..."
+	ssh $(VPS_USER)@$(VPS_HOST) "mkdir -p $(REMOTE_DIR)/config"
+	scp .env docker-compose.yml $(VPS_USER)@$(VPS_HOST):$(REMOTE_DIR)/
+	scp -r config/* $(VPS_USER)@$(VPS_HOST):$(REMOTE_DIR)/config/
 
-deploy_vps:
-	@ssh $(VPS_USER)@$(VPS_HOST) "\
-		docker pull $(REMOTE_IMAGE) && \
-		(docker stop $(VPS_NAME) || true) && \
-		(docker rm $(VPS_NAME) || true) && \
-		docker run -d --name $(VPS_NAME) \
-			-p 8080:8080 -p 50051:50051 \
-			$(REMOTE_IMAGE)"
+	@echo "🛠️  Injecting IMAGE_NAME=$(REMOTE_IMAGE) into .env..."
+	ssh $(VPS_USER)@$(VPS_HOST) "\
+		cd $(REMOTE_DIR) && \
+		grep -v '^IMAGE_NAME=' .env > .env.tmp || true && \
+		echo 'IMAGE_NAME=$(REMOTE_IMAGE)' >> .env.tmp && \
+		mv .env.tmp .env"
+
+	@echo "Deploying image $(REMOTE_IMAGE) on VPS..."
+	ssh $(VPS_USER)@$(VPS_HOST) "\
+		cd $(REMOTE_DIR) && \
+		docker compose pull && \
+		docker compose up -d --remove-orphans"
+
 	@echo "Deployed $(REMOTE_IMAGE) to $(VPS_USER)@$(VPS_HOST)"
