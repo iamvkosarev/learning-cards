@@ -2,6 +2,9 @@ LAST_TAG = $(shell go run $(ROOT_DIR)/pkg/tools/versiongen -file $(VERSION_FILE)
 REMOTE_IMAGE = $(DOCKER_REPO):$(LAST_TAG)
 REMOTE_DIR := /root/$(PROJECT_NAME)
 
+vps-get-containers:
+	@ssh $(VPS_USER)@$(VPS_HOST) "docker ps --format '{{ .ID}}\t{{.Names}}'"
+
 vps-deploy:
 	@echo "Uploading .env, docker-compose.yml and config/ to VPS..."
 	ssh $(VPS_USER)@$(VPS_HOST) "mkdir -p $(REMOTE_DIR)/config"
