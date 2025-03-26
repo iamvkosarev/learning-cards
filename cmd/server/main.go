@@ -72,17 +72,22 @@ func main() {
 		}
 	}()
 
-	mux := runtime.NewServeMux()
+	httpMux := http.NewServeMux()
+	gwMux := runtime.NewServeMux()
+
 	err = pb.RegisterLearningCardsHandlerFromEndpoint(
-		ctx, mux, cfg.Server.GRPCPort,
+		ctx, gwMux, cfg.Server.GRPCPort,
 		[]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())},
 	)
+
+	httpMux.Handle(cfg.Server.RestPrefix, http.StripPrefix(cfg.Server.RestPrefix, gwMux))
+
 	if err != nil {
 		log.Fatalf("failed to start HTTP gateway: %v", err)
 	}
 
 	log.Println("Starting REST gateway on", cfg.Server.RESTPort)
-	if err := http.ListenAndServe(cfg.Server.RESTPort, mux); err != nil {
+	if err := http.ListenAndServe(cfg.Server.RESTPort, httpMux); err != nil {
 		log.Fatalf("failed to serve HTTP: %v", err)
 	}
 }

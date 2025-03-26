@@ -7,8 +7,9 @@ import (
 )
 
 type Server struct {
-	RESTPort string `yaml:"rest_port"`
-	GRPCPort string `yaml:"grpc_port"`
+	RestPrefix string `yaml:"rest_prefix"`
+	RESTPort   string `yaml:"rest_port"`
+	GRPCPort   string `yaml:"grpc_port"`
 }
 
 type SSO struct {
