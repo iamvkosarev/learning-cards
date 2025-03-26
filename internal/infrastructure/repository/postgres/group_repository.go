@@ -25,7 +25,7 @@ func (r *GroupRepository) Add(ctx context.Context, user entity.CardGroup) (int64
 	var id int64
 	err := r.db.QueryRow(
 		ctx,
-		`INSERT INTO groups (name, user_id) VALUES ($1, $2) RETURNING id`,
+		`INSERT INTO card_groups (name, user_id) VALUES ($1, $2) RETURNING id`,
 		user.Name, user.UserID,
 	).Scan(&id)
 

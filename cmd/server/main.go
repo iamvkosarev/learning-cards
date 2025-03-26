@@ -6,10 +6,12 @@ import (
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
 	"github.com/iamvkosarev/learning-cards/internal/app/usecase"
 	"github.com/iamvkosarev/learning-cards/internal/config"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/auth"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/database/postgres"
 	server "github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc"
 	sqlRepository "github.com/iamvkosarev/learning-cards/internal/infrastructure/repository/postgres"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
+	sso_pb "github.com/iamvkosarev/sso/pkg/proto/sso/v1"
 	"github.com/joho/godotenv"
 	"log"
 	"net"
@@ -41,7 +43,7 @@ func main() {
 	)
 	pool, err := postgres.NewPostgresPool(ctx, dns)
 	if err != nil {
-		log.Fatalf("error setting up sqlite: %v\n", err)
+		log.Fatalf("error setting up postgres: %v\ndns: %v", err, dns)
 	}
 	groupRepository := sqlRepository.NewGroupRepository(pool)
 
@@ -50,8 +52,15 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
+	ssoConn, err := grpc.NewClient(cfg.SSO.HostAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatal(err)
+	}
+	ssoClient := sso_pb.NewSSOClient(ssoConn)
+	authService := auth.NewGRPCService(ssoClient)
+
 	grpcServer := grpc.NewServer()
-	groupUseCase := usecase.NewGroupUseCase(groupRepository)
+	groupUseCase := usecase.NewGroupUseCase(groupRepository, authService)
 	learningCardsServer := server.NewServer(groupUseCase, logger)
 
 	pb.RegisterLearningCardsServer(grpcServer, learningCardsServer)

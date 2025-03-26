@@ -11,9 +11,14 @@ type Server struct {
 	GRPCPort string `yaml:"grpc_port"`
 }
 
+type SSO struct {
+	HostAddress string `yaml:"host_address"`
+}
+
 type Config struct {
 	Env    string `yaml:"env" env-default:"development"`
 	Server `yaml:"server"`
+	SSO    `yaml:"sso"`
 }
 
 func MustLoad() *Config {
