@@ -21,7 +21,7 @@ func NewGRPCService(client sso_pb.SSOClient) *grpcService {
 	}
 }
 
-func (s *grpcService) VerifyToken(ctx context.Context) (int64, error) {
+func (s *grpcService) VerifyUserByContext(ctx context.Context) (entity.UserId, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return 0, entity.ErrMetadataIsEmpty
@@ -36,5 +36,5 @@ func (s *grpcService) VerifyToken(ctx context.Context) (int64, error) {
 		}
 		return 0, entity.NewVerificationError(err.Error(), codes.PermissionDenied)
 	}
-	return res.GetUserId(), nil
+	return entity.UserId(res.GetUserId()), nil
 }

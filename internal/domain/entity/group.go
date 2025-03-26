@@ -1,6 +1,23 @@
 package entity
 
-type CardGroup struct {
-	Name   string
-	UserID int64
+import (
+	"time"
+)
+
+const (
+	GROUP_VISIBILITY_PRIVATE = GroupVisibility(iota)
+	GROUP_VISIBILITY_PUBLIC
+	GROUP_VISIBILITY_UNLISTED
+)
+
+type GroupVisibility int32
+type GroupId int64
+
+type Group struct {
+	Id          GroupId
+	OwnerId     UserId
+	Name        string
+	Description string
+	CreateTime  time.Time
+	Visibility  GroupVisibility
 }

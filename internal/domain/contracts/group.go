@@ -6,6 +6,12 @@ import (
 )
 
 type GroupReader interface {
-	Get(ctx context.Context, groupId int64) (entity.Group, error)
-	List(ctx context.Context, userId int64) ([]entity.Group, error)
+	Get(ctx context.Context, groupId entity.GroupId) (entity.Group, error)
+	ListByUser(ctx context.Context, id entity.UserId) ([]entity.Group, error)
+}
+
+type GroupWriter interface {
+	Add(ctx context.Context, group entity.Group) (entity.GroupId, error)
+	Update(ctx context.Context, group entity.Group) error
+	Delete(ctx context.Context, groupId entity.GroupId) error
 }

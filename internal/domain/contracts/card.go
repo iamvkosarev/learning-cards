@@ -5,7 +5,13 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 )
 
-type GroupWriter interface {
-	Add(ctx context.Context, group entity.Group) (int64, error)
-	Update(ctx context.Context, group entity.Group) error
+type CardReader interface {
+	Get(ctx context.Context, cardId entity.CardId) (entity.Card, error)
+	List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error)
+}
+
+type CardWriter interface {
+	Add(ctx context.Context, card entity.Card) (entity.CardId, error)
+	Update(ctx context.Context, card entity.Card) error
+	Delete(ctx context.Context, cardId entity.CardId) error
 }

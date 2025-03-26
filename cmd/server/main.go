@@ -6,9 +6,11 @@ import (
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
 	"github.com/iamvkosarev/learning-cards/internal/app/usecase"
 	"github.com/iamvkosarev/learning-cards/internal/config"
+	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/auth"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/database/postgres"
 	server "github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor"
 	sqlRepository "github.com/iamvkosarev/learning-cards/internal/infrastructure/repository/postgres"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	sso_pb "github.com/iamvkosarev/sso/pkg/proto/sso/v1"
@@ -36,6 +38,7 @@ func main() {
 
 	ctx := context.Background()
 
+	// === Repositories connection ===
 	dns := fmt.Sprintf(
 		"postgres://%v:%v@%v:%v/%v?sslmode=disable",
 		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_SERVICE_NAME"),
@@ -43,27 +46,48 @@ func main() {
 	)
 	pool, err := postgres.NewPostgresPool(ctx, dns)
 	if err != nil {
-		log.Fatalf("error setting up postgres: %v\ndns: %v", err, dns)
+		log.Fatalf("error setting up postgres: %v", err)
 	}
-	groupRepository := sqlRepository.NewGroupRepository(pool)
+	groupRepo := sqlRepository.NewGroupRepository(pool)
+	cardRepo := sqlRepository.NewCardRepository(pool)
 
-	lis, err := net.Listen("tcp", cfg.Server.GRPCPort)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
+	// === Auth connection ===
 	ssoConn, err := grpc.NewClient(cfg.SSO.HostAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)
 	}
 	ssoClient := sso_pb.NewSSOClient(ssoConn)
-	authService := auth.NewGRPCService(ssoClient)
+	var authService contracts.AuthVerifier = auth.NewGRPCService(ssoClient)
 
-	grpcServer := grpc.NewServer()
-	groupUseCase := usecase.NewGroupUseCase(groupRepository, authService)
-	learningCardsServer := server.NewServer(groupUseCase, logger)
+	// === UseCases ===
+	groupUseCase := usecase.NewGroupUseCase(
+		usecase.GroupUseCaseDeps{
+			GroupReader:  groupRepo,
+			GroupWriter:  groupRepo,
+			AuthVerifier: authService,
+		},
+	)
+	cardsUseCase := usecase.NewCardsUseCase(
+		usecase.CardsUseCaseDeps{
+			GroupReader:  groupRepo,
+			CardWriter:   cardRepo,
+			CardReader:   cardRepo,
+			AuthVerifier: authService,
+		},
+	)
+
+	// === Server ===
+	learningCardsServer := server.NewServer(groupUseCase, cardsUseCase, logger)
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(interceptor.RecoveryInterceptor(logger)),
+	)
 
 	pb.RegisterLearningCardsServer(grpcServer, learningCardsServer)
+
+	lis, err := net.Listen("tcp", cfg.Server.GRPCPort)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
 
 	go func() {
 		log.Println("Starting gRPC server on", cfg.Server.GRPCPort)
@@ -80,8 +104,7 @@ func main() {
 		[]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())},
 	)
 
-	httpMux.Handle(cfg.Server.RestPrefix, http.StripPrefix(cfg.Server.RestPrefix, gwMux))
-
+	httpMux.Handle(cfg.Server.RestPrefix+"/", http.StripPrefix(cfg.Server.RestPrefix, gwMux))
 	if err != nil {
 		log.Fatalf("failed to start HTTP gateway: %v", err)
 	}
