@@ -50,4 +50,4 @@ volumes:
 
 networks:
   net:
-    name: learning_cards_network
+    name: iamvkosarev_network
