@@ -33,6 +33,9 @@ local-database-migrate-up:
 local-database-migrate-down:
 	$(MAKE) database-migrate MIGRATE_CMD=down
 
+local-database-migrate-status:
+	$(MAKE) database-migrate MIGRATE_CMD=status
 
-#local-database-migrate-reset:
-#	$(MAKE) database-migrate MIGRATE_CMD=reset
+
+local-database-migrate-reset:
+	$(MAKE) database-migrate MIGRATE_CMD=reset
