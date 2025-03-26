@@ -26,16 +26,16 @@ var File_learning_cards_v1_learning_cards_proto protoreflect.FileDescriptor
 
 const file_learning_cards_v1_learning_cards_proto_rawDesc = "" +
 	"\n" +
-	"&learning_cards/v1/learning-cards.proto\x12\x11learning_cards.v1\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1clearning_cards/v1/card.proto\x1a\x1dlearning_cards/v1/group.proto2\xa9\t\n" +
-	"\rLearningCards\x12\x82\x01\n" +
-	"\x10CreateCardsGroup\x12*.learning_cards.v1.CreateCardsGroupRequest\x1a+.learning_cards.v1.CreateCardsGroupResponse\"\x15\x82\xd3\xe4\x93\x02\x0f:\x01*\"\n" +
-	"/v1/groups\x12i\n" +
-	"\x0fListCardsGroups\x12\x16.google.protobuf.Empty\x1a*.learning_cards.v1.ListCardsGroupsResponse\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
-	"/v1/groups\x12\x81\x01\n" +
-	"\rGetGroupCards\x12'.learning_cards.v1.GetGroupCardsRequest\x1a(.learning_cards.v1.GetGroupCardsResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/v1/groups/{group_id}\x12\x81\x01\n" +
-	"\x11UpdateGroupAccess\x12+.learning_cards.v1.UpdateGroupAccessRequest\x1a\x16.google.protobuf.Empty\"'\x82\xd3\xe4\x93\x02!:\x01*\x1a\x1c/v1/groups/{group_id}/access\x12\x80\x01\n" +
-	"\x14UpdateCardsGroupName\x12..learning_cards.v1.UpdateCardsGroupNameRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a:\x01*\x1a\x15/v1/groups/{group_id}\x12u\n" +
-	"\x10DeleteCardsGroup\x12*.learning_cards.v1.DeleteCardsGroupRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/v1/groups/{group_id}\x12e\n" +
+	"&learning_cards/v1/learning-cards.proto\x12\x11learning_cards.v1\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1clearning_cards/v1/card.proto\x1a\x1dlearning_cards/v1/group.proto2\xba\n" +
+	"\n" +
+	"\rLearningCards\x12\x81\x01\n" +
+	"\x10CreateCardsGroup\x12*.learning_cards.v1.CreateCardsGroupRequest\x1a+.learning_cards.v1.CreateCardsGroupResponse\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/v1/group\x12h\n" +
+	"\x0fListCardsGroups\x12\x16.google.protobuf.Empty\x1a*.learning_cards.v1.ListCardsGroupsResponse\"\x11\x82\xd3\xe4\x93\x02\v\x12\t/v1/group\x12\x80\x01\n" +
+	"\rGetCardsGroup\x12'.learning_cards.v1.GetCardsGroupRequest\x1a(.learning_cards.v1.GetCardsGroupResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/v1/group/{group_id}\x12\x95\x01\n" +
+	"\x12GetCardsGroupCards\x12,.learning_cards.v1.GetCardsGroupCardsRequest\x1a-.learning_cards.v1.GetCardsGroupCardsResponse\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/v1/group/{group_id}/cards\x12\x80\x01\n" +
+	"\x11UpdateGroupAccess\x12+.learning_cards.v1.UpdateGroupAccessRequest\x1a\x16.google.protobuf.Empty\"&\x82\xd3\xe4\x93\x02 :\x01*\x1a\x1b/v1/group/{group_id}/access\x12\x7f\n" +
+	"\x14UpdateCardsGroupName\x12..learning_cards.v1.UpdateCardsGroupNameRequest\x1a\x16.google.protobuf.Empty\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\x1a\x14/v1/group/{group_id}\x12t\n" +
+	"\x10DeleteCardsGroup\x12*.learning_cards.v1.DeleteCardsGroupRequest\x1a\x16.google.protobuf.Empty\"\x1c\x82\xd3\xe4\x93\x02\x16*\x14/v1/group/{group_id}\x12e\n" +
 	"\aAddCard\x12!.learning_cards.v1.AddCardRequest\x1a\".learning_cards.v1.AddCardResponse\"\x13\x82\xd3\xe4\x93\x02\r:\x01*\"\b/v1/card\x12l\n" +
 	"\aGetCard\x12!.learning_cards.v1.GetCardRequest\x1a\".learning_cards.v1.GetCardResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/card/{card_id}\x12i\n" +
 	"\n" +
@@ -46,43 +46,47 @@ const file_learning_cards_v1_learning_cards_proto_rawDesc = "" +
 var file_learning_cards_v1_learning_cards_proto_goTypes = []any{
 	(*CreateCardsGroupRequest)(nil),     // 0: learning_cards.v1.CreateCardsGroupRequest
 	(*emptypb.Empty)(nil),               // 1: google.protobuf.Empty
-	(*GetGroupCardsRequest)(nil),        // 2: learning_cards.v1.GetGroupCardsRequest
-	(*UpdateGroupAccessRequest)(nil),    // 3: learning_cards.v1.UpdateGroupAccessRequest
-	(*UpdateCardsGroupNameRequest)(nil), // 4: learning_cards.v1.UpdateCardsGroupNameRequest
-	(*DeleteCardsGroupRequest)(nil),     // 5: learning_cards.v1.DeleteCardsGroupRequest
-	(*AddCardRequest)(nil),              // 6: learning_cards.v1.AddCardRequest
-	(*GetCardRequest)(nil),              // 7: learning_cards.v1.GetCardRequest
-	(*UpdateCardRequest)(nil),           // 8: learning_cards.v1.UpdateCardRequest
-	(*DeleteCardRequest)(nil),           // 9: learning_cards.v1.DeleteCardRequest
-	(*CreateCardsGroupResponse)(nil),    // 10: learning_cards.v1.CreateCardsGroupResponse
-	(*ListCardsGroupsResponse)(nil),     // 11: learning_cards.v1.ListCardsGroupsResponse
-	(*GetGroupCardsResponse)(nil),       // 12: learning_cards.v1.GetGroupCardsResponse
-	(*AddCardResponse)(nil),             // 13: learning_cards.v1.AddCardResponse
-	(*GetCardResponse)(nil),             // 14: learning_cards.v1.GetCardResponse
+	(*GetCardsGroupRequest)(nil),        // 2: learning_cards.v1.GetCardsGroupRequest
+	(*GetCardsGroupCardsRequest)(nil),   // 3: learning_cards.v1.GetCardsGroupCardsRequest
+	(*UpdateGroupAccessRequest)(nil),    // 4: learning_cards.v1.UpdateGroupAccessRequest
+	(*UpdateCardsGroupNameRequest)(nil), // 5: learning_cards.v1.UpdateCardsGroupNameRequest
+	(*DeleteCardsGroupRequest)(nil),     // 6: learning_cards.v1.DeleteCardsGroupRequest
+	(*AddCardRequest)(nil),              // 7: learning_cards.v1.AddCardRequest
+	(*GetCardRequest)(nil),              // 8: learning_cards.v1.GetCardRequest
+	(*UpdateCardRequest)(nil),           // 9: learning_cards.v1.UpdateCardRequest
+	(*DeleteCardRequest)(nil),           // 10: learning_cards.v1.DeleteCardRequest
+	(*CreateCardsGroupResponse)(nil),    // 11: learning_cards.v1.CreateCardsGroupResponse
+	(*ListCardsGroupsResponse)(nil),     // 12: learning_cards.v1.ListCardsGroupsResponse
+	(*GetCardsGroupResponse)(nil),       // 13: learning_cards.v1.GetCardsGroupResponse
+	(*GetCardsGroupCardsResponse)(nil),  // 14: learning_cards.v1.GetCardsGroupCardsResponse
+	(*AddCardResponse)(nil),             // 15: learning_cards.v1.AddCardResponse
+	(*GetCardResponse)(nil),             // 16: learning_cards.v1.GetCardResponse
 }
 var file_learning_cards_v1_learning_cards_proto_depIdxs = []int32{
 	0,  // 0: learning_cards.v1.LearningCards.CreateCardsGroup:input_type -> learning_cards.v1.CreateCardsGroupRequest
 	1,  // 1: learning_cards.v1.LearningCards.ListCardsGroups:input_type -> google.protobuf.Empty
-	2,  // 2: learning_cards.v1.LearningCards.GetGroupCards:input_type -> learning_cards.v1.GetGroupCardsRequest
-	3,  // 3: learning_cards.v1.LearningCards.UpdateGroupAccess:input_type -> learning_cards.v1.UpdateGroupAccessRequest
-	4,  // 4: learning_cards.v1.LearningCards.UpdateCardsGroupName:input_type -> learning_cards.v1.UpdateCardsGroupNameRequest
-	5,  // 5: learning_cards.v1.LearningCards.DeleteCardsGroup:input_type -> learning_cards.v1.DeleteCardsGroupRequest
-	6,  // 6: learning_cards.v1.LearningCards.AddCard:input_type -> learning_cards.v1.AddCardRequest
-	7,  // 7: learning_cards.v1.LearningCards.GetCard:input_type -> learning_cards.v1.GetCardRequest
-	8,  // 8: learning_cards.v1.LearningCards.UpdateCard:input_type -> learning_cards.v1.UpdateCardRequest
-	9,  // 9: learning_cards.v1.LearningCards.DeleteCard:input_type -> learning_cards.v1.DeleteCardRequest
-	10, // 10: learning_cards.v1.LearningCards.CreateCardsGroup:output_type -> learning_cards.v1.CreateCardsGroupResponse
-	11, // 11: learning_cards.v1.LearningCards.ListCardsGroups:output_type -> learning_cards.v1.ListCardsGroupsResponse
-	12, // 12: learning_cards.v1.LearningCards.GetGroupCards:output_type -> learning_cards.v1.GetGroupCardsResponse
-	1,  // 13: learning_cards.v1.LearningCards.UpdateGroupAccess:output_type -> google.protobuf.Empty
-	1,  // 14: learning_cards.v1.LearningCards.UpdateCardsGroupName:output_type -> google.protobuf.Empty
-	1,  // 15: learning_cards.v1.LearningCards.DeleteCardsGroup:output_type -> google.protobuf.Empty
-	13, // 16: learning_cards.v1.LearningCards.AddCard:output_type -> learning_cards.v1.AddCardResponse
-	14, // 17: learning_cards.v1.LearningCards.GetCard:output_type -> learning_cards.v1.GetCardResponse
-	1,  // 18: learning_cards.v1.LearningCards.UpdateCard:output_type -> google.protobuf.Empty
-	1,  // 19: learning_cards.v1.LearningCards.DeleteCard:output_type -> google.protobuf.Empty
-	10, // [10:20] is the sub-list for method output_type
-	0,  // [0:10] is the sub-list for method input_type
+	2,  // 2: learning_cards.v1.LearningCards.GetCardsGroup:input_type -> learning_cards.v1.GetCardsGroupRequest
+	3,  // 3: learning_cards.v1.LearningCards.GetCardsGroupCards:input_type -> learning_cards.v1.GetCardsGroupCardsRequest
+	4,  // 4: learning_cards.v1.LearningCards.UpdateGroupAccess:input_type -> learning_cards.v1.UpdateGroupAccessRequest
+	5,  // 5: learning_cards.v1.LearningCards.UpdateCardsGroupName:input_type -> learning_cards.v1.UpdateCardsGroupNameRequest
+	6,  // 6: learning_cards.v1.LearningCards.DeleteCardsGroup:input_type -> learning_cards.v1.DeleteCardsGroupRequest
+	7,  // 7: learning_cards.v1.LearningCards.AddCard:input_type -> learning_cards.v1.AddCardRequest
+	8,  // 8: learning_cards.v1.LearningCards.GetCard:input_type -> learning_cards.v1.GetCardRequest
+	9,  // 9: learning_cards.v1.LearningCards.UpdateCard:input_type -> learning_cards.v1.UpdateCardRequest
+	10, // 10: learning_cards.v1.LearningCards.DeleteCard:input_type -> learning_cards.v1.DeleteCardRequest
+	11, // 11: learning_cards.v1.LearningCards.CreateCardsGroup:output_type -> learning_cards.v1.CreateCardsGroupResponse
+	12, // 12: learning_cards.v1.LearningCards.ListCardsGroups:output_type -> learning_cards.v1.ListCardsGroupsResponse
+	13, // 13: learning_cards.v1.LearningCards.GetCardsGroup:output_type -> learning_cards.v1.GetCardsGroupResponse
+	14, // 14: learning_cards.v1.LearningCards.GetCardsGroupCards:output_type -> learning_cards.v1.GetCardsGroupCardsResponse
+	1,  // 15: learning_cards.v1.LearningCards.UpdateGroupAccess:output_type -> google.protobuf.Empty
+	1,  // 16: learning_cards.v1.LearningCards.UpdateCardsGroupName:output_type -> google.protobuf.Empty
+	1,  // 17: learning_cards.v1.LearningCards.DeleteCardsGroup:output_type -> google.protobuf.Empty
+	15, // 18: learning_cards.v1.LearningCards.AddCard:output_type -> learning_cards.v1.AddCardResponse
+	16, // 19: learning_cards.v1.LearningCards.GetCard:output_type -> learning_cards.v1.GetCardResponse
+	1,  // 20: learning_cards.v1.LearningCards.UpdateCard:output_type -> google.protobuf.Empty
+	1,  // 21: learning_cards.v1.LearningCards.DeleteCard:output_type -> google.protobuf.Empty
+	11, // [11:22] is the sub-list for method output_type
+	0,  // [0:11] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

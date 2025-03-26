@@ -600,22 +600,22 @@ var _ interface {
 	ErrorName() string
 } = GetCardResponseValidationError{}
 
-// Validate checks the field values on GetGroupCardsRequest with the rules
+// Validate checks the field values on GetCardsGroupCardsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetGroupCardsRequest) Validate() error {
+func (m *GetCardsGroupCardsRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetGroupCardsRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on GetCardsGroupCardsRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetGroupCardsRequestMultiError, or nil if none found.
-func (m *GetGroupCardsRequest) ValidateAll() error {
+// GetCardsGroupCardsRequestMultiError, or nil if none found.
+func (m *GetCardsGroupCardsRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetGroupCardsRequest) validate(all bool) error {
+func (m *GetCardsGroupCardsRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -625,19 +625,19 @@ func (m *GetGroupCardsRequest) validate(all bool) error {
 	// no validation rules for GroupId
 
 	if len(errors) > 0 {
-		return GetGroupCardsRequestMultiError(errors)
+		return GetCardsGroupCardsRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetGroupCardsRequestMultiError is an error wrapping multiple validation
-// errors returned by GetGroupCardsRequest.ValidateAll() if the designated
-// constraints aren't met.
-type GetGroupCardsRequestMultiError []error
+// GetCardsGroupCardsRequestMultiError is an error wrapping multiple validation
+// errors returned by GetCardsGroupCardsRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GetCardsGroupCardsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetGroupCardsRequestMultiError) Error() string {
+func (m GetCardsGroupCardsRequestMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -646,11 +646,11 @@ func (m GetGroupCardsRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetGroupCardsRequestMultiError) AllErrors() []error { return m }
+func (m GetCardsGroupCardsRequestMultiError) AllErrors() []error { return m }
 
-// GetGroupCardsRequestValidationError is the validation error returned by
-// GetGroupCardsRequest.Validate if the designated constraints aren't met.
-type GetGroupCardsRequestValidationError struct {
+// GetCardsGroupCardsRequestValidationError is the validation error returned by
+// GetCardsGroupCardsRequest.Validate if the designated constraints aren't met.
+type GetCardsGroupCardsRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -658,24 +658,24 @@ type GetGroupCardsRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetGroupCardsRequestValidationError) Field() string { return e.field }
+func (e GetCardsGroupCardsRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetGroupCardsRequestValidationError) Reason() string { return e.reason }
+func (e GetCardsGroupCardsRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetGroupCardsRequestValidationError) Cause() error { return e.cause }
+func (e GetCardsGroupCardsRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetGroupCardsRequestValidationError) Key() bool { return e.key }
+func (e GetCardsGroupCardsRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetGroupCardsRequestValidationError) ErrorName() string {
-	return "GetGroupCardsRequestValidationError"
+func (e GetCardsGroupCardsRequestValidationError) ErrorName() string {
+	return "GetCardsGroupCardsRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetGroupCardsRequestValidationError) Error() string {
+func (e GetCardsGroupCardsRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -687,14 +687,14 @@ func (e GetGroupCardsRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetGroupCardsRequest.%s: %s%s",
+		"invalid %sGetCardsGroupCardsRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetGroupCardsRequestValidationError{}
+var _ error = GetCardsGroupCardsRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -702,24 +702,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetGroupCardsRequestValidationError{}
+} = GetCardsGroupCardsRequestValidationError{}
 
-// Validate checks the field values on GetGroupCardsResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on GetCardsGroupCardsResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetGroupCardsResponse) Validate() error {
+func (m *GetCardsGroupCardsResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetGroupCardsResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on GetCardsGroupCardsResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetGroupCardsResponseMultiError, or nil if none found.
-func (m *GetGroupCardsResponse) ValidateAll() error {
+// GetCardsGroupCardsResponseMultiError, or nil if none found.
+func (m *GetCardsGroupCardsResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetGroupCardsResponse) validate(all bool) error {
+func (m *GetCardsGroupCardsResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -733,7 +733,7 @@ func (m *GetGroupCardsResponse) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, GetGroupCardsResponseValidationError{
+					errors = append(errors, GetCardsGroupCardsResponseValidationError{
 						field:  fmt.Sprintf("Cards[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -741,7 +741,7 @@ func (m *GetGroupCardsResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, GetGroupCardsResponseValidationError{
+					errors = append(errors, GetCardsGroupCardsResponseValidationError{
 						field:  fmt.Sprintf("Cards[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -750,7 +750,7 @@ func (m *GetGroupCardsResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return GetGroupCardsResponseValidationError{
+				return GetCardsGroupCardsResponseValidationError{
 					field:  fmt.Sprintf("Cards[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -761,19 +761,19 @@ func (m *GetGroupCardsResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return GetGroupCardsResponseMultiError(errors)
+		return GetCardsGroupCardsResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetGroupCardsResponseMultiError is an error wrapping multiple validation
-// errors returned by GetGroupCardsResponse.ValidateAll() if the designated
-// constraints aren't met.
-type GetGroupCardsResponseMultiError []error
+// GetCardsGroupCardsResponseMultiError is an error wrapping multiple
+// validation errors returned by GetCardsGroupCardsResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GetCardsGroupCardsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetGroupCardsResponseMultiError) Error() string {
+func (m GetCardsGroupCardsResponseMultiError) Error() string {
 	msgs := make([]string, 0, len(m))
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -782,11 +782,11 @@ func (m GetGroupCardsResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetGroupCardsResponseMultiError) AllErrors() []error { return m }
+func (m GetCardsGroupCardsResponseMultiError) AllErrors() []error { return m }
 
-// GetGroupCardsResponseValidationError is the validation error returned by
-// GetGroupCardsResponse.Validate if the designated constraints aren't met.
-type GetGroupCardsResponseValidationError struct {
+// GetCardsGroupCardsResponseValidationError is the validation error returned
+// by GetCardsGroupCardsResponse.Validate if the designated constraints aren't met.
+type GetCardsGroupCardsResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -794,24 +794,24 @@ type GetGroupCardsResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetGroupCardsResponseValidationError) Field() string { return e.field }
+func (e GetCardsGroupCardsResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetGroupCardsResponseValidationError) Reason() string { return e.reason }
+func (e GetCardsGroupCardsResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetGroupCardsResponseValidationError) Cause() error { return e.cause }
+func (e GetCardsGroupCardsResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetGroupCardsResponseValidationError) Key() bool { return e.key }
+func (e GetCardsGroupCardsResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetGroupCardsResponseValidationError) ErrorName() string {
-	return "GetGroupCardsResponseValidationError"
+func (e GetCardsGroupCardsResponseValidationError) ErrorName() string {
+	return "GetCardsGroupCardsResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetGroupCardsResponseValidationError) Error() string {
+func (e GetCardsGroupCardsResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -823,14 +823,14 @@ func (e GetGroupCardsResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetGroupCardsResponse.%s: %s%s",
+		"invalid %sGetCardsGroupCardsResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetGroupCardsResponseValidationError{}
+var _ error = GetCardsGroupCardsResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -838,7 +838,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetGroupCardsResponseValidationError{}
+} = GetCardsGroupCardsResponseValidationError{}
 
 // Validate checks the field values on UpdateCardRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the

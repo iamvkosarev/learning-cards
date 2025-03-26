@@ -147,7 +147,7 @@
         ]
       }
     },
-    "/v1/groups": {
+    "/v1/group": {
       "get": {
         "operationId": "LearningCards_ListCardsGroups",
         "responses": {
@@ -199,14 +199,14 @@
         ]
       }
     },
-    "/v1/groups/{groupId}": {
+    "/v1/group/{groupId}": {
       "get": {
-        "operationId": "LearningCards_GetGroupCards",
+        "operationId": "LearningCards_GetCardsGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetGroupCardsResponse"
+              "$ref": "#/definitions/v1GetCardsGroupResponse"
             }
           },
           "default": {
@@ -298,7 +298,7 @@
         ]
       }
     },
-    "/v1/groups/{groupId}/access": {
+    "/v1/group/{groupId}/access": {
       "put": {
         "operationId": "LearningCards_UpdateGroupAccess",
         "responses": {
@@ -331,6 +331,37 @@
             "schema": {
               "$ref": "#/definitions/LearningCardsUpdateGroupAccessBody"
             }
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      }
+    },
+    "/v1/group/{groupId}/cards": {
+      "get": {
+        "operationId": "LearningCards_GetCardsGroupCards",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetCardsGroupCardsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -497,7 +528,7 @@
         }
       }
     },
-    "v1GetGroupCardsResponse": {
+    "v1GetCardsGroupCardsResponse": {
       "type": "object",
       "properties": {
         "cards": {
@@ -509,15 +540,22 @@
         }
       }
     },
+    "v1GetCardsGroupResponse": {
+      "type": "object",
+      "properties": {
+        "group": {
+          "$ref": "#/definitions/v1CardsGroup"
+        }
+      }
+    },
     "v1GroupVisibility": {
       "type": "string",
       "enum": [
-        "NULL",
         "PRIVATE",
         "PUBLIC",
         "UNLISTED"
       ],
-      "default": "NULL"
+      "default": "PRIVATE"
     },
     "v1ListCardsGroupsResponse": {
       "type": "object",

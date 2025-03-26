@@ -367,6 +367,241 @@ var _ interface {
 	ErrorName() string
 } = CreateCardsGroupResponseValidationError{}
 
+// Validate checks the field values on GetCardsGroupRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCardsGroupRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCardsGroupRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCardsGroupRequestMultiError, or nil if none found.
+func (m *GetCardsGroupRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCardsGroupRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for GroupId
+
+	if len(errors) > 0 {
+		return GetCardsGroupRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCardsGroupRequestMultiError is an error wrapping multiple validation
+// errors returned by GetCardsGroupRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetCardsGroupRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCardsGroupRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCardsGroupRequestMultiError) AllErrors() []error { return m }
+
+// GetCardsGroupRequestValidationError is the validation error returned by
+// GetCardsGroupRequest.Validate if the designated constraints aren't met.
+type GetCardsGroupRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCardsGroupRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCardsGroupRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCardsGroupRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCardsGroupRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCardsGroupRequestValidationError) ErrorName() string {
+	return "GetCardsGroupRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCardsGroupRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCardsGroupRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCardsGroupRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCardsGroupRequestValidationError{}
+
+// Validate checks the field values on GetCardsGroupResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCardsGroupResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCardsGroupResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCardsGroupResponseMultiError, or nil if none found.
+func (m *GetCardsGroupResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCardsGroupResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetGroup()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetCardsGroupResponseValidationError{
+					field:  "Group",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetCardsGroupResponseValidationError{
+					field:  "Group",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetGroup()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetCardsGroupResponseValidationError{
+				field:  "Group",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetCardsGroupResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCardsGroupResponseMultiError is an error wrapping multiple validation
+// errors returned by GetCardsGroupResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetCardsGroupResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCardsGroupResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCardsGroupResponseMultiError) AllErrors() []error { return m }
+
+// GetCardsGroupResponseValidationError is the validation error returned by
+// GetCardsGroupResponse.Validate if the designated constraints aren't met.
+type GetCardsGroupResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCardsGroupResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCardsGroupResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCardsGroupResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCardsGroupResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCardsGroupResponseValidationError) ErrorName() string {
+	return "GetCardsGroupResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCardsGroupResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCardsGroupResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCardsGroupResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCardsGroupResponseValidationError{}
+
 // Validate checks the field values on ListCardsGroupsResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

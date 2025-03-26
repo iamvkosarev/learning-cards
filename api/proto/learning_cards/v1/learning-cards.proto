@@ -12,40 +12,46 @@ option go_package = "github.com/iamvkosarev/learning-cards/pkg/proto/learning_ca
 service LearningCards {
     rpc CreateCardsGroup (CreateCardsGroupRequest) returns (CreateCardsGroupResponse) {
         option (google.api.http) = {
-            post: "/v1/groups"
+            post: "/v1/group"
             body: "*"
         };
     };
 
     rpc ListCardsGroups (google.protobuf.Empty) returns (ListCardsGroupsResponse) {
         option (google.api.http) = {
-            get: "/v1/groups"
+            get: "/v1/group"
         };
     };
 
-    rpc GetGroupCards (GetGroupCardsRequest) returns (GetGroupCardsResponse) {
+    rpc GetCardsGroup (GetCardsGroupRequest) returns (GetCardsGroupResponse) {
         option (google.api.http) = {
-            get: "/v1/groups/{group_id}"
+            get: "/v1/group/{group_id}"
+        };
+    };
+
+    rpc GetCardsGroupCards (GetCardsGroupCardsRequest) returns (GetCardsGroupCardsResponse) {
+        option (google.api.http) = {
+            get: "/v1/group/{group_id}/cards"
         };
     };
 
     rpc UpdateGroupAccess (UpdateGroupAccessRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
-            put: "/v1/groups/{group_id}/access"
+            put: "/v1/group/{group_id}/access"
             body: "*"
         };
     }
 
     rpc UpdateCardsGroupName (UpdateCardsGroupNameRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
-            put: "/v1/groups/{group_id}"
+            put: "/v1/group/{group_id}"
             body: "*"
         };
     };
 
     rpc DeleteCardsGroup (DeleteCardsGroupRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
-            delete: "/v1/groups/{group_id}"
+            delete: "/v1/group/{group_id}"
         };
     };
 

@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	LearningCards_CreateCardsGroup_FullMethodName     = "/learning_cards.v1.LearningCards/CreateCardsGroup"
 	LearningCards_ListCardsGroups_FullMethodName      = "/learning_cards.v1.LearningCards/ListCardsGroups"
-	LearningCards_GetGroupCards_FullMethodName        = "/learning_cards.v1.LearningCards/GetGroupCards"
+	LearningCards_GetCardsGroup_FullMethodName        = "/learning_cards.v1.LearningCards/GetCardsGroup"
+	LearningCards_GetCardsGroupCards_FullMethodName   = "/learning_cards.v1.LearningCards/GetCardsGroupCards"
 	LearningCards_UpdateGroupAccess_FullMethodName    = "/learning_cards.v1.LearningCards/UpdateGroupAccess"
 	LearningCards_UpdateCardsGroupName_FullMethodName = "/learning_cards.v1.LearningCards/UpdateCardsGroupName"
 	LearningCards_DeleteCardsGroup_FullMethodName     = "/learning_cards.v1.LearningCards/DeleteCardsGroup"
@@ -38,7 +39,8 @@ const (
 type LearningCardsClient interface {
 	CreateCardsGroup(ctx context.Context, in *CreateCardsGroupRequest, opts ...grpc.CallOption) (*CreateCardsGroupResponse, error)
 	ListCardsGroups(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListCardsGroupsResponse, error)
-	GetGroupCards(ctx context.Context, in *GetGroupCardsRequest, opts ...grpc.CallOption) (*GetGroupCardsResponse, error)
+	GetCardsGroup(ctx context.Context, in *GetCardsGroupRequest, opts ...grpc.CallOption) (*GetCardsGroupResponse, error)
+	GetCardsGroupCards(ctx context.Context, in *GetCardsGroupCardsRequest, opts ...grpc.CallOption) (*GetCardsGroupCardsResponse, error)
 	UpdateGroupAccess(ctx context.Context, in *UpdateGroupAccessRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	UpdateCardsGroupName(ctx context.Context, in *UpdateCardsGroupNameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteCardsGroup(ctx context.Context, in *DeleteCardsGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -76,10 +78,20 @@ func (c *learningCardsClient) ListCardsGroups(ctx context.Context, in *emptypb.E
 	return out, nil
 }
 
-func (c *learningCardsClient) GetGroupCards(ctx context.Context, in *GetGroupCardsRequest, opts ...grpc.CallOption) (*GetGroupCardsResponse, error) {
+func (c *learningCardsClient) GetCardsGroup(ctx context.Context, in *GetCardsGroupRequest, opts ...grpc.CallOption) (*GetCardsGroupResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetGroupCardsResponse)
-	err := c.cc.Invoke(ctx, LearningCards_GetGroupCards_FullMethodName, in, out, cOpts...)
+	out := new(GetCardsGroupResponse)
+	err := c.cc.Invoke(ctx, LearningCards_GetCardsGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) GetCardsGroupCards(ctx context.Context, in *GetCardsGroupCardsRequest, opts ...grpc.CallOption) (*GetCardsGroupCardsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCardsGroupCardsResponse)
+	err := c.cc.Invoke(ctx, LearningCards_GetCardsGroupCards_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +174,8 @@ func (c *learningCardsClient) DeleteCard(ctx context.Context, in *DeleteCardRequ
 type LearningCardsServer interface {
 	CreateCardsGroup(context.Context, *CreateCardsGroupRequest) (*CreateCardsGroupResponse, error)
 	ListCardsGroups(context.Context, *emptypb.Empty) (*ListCardsGroupsResponse, error)
-	GetGroupCards(context.Context, *GetGroupCardsRequest) (*GetGroupCardsResponse, error)
+	GetCardsGroup(context.Context, *GetCardsGroupRequest) (*GetCardsGroupResponse, error)
+	GetCardsGroupCards(context.Context, *GetCardsGroupCardsRequest) (*GetCardsGroupCardsResponse, error)
 	UpdateGroupAccess(context.Context, *UpdateGroupAccessRequest) (*emptypb.Empty, error)
 	UpdateCardsGroupName(context.Context, *UpdateCardsGroupNameRequest) (*emptypb.Empty, error)
 	DeleteCardsGroup(context.Context, *DeleteCardsGroupRequest) (*emptypb.Empty, error)
@@ -186,8 +199,11 @@ func (UnimplementedLearningCardsServer) CreateCardsGroup(context.Context, *Creat
 func (UnimplementedLearningCardsServer) ListCardsGroups(context.Context, *emptypb.Empty) (*ListCardsGroupsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCardsGroups not implemented")
 }
-func (UnimplementedLearningCardsServer) GetGroupCards(context.Context, *GetGroupCardsRequest) (*GetGroupCardsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetGroupCards not implemented")
+func (UnimplementedLearningCardsServer) GetCardsGroup(context.Context, *GetCardsGroupRequest) (*GetCardsGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCardsGroup not implemented")
+}
+func (UnimplementedLearningCardsServer) GetCardsGroupCards(context.Context, *GetCardsGroupCardsRequest) (*GetCardsGroupCardsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCardsGroupCards not implemented")
 }
 func (UnimplementedLearningCardsServer) UpdateGroupAccess(context.Context, *UpdateGroupAccessRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroupAccess not implemented")
@@ -267,20 +283,38 @@ func _LearningCards_ListCardsGroups_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _LearningCards_GetGroupCards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetGroupCardsRequest)
+func _LearningCards_GetCardsGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCardsGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LearningCardsServer).GetGroupCards(ctx, in)
+		return srv.(LearningCardsServer).GetCardsGroup(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: LearningCards_GetGroupCards_FullMethodName,
+		FullMethod: LearningCards_GetCardsGroup_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LearningCardsServer).GetGroupCards(ctx, req.(*GetGroupCardsRequest))
+		return srv.(LearningCardsServer).GetCardsGroup(ctx, req.(*GetCardsGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_GetCardsGroupCards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCardsGroupCardsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).GetCardsGroupCards(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_GetCardsGroupCards_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).GetCardsGroupCards(ctx, req.(*GetCardsGroupCardsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -427,8 +461,12 @@ var LearningCards_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _LearningCards_ListCardsGroups_Handler,
 		},
 		{
-			MethodName: "GetGroupCards",
-			Handler:    _LearningCards_GetGroupCards_Handler,
+			MethodName: "GetCardsGroup",
+			Handler:    _LearningCards_GetCardsGroup_Handler,
+		},
+		{
+			MethodName: "GetCardsGroupCards",
+			Handler:    _LearningCards_GetCardsGroupCards_Handler,
 		},
 		{
 			MethodName: "UpdateGroupAccess",
