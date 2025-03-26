@@ -10,8 +10,8 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,131 +22,70 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type CreateCardsGroupRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	GroupName     string                 `protobuf:"bytes,1,opt,name=groupName,proto3" json:"groupName,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateCardsGroupRequest) Reset() {
-	*x = CreateCardsGroupRequest{}
-	mi := &file_learning_cards_v1_learning_cards_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateCardsGroupRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateCardsGroupRequest) ProtoMessage() {}
-
-func (x *CreateCardsGroupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_learning_cards_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateCardsGroupRequest.ProtoReflect.Descriptor instead.
-func (*CreateCardsGroupRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_learning_cards_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *CreateCardsGroupRequest) GetGroupName() string {
-	if x != nil {
-		return x.GroupName
-	}
-	return ""
-}
-
-type CreateCardsGroupResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	GroupId       int64                  `protobuf:"varint,1,opt,name=groupId,proto3" json:"groupId,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *CreateCardsGroupResponse) Reset() {
-	*x = CreateCardsGroupResponse{}
-	mi := &file_learning_cards_v1_learning_cards_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateCardsGroupResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateCardsGroupResponse) ProtoMessage() {}
-
-func (x *CreateCardsGroupResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_learning_cards_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateCardsGroupResponse.ProtoReflect.Descriptor instead.
-func (*CreateCardsGroupResponse) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_learning_cards_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *CreateCardsGroupResponse) GetGroupId() int64 {
-	if x != nil {
-		return x.GroupId
-	}
-	return 0
-}
-
 var File_learning_cards_v1_learning_cards_proto protoreflect.FileDescriptor
 
 const file_learning_cards_v1_learning_cards_proto_rawDesc = "" +
 	"\n" +
-	"&learning_cards/v1/learning-cards.proto\x12\x0elearning_cards\x1a\x1cgoogle/api/annotations.proto\"7\n" +
-	"\x17CreateCardsGroupRequest\x12\x1c\n" +
-	"\tgroupName\x18\x01 \x01(\tR\tgroupName\"4\n" +
-	"\x18CreateCardsGroupResponse\x12\x18\n" +
-	"\agroupId\x18\x01 \x01(\x03R\agroupId2\xa6\x01\n" +
-	"\rLearningCards\x12\x94\x01\n" +
-	"\x10CreateCardsGroup\x12'.learning_cards.CreateCardsGroupRequest\x1a(.learning_cards.CreateCardsGroupResponse\"-\x82\xd3\xe4\x93\x02':\x01*\"\"/api/learning-cards/v1/cards/groupBRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
+	"&learning_cards/v1/learning-cards.proto\x12\x11learning_cards.v1\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1clearning_cards/v1/card.proto\x1a\x1dlearning_cards/v1/group.proto2\xa9\t\n" +
+	"\rLearningCards\x12\x82\x01\n" +
+	"\x10CreateCardsGroup\x12*.learning_cards.v1.CreateCardsGroupRequest\x1a+.learning_cards.v1.CreateCardsGroupResponse\"\x15\x82\xd3\xe4\x93\x02\x0f:\x01*\"\n" +
+	"/v1/groups\x12i\n" +
+	"\x0fListCardsGroups\x12\x16.google.protobuf.Empty\x1a*.learning_cards.v1.ListCardsGroupsResponse\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
+	"/v1/groups\x12\x81\x01\n" +
+	"\rGetGroupCards\x12'.learning_cards.v1.GetGroupCardsRequest\x1a(.learning_cards.v1.GetGroupCardsResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/v1/groups/{group_id}\x12\x81\x01\n" +
+	"\x11UpdateGroupAccess\x12+.learning_cards.v1.UpdateGroupAccessRequest\x1a\x16.google.protobuf.Empty\"'\x82\xd3\xe4\x93\x02!:\x01*\x1a\x1c/v1/groups/{group_id}/access\x12\x80\x01\n" +
+	"\x14UpdateCardsGroupName\x12..learning_cards.v1.UpdateCardsGroupNameRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a:\x01*\x1a\x15/v1/groups/{group_id}\x12u\n" +
+	"\x10DeleteCardsGroup\x12*.learning_cards.v1.DeleteCardsGroupRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/v1/groups/{group_id}\x12e\n" +
+	"\aAddCard\x12!.learning_cards.v1.AddCardRequest\x1a\".learning_cards.v1.AddCardResponse\"\x13\x82\xd3\xe4\x93\x02\r:\x01*\"\b/v1/card\x12l\n" +
+	"\aGetCard\x12!.learning_cards.v1.GetCardRequest\x1a\".learning_cards.v1.GetCardResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/card/{card_id}\x12i\n" +
+	"\n" +
+	"UpdateCard\x12$.learning_cards.v1.UpdateCardRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\x1a\x12/v1/card/{card_id}\x12f\n" +
+	"\n" +
+	"DeleteCard\x12$.learning_cards.v1.DeleteCardRequest\x1a\x16.google.protobuf.Empty\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/v1/card/{card_id}BRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
 
-var (
-	file_learning_cards_v1_learning_cards_proto_rawDescOnce sync.Once
-	file_learning_cards_v1_learning_cards_proto_rawDescData []byte
-)
-
-func file_learning_cards_v1_learning_cards_proto_rawDescGZIP() []byte {
-	file_learning_cards_v1_learning_cards_proto_rawDescOnce.Do(func() {
-		file_learning_cards_v1_learning_cards_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_learning_cards_v1_learning_cards_proto_rawDesc), len(file_learning_cards_v1_learning_cards_proto_rawDesc)))
-	})
-	return file_learning_cards_v1_learning_cards_proto_rawDescData
-}
-
-var file_learning_cards_v1_learning_cards_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_learning_cards_v1_learning_cards_proto_goTypes = []any{
-	(*CreateCardsGroupRequest)(nil),  // 0: learning_cards.CreateCardsGroupRequest
-	(*CreateCardsGroupResponse)(nil), // 1: learning_cards.CreateCardsGroupResponse
+	(*CreateCardsGroupRequest)(nil),     // 0: learning_cards.v1.CreateCardsGroupRequest
+	(*emptypb.Empty)(nil),               // 1: google.protobuf.Empty
+	(*GetGroupCardsRequest)(nil),        // 2: learning_cards.v1.GetGroupCardsRequest
+	(*UpdateGroupAccessRequest)(nil),    // 3: learning_cards.v1.UpdateGroupAccessRequest
+	(*UpdateCardsGroupNameRequest)(nil), // 4: learning_cards.v1.UpdateCardsGroupNameRequest
+	(*DeleteCardsGroupRequest)(nil),     // 5: learning_cards.v1.DeleteCardsGroupRequest
+	(*AddCardRequest)(nil),              // 6: learning_cards.v1.AddCardRequest
+	(*GetCardRequest)(nil),              // 7: learning_cards.v1.GetCardRequest
+	(*UpdateCardRequest)(nil),           // 8: learning_cards.v1.UpdateCardRequest
+	(*DeleteCardRequest)(nil),           // 9: learning_cards.v1.DeleteCardRequest
+	(*CreateCardsGroupResponse)(nil),    // 10: learning_cards.v1.CreateCardsGroupResponse
+	(*ListCardsGroupsResponse)(nil),     // 11: learning_cards.v1.ListCardsGroupsResponse
+	(*GetGroupCardsResponse)(nil),       // 12: learning_cards.v1.GetGroupCardsResponse
+	(*AddCardResponse)(nil),             // 13: learning_cards.v1.AddCardResponse
+	(*GetCardResponse)(nil),             // 14: learning_cards.v1.GetCardResponse
 }
 var file_learning_cards_v1_learning_cards_proto_depIdxs = []int32{
-	0, // 0: learning_cards.LearningCards.CreateCardsGroup:input_type -> learning_cards.CreateCardsGroupRequest
-	1, // 1: learning_cards.LearningCards.CreateCardsGroup:output_type -> learning_cards.CreateCardsGroupResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: learning_cards.v1.LearningCards.CreateCardsGroup:input_type -> learning_cards.v1.CreateCardsGroupRequest
+	1,  // 1: learning_cards.v1.LearningCards.ListCardsGroups:input_type -> google.protobuf.Empty
+	2,  // 2: learning_cards.v1.LearningCards.GetGroupCards:input_type -> learning_cards.v1.GetGroupCardsRequest
+	3,  // 3: learning_cards.v1.LearningCards.UpdateGroupAccess:input_type -> learning_cards.v1.UpdateGroupAccessRequest
+	4,  // 4: learning_cards.v1.LearningCards.UpdateCardsGroupName:input_type -> learning_cards.v1.UpdateCardsGroupNameRequest
+	5,  // 5: learning_cards.v1.LearningCards.DeleteCardsGroup:input_type -> learning_cards.v1.DeleteCardsGroupRequest
+	6,  // 6: learning_cards.v1.LearningCards.AddCard:input_type -> learning_cards.v1.AddCardRequest
+	7,  // 7: learning_cards.v1.LearningCards.GetCard:input_type -> learning_cards.v1.GetCardRequest
+	8,  // 8: learning_cards.v1.LearningCards.UpdateCard:input_type -> learning_cards.v1.UpdateCardRequest
+	9,  // 9: learning_cards.v1.LearningCards.DeleteCard:input_type -> learning_cards.v1.DeleteCardRequest
+	10, // 10: learning_cards.v1.LearningCards.CreateCardsGroup:output_type -> learning_cards.v1.CreateCardsGroupResponse
+	11, // 11: learning_cards.v1.LearningCards.ListCardsGroups:output_type -> learning_cards.v1.ListCardsGroupsResponse
+	12, // 12: learning_cards.v1.LearningCards.GetGroupCards:output_type -> learning_cards.v1.GetGroupCardsResponse
+	1,  // 13: learning_cards.v1.LearningCards.UpdateGroupAccess:output_type -> google.protobuf.Empty
+	1,  // 14: learning_cards.v1.LearningCards.UpdateCardsGroupName:output_type -> google.protobuf.Empty
+	1,  // 15: learning_cards.v1.LearningCards.DeleteCardsGroup:output_type -> google.protobuf.Empty
+	13, // 16: learning_cards.v1.LearningCards.AddCard:output_type -> learning_cards.v1.AddCardResponse
+	14, // 17: learning_cards.v1.LearningCards.GetCard:output_type -> learning_cards.v1.GetCardResponse
+	1,  // 18: learning_cards.v1.LearningCards.UpdateCard:output_type -> google.protobuf.Empty
+	1,  // 19: learning_cards.v1.LearningCards.DeleteCard:output_type -> google.protobuf.Empty
+	10, // [10:20] is the sub-list for method output_type
+	0,  // [0:10] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_learning_cards_v1_learning_cards_proto_init() }
@@ -154,19 +93,20 @@ func file_learning_cards_v1_learning_cards_proto_init() {
 	if File_learning_cards_v1_learning_cards_proto != nil {
 		return
 	}
+	file_learning_cards_v1_card_proto_init()
+	file_learning_cards_v1_group_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_learning_cards_v1_learning_cards_proto_rawDesc), len(file_learning_cards_v1_learning_cards_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_learning_cards_v1_learning_cards_proto_goTypes,
 		DependencyIndexes: file_learning_cards_v1_learning_cards_proto_depIdxs,
-		MessageInfos:      file_learning_cards_v1_learning_cards_proto_msgTypes,
 	}.Build()
 	File_learning_cards_v1_learning_cards_proto = out.File
 	file_learning_cards_v1_learning_cards_proto_goTypes = nil

@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/api/learning-cards/v1/cards/group": {
+    "/v1/card": {
       "post": {
-        "operationId": "LearningCards_CreateCardsGroup",
+        "operationId": "LearningCards_AddCard",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/learning_cardsCreateCardsGroupResponse"
+              "$ref": "#/definitions/v1AddCardResponse"
             }
           },
           "default": {
@@ -39,7 +39,297 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/learning_cardsCreateCardsGroupRequest"
+              "$ref": "#/definitions/v1AddCardRequest"
+            }
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      }
+    },
+    "/v1/card/{cardId}": {
+      "get": {
+        "operationId": "LearningCards_GetCard",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetCardResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cardId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      },
+      "delete": {
+        "operationId": "LearningCards_DeleteCard",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cardId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      },
+      "put": {
+        "operationId": "LearningCards_UpdateCard",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "cardId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LearningCardsUpdateCardBody"
+            }
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      }
+    },
+    "/v1/groups": {
+      "get": {
+        "operationId": "LearningCards_ListCardsGroups",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCardsGroupsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "LearningCards"
+        ]
+      },
+      "post": {
+        "operationId": "LearningCards_CreateCardsGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1CreateCardsGroupResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/v1CreateCardsGroupRequest"
+            }
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      }
+    },
+    "/v1/groups/{groupId}": {
+      "get": {
+        "operationId": "LearningCards_GetGroupCards",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetGroupCardsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      },
+      "delete": {
+        "operationId": "LearningCards_DeleteCardsGroup",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      },
+      "put": {
+        "operationId": "LearningCards_UpdateCardsGroupName",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LearningCardsUpdateCardsGroupNameBody"
+            }
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      }
+    },
+    "/v1/groups/{groupId}/access": {
+      "put": {
+        "operationId": "LearningCards_UpdateGroupAccess",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LearningCardsUpdateGroupAccessBody"
             }
           }
         ],
@@ -50,20 +340,30 @@
     }
   },
   "definitions": {
-    "learning_cardsCreateCardsGroupRequest": {
+    "LearningCardsUpdateCardBody": {
       "type": "object",
       "properties": {
-        "groupName": {
+        "frontText": {
+          "type": "string"
+        },
+        "backText": {
           "type": "string"
         }
       }
     },
-    "learning_cardsCreateCardsGroupResponse": {
+    "LearningCardsUpdateCardsGroupNameBody": {
       "type": "object",
       "properties": {
-        "groupId": {
-          "type": "string",
-          "format": "int64"
+        "newName": {
+          "type": "string"
+        }
+      }
+    },
+    "LearningCardsUpdateGroupAccessBody": {
+      "type": "object",
+      "properties": {
+        "visibility": {
+          "$ref": "#/definitions/v1GroupVisibility"
         }
       }
     },
@@ -91,6 +391,142 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1AddCardRequest": {
+      "type": "object",
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "frontText": {
+          "type": "string"
+        },
+        "backText": {
+          "type": "string"
+        }
+      }
+    },
+    "v1AddCardResponse": {
+      "type": "object",
+      "properties": {
+        "cardId": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1Card": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "groupId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "frontText": {
+          "type": "string"
+        },
+        "backText": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      }
+    },
+    "v1CardsGroup": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "ownerId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "visibility": {
+          "$ref": "#/definitions/v1GroupVisibility"
+        }
+      }
+    },
+    "v1CreateCardsGroupRequest": {
+      "type": "object",
+      "properties": {
+        "groupName": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "visibility": {
+          "$ref": "#/definitions/v1GroupVisibility"
+        }
+      }
+    },
+    "v1CreateCardsGroupResponse": {
+      "type": "object",
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "v1GetCardResponse": {
+      "type": "object",
+      "properties": {
+        "card": {
+          "$ref": "#/definitions/v1Card"
+        }
+      }
+    },
+    "v1GetGroupCardsResponse": {
+      "type": "object",
+      "properties": {
+        "cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Card"
+          }
+        }
+      }
+    },
+    "v1GroupVisibility": {
+      "type": "string",
+      "enum": [
+        "NULL",
+        "PRIVATE",
+        "PUBLIC",
+        "UNLISTED"
+      ],
+      "default": "NULL"
+    },
+    "v1ListCardsGroupsResponse": {
+      "type": "object",
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1CardsGroup"
           }
         }
       }

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package learning_cards.v1;
+
+import "validate/validate.proto";
+
+option go_package = "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cards";
+
+enum GroupVisibility {
+    NULL = 0;
+    PRIVATE = 1;
+    PUBLIC = 2;
+    UNLISTED = 3;
+}
+
+message CardsGroup {
+    int64 id = 1;
+    int64 owner_id = 2;
+    string name = 3;
+    string description = 4;
+    string created_at = 5;
+    GroupVisibility visibility = 6;
+}
+
+message CreateCardsGroupRequest {
+    string group_name = 1 [(validate.rules).string = {min_len: 1}];
+    string description = 2;
+    GroupVisibility visibility = 3;
+}
+
+message CreateCardsGroupResponse {
+    int64 group_id = 1;
+}
+
+message ListCardsGroupsResponse {
+    repeated CardsGroup groups = 1;
+}
+
+message UpdateGroupAccessRequest {
+    int64 group_id = 1;
+    GroupVisibility visibility = 2;
+}
+
+message UpdateCardsGroupNameRequest {
+    int64 group_id = 1;
+    string new_name = 2 [(validate.rules).string = {min_len: 1}];
+}
+
+message DeleteCardsGroupRequest {
+    int64 group_id = 1;
+}

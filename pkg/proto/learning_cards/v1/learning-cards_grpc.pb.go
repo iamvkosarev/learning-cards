@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,7 +20,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	LearningCards_CreateCardsGroup_FullMethodName = "/learning_cards.LearningCards/CreateCardsGroup"
+	LearningCards_CreateCardsGroup_FullMethodName     = "/learning_cards.v1.LearningCards/CreateCardsGroup"
+	LearningCards_ListCardsGroups_FullMethodName      = "/learning_cards.v1.LearningCards/ListCardsGroups"
+	LearningCards_GetGroupCards_FullMethodName        = "/learning_cards.v1.LearningCards/GetGroupCards"
+	LearningCards_UpdateGroupAccess_FullMethodName    = "/learning_cards.v1.LearningCards/UpdateGroupAccess"
+	LearningCards_UpdateCardsGroupName_FullMethodName = "/learning_cards.v1.LearningCards/UpdateCardsGroupName"
+	LearningCards_DeleteCardsGroup_FullMethodName     = "/learning_cards.v1.LearningCards/DeleteCardsGroup"
+	LearningCards_AddCard_FullMethodName              = "/learning_cards.v1.LearningCards/AddCard"
+	LearningCards_GetCard_FullMethodName              = "/learning_cards.v1.LearningCards/GetCard"
+	LearningCards_UpdateCard_FullMethodName           = "/learning_cards.v1.LearningCards/UpdateCard"
+	LearningCards_DeleteCard_FullMethodName           = "/learning_cards.v1.LearningCards/DeleteCard"
 )
 
 // LearningCardsClient is the client API for LearningCards service.
@@ -27,6 +37,15 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LearningCardsClient interface {
 	CreateCardsGroup(ctx context.Context, in *CreateCardsGroupRequest, opts ...grpc.CallOption) (*CreateCardsGroupResponse, error)
+	ListCardsGroups(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListCardsGroupsResponse, error)
+	GetGroupCards(ctx context.Context, in *GetGroupCardsRequest, opts ...grpc.CallOption) (*GetGroupCardsResponse, error)
+	UpdateGroupAccess(ctx context.Context, in *UpdateGroupAccessRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdateCardsGroupName(ctx context.Context, in *UpdateCardsGroupNameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteCardsGroup(ctx context.Context, in *DeleteCardsGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	AddCard(ctx context.Context, in *AddCardRequest, opts ...grpc.CallOption) (*AddCardResponse, error)
+	GetCard(ctx context.Context, in *GetCardRequest, opts ...grpc.CallOption) (*GetCardResponse, error)
+	UpdateCard(ctx context.Context, in *UpdateCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteCard(ctx context.Context, in *DeleteCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type learningCardsClient struct {
@@ -47,11 +66,110 @@ func (c *learningCardsClient) CreateCardsGroup(ctx context.Context, in *CreateCa
 	return out, nil
 }
 
+func (c *learningCardsClient) ListCardsGroups(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListCardsGroupsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCardsGroupsResponse)
+	err := c.cc.Invoke(ctx, LearningCards_ListCardsGroups_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) GetGroupCards(ctx context.Context, in *GetGroupCardsRequest, opts ...grpc.CallOption) (*GetGroupCardsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetGroupCardsResponse)
+	err := c.cc.Invoke(ctx, LearningCards_GetGroupCards_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) UpdateGroupAccess(ctx context.Context, in *UpdateGroupAccessRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, LearningCards_UpdateGroupAccess_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) UpdateCardsGroupName(ctx context.Context, in *UpdateCardsGroupNameRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, LearningCards_UpdateCardsGroupName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) DeleteCardsGroup(ctx context.Context, in *DeleteCardsGroupRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, LearningCards_DeleteCardsGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) AddCard(ctx context.Context, in *AddCardRequest, opts ...grpc.CallOption) (*AddCardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddCardResponse)
+	err := c.cc.Invoke(ctx, LearningCards_AddCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) GetCard(ctx context.Context, in *GetCardRequest, opts ...grpc.CallOption) (*GetCardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCardResponse)
+	err := c.cc.Invoke(ctx, LearningCards_GetCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) UpdateCard(ctx context.Context, in *UpdateCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, LearningCards_UpdateCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) DeleteCard(ctx context.Context, in *DeleteCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, LearningCards_DeleteCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LearningCardsServer is the server API for LearningCards service.
 // All implementations must embed UnimplementedLearningCardsServer
 // for forward compatibility.
 type LearningCardsServer interface {
 	CreateCardsGroup(context.Context, *CreateCardsGroupRequest) (*CreateCardsGroupResponse, error)
+	ListCardsGroups(context.Context, *emptypb.Empty) (*ListCardsGroupsResponse, error)
+	GetGroupCards(context.Context, *GetGroupCardsRequest) (*GetGroupCardsResponse, error)
+	UpdateGroupAccess(context.Context, *UpdateGroupAccessRequest) (*emptypb.Empty, error)
+	UpdateCardsGroupName(context.Context, *UpdateCardsGroupNameRequest) (*emptypb.Empty, error)
+	DeleteCardsGroup(context.Context, *DeleteCardsGroupRequest) (*emptypb.Empty, error)
+	AddCard(context.Context, *AddCardRequest) (*AddCardResponse, error)
+	GetCard(context.Context, *GetCardRequest) (*GetCardResponse, error)
+	UpdateCard(context.Context, *UpdateCardRequest) (*emptypb.Empty, error)
+	DeleteCard(context.Context, *DeleteCardRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedLearningCardsServer()
 }
 
@@ -64,6 +182,33 @@ type UnimplementedLearningCardsServer struct{}
 
 func (UnimplementedLearningCardsServer) CreateCardsGroup(context.Context, *CreateCardsGroupRequest) (*CreateCardsGroupResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCardsGroup not implemented")
+}
+func (UnimplementedLearningCardsServer) ListCardsGroups(context.Context, *emptypb.Empty) (*ListCardsGroupsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCardsGroups not implemented")
+}
+func (UnimplementedLearningCardsServer) GetGroupCards(context.Context, *GetGroupCardsRequest) (*GetGroupCardsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupCards not implemented")
+}
+func (UnimplementedLearningCardsServer) UpdateGroupAccess(context.Context, *UpdateGroupAccessRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroupAccess not implemented")
+}
+func (UnimplementedLearningCardsServer) UpdateCardsGroupName(context.Context, *UpdateCardsGroupNameRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCardsGroupName not implemented")
+}
+func (UnimplementedLearningCardsServer) DeleteCardsGroup(context.Context, *DeleteCardsGroupRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCardsGroup not implemented")
+}
+func (UnimplementedLearningCardsServer) AddCard(context.Context, *AddCardRequest) (*AddCardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddCard not implemented")
+}
+func (UnimplementedLearningCardsServer) GetCard(context.Context, *GetCardRequest) (*GetCardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCard not implemented")
+}
+func (UnimplementedLearningCardsServer) UpdateCard(context.Context, *UpdateCardRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCard not implemented")
+}
+func (UnimplementedLearningCardsServer) DeleteCard(context.Context, *DeleteCardRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCard not implemented")
 }
 func (UnimplementedLearningCardsServer) mustEmbedUnimplementedLearningCardsServer() {}
 func (UnimplementedLearningCardsServer) testEmbeddedByValue()                       {}
@@ -104,16 +249,214 @@ func _LearningCards_CreateCardsGroup_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LearningCards_ListCardsGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).ListCardsGroups(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_ListCardsGroups_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).ListCardsGroups(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_GetGroupCards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupCardsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).GetGroupCards(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_GetGroupCards_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).GetGroupCards(ctx, req.(*GetGroupCardsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_UpdateGroupAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateGroupAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).UpdateGroupAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_UpdateGroupAccess_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).UpdateGroupAccess(ctx, req.(*UpdateGroupAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_UpdateCardsGroupName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCardsGroupNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).UpdateCardsGroupName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_UpdateCardsGroupName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).UpdateCardsGroupName(ctx, req.(*UpdateCardsGroupNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_DeleteCardsGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCardsGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).DeleteCardsGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_DeleteCardsGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).DeleteCardsGroup(ctx, req.(*DeleteCardsGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_AddCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddCardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).AddCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_AddCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).AddCard(ctx, req.(*AddCardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_GetCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).GetCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_GetCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).GetCard(ctx, req.(*GetCardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_UpdateCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).UpdateCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_UpdateCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).UpdateCard(ctx, req.(*UpdateCardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_DeleteCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).DeleteCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_DeleteCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).DeleteCard(ctx, req.(*DeleteCardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LearningCards_ServiceDesc is the grpc.ServiceDesc for LearningCards service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var LearningCards_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "learning_cards.LearningCards",
+	ServiceName: "learning_cards.v1.LearningCards",
 	HandlerType: (*LearningCardsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateCardsGroup",
 			Handler:    _LearningCards_CreateCardsGroup_Handler,
+		},
+		{
+			MethodName: "ListCardsGroups",
+			Handler:    _LearningCards_ListCardsGroups_Handler,
+		},
+		{
+			MethodName: "GetGroupCards",
+			Handler:    _LearningCards_GetGroupCards_Handler,
+		},
+		{
+			MethodName: "UpdateGroupAccess",
+			Handler:    _LearningCards_UpdateGroupAccess_Handler,
+		},
+		{
+			MethodName: "UpdateCardsGroupName",
+			Handler:    _LearningCards_UpdateCardsGroupName_Handler,
+		},
+		{
+			MethodName: "DeleteCardsGroup",
+			Handler:    _LearningCards_DeleteCardsGroup_Handler,
+		},
+		{
+			MethodName: "AddCard",
+			Handler:    _LearningCards_AddCard_Handler,
+		},
+		{
+			MethodName: "GetCard",
+			Handler:    _LearningCards_GetCard_Handler,
+		},
+		{
+			MethodName: "UpdateCard",
+			Handler:    _LearningCards_UpdateCard_Handler,
+		},
+		{
+			MethodName: "DeleteCard",
+			Handler:    _LearningCards_DeleteCard_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

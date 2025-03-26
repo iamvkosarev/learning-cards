@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package learning_cards.v1;
+
+import "validate/validate.proto";
+
+option go_package = "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cards";
+
+message Card {
+    int64 id = 1;
+    int64 group_id = 2;
+    string front_text = 3;
+    string back_text = 4;
+    string created_at = 5;
+}
+
+message AddCardRequest {
+    int64 group_id = 1;
+    string front_text = 2 [(validate.rules).string = {min_len: 1}];
+    string back_text = 3 [(validate.rules).string = {min_len: 1}];
+}
+
+message AddCardResponse {
+    int64 card_id = 1;
+}
+
+message GetCardRequest {
+    int64 card_id = 1;
+}
+
+message GetCardResponse {
+    Card card = 1;
+}
+
+message GetGroupCardsRequest {
+    int64 group_id = 1;
+}
+
+message GetGroupCardsResponse {
+    repeated Card cards = 1;
+}
+message UpdateCardRequest {
+    int64 card_id = 1;
+    string front_text = 2 [(validate.rules).string = {min_len: 1}];
+    string back_text = 3 [(validate.rules).string = {min_len: 1}];
+}
+
+message DeleteCardRequest {
+    int64 card_id = 1;
+}
