@@ -13,6 +13,8 @@ import (
 	"log/slog"
 )
 
+const internalErrMessage = "internal server error"
+
 type groupUseCase interface {
 	Create(ctx context.Context, name, description string, visibility entity.GroupVisibility) (entity.GroupId, error)
 	List(ctx context.Context) ([]entity.Group, error)
@@ -24,6 +26,7 @@ type cardsUseCase interface {
 	Create(ctx context.Context, groupId entity.GroupId, frontText, backText string) (entity.CardId, error)
 	List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error)
 	Get(ctx context.Context, id entity.CardId) (entity.Card, error)
+	Update(ctx context.Context, card entity.UpdateCard) error
 }
 
 type Server struct {
@@ -62,7 +65,7 @@ func (s *Server) CreateCardsGroup(ctx context.Context, req *pb.CreateCardsGroupR
 
 	if err != nil {
 		log.Info("failed to create group", sl.Err(err))
-		return nil, status.Error(codes.Internal, "internal server error")
+		return nil, status.Error(codes.Internal, internalErrMessage)
 	}
 
 	resId := int64(cardId)
@@ -81,7 +84,7 @@ func (s *Server) ListCardsGroups(ctx context.Context, _ *emptypb.Empty) (*pb.Lis
 	}
 	if err != nil {
 		log.Info("failed to create card", sl.Err(err))
-		return nil, status.Error(codes.Internal, "internal server error")
+		return nil, status.Error(codes.Internal, internalErrMessage)
 	}
 
 	var respGroups []*pb.CardsGroup
@@ -114,7 +117,7 @@ func (s *Server) GetCardsGroupCards(ctx context.Context, req *pb.GetCardsGroupCa
 	}
 	if err != nil {
 		log.Info("failed to create card", sl.Err(err))
-		return nil, status.Error(codes.Internal, "internal server error")
+		return nil, status.Error(codes.Internal, internalErrMessage)
 	}
 
 	var respCards []*pb.Card
@@ -141,7 +144,7 @@ func (s *Server) GetCardsGroup(ctx context.Context, req *pb.GetCardsGroupRequest
 
 	if err != nil {
 		log.Info("failed to create card", sl.Err(err))
-		return nil, status.Error(codes.Internal, "internal server error")
+		return nil, status.Error(codes.Internal, internalErrMessage)
 	}
 
 	groupResp := groupToResponse(group)
@@ -152,7 +155,7 @@ func (s *Server) UpdateCardsGroup(ctx context.Context, req *pb.UpdateCardsGroupR
 	*emptypb.Empty,
 	error,
 ) {
-	const op = "grpc.UpdateCardsGroupRequest"
+	const op = "grpc.UpdateCardsGroup"
 	log := s.Logger.With(
 		slog.String("op", op),
 		slog.Int64("groupId", req.GroupId),
@@ -178,9 +181,11 @@ func (s *Server) UpdateCardsGroup(ctx context.Context, req *pb.UpdateCardsGroupR
 		switch {
 		case errors.Is(err, entity.ErrGroupNotFound):
 			return nil, status.Error(codes.NotFound, "group not found")
+		case errors.Is(err, entity.ErrCardNotFound):
+			return nil, status.Error(codes.NotFound, "card not found")
 		default:
-			log.Info("failed to create group", sl.Err(err))
-			return nil, status.Error(codes.Internal, "internal server error")
+			log.Info("failed to update group", sl.Err(err))
+			return nil, status.Error(codes.Internal, internalErrMessage)
 		}
 	}
 
@@ -225,7 +230,7 @@ func (s *Server) AddCard(ctx context.Context, req *pb.AddCardRequest) (*pb.AddCa
 			s.Logger.Info("failed to create card", sl.Err(err))
 			return nil, status.Error(
 				codes.Internal,
-				"internal server error",
+				internalErrMessage,
 			)
 		}
 	}
@@ -258,7 +263,7 @@ func (s *Server) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.GetCa
 			return nil, status.Error(codes.NotFound, "card not found")
 		default:
 			log.Info("failed to get card", sl.Err(err))
-			return nil, status.Error(codes.Internal, "internal server error")
+			return nil, status.Error(codes.Internal, internalErrMessage)
 		}
 	}
 
@@ -269,7 +274,10 @@ func (s *Server) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.GetCa
 
 func (s *Server) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest) (*emptypb.Empty, error) {
 	const op = "grpc.UpdateCard"
-	//log := s.Logger.With(slog.String("op", op))
+	log := s.Logger.With(
+		slog.String("op", op),
+		slog.Int64("cardId", req.CardId),
+	)
 
 	err := req.Validate()
 	if err != nil {
