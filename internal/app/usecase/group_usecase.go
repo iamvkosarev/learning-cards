@@ -9,9 +9,9 @@ import (
 )
 
 type GroupUseCaseDeps struct {
-	contracts.GroupReader
-	contracts.GroupWriter
-	contracts.AuthVerifier
+	GroupReader  contracts.GroupReader
+	GroupWriter  contracts.GroupWriter
+	AuthVerifier contracts.AuthVerifier
 }
 
 type GroupUseCase struct {
@@ -93,7 +93,7 @@ func (uc *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGro
 		return err
 	}
 
-	group, err := uc.Get(ctx, updateGroup.Id)
+	group, err := uc.deps.GroupReader.Get(ctx, updateGroup.Id)
 
 	if err != nil {
 		return err

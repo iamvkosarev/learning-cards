@@ -104,12 +104,32 @@ func (cr CardRepository) List(ctx context.Context, groupId entity.GroupId) ([]en
 	return cards, nil
 }
 
-func (cr CardRepository) Delete(ctx context.Context, cardId entity.CardId) error {
-	//TODO implement me
-	panic("implement me")
+func (cr CardRepository) Update(ctx context.Context, card entity.Card) error {
+	op := "postgres.CardRepository.Update"
+
+	cmdTag, err := cr.db.Exec(
+		ctx,
+		`UPDATE cards
+		 SET front_text = $1,
+		     back_text = $2
+		 WHERE id = $3`,
+		card.FrontText,
+		card.BackText,
+		card.Id,
+	)
+
+	if err != nil {
+		return fmt.Errorf("%s: update error: %w", op, err)
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		return fmt.Errorf("%s: %w", op, entity.ErrCardNotFound)
+	}
+
+	return nil
 }
 
-func (cr CardRepository) Update(ctx context.Context, card entity.Card) error {
+func (cr CardRepository) Delete(ctx context.Context, cardId entity.CardId) error {
 	//TODO implement me
 	panic("implement me")
 }

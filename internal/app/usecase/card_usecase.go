@@ -104,3 +104,36 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 	}
 	return cardId, nil
 }
+
+func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard) error {
+	op := "usecase.GroupUseCase.Update"
+
+	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return err
+	}
+	card, err := c.deps.CardReader.Get(ctx, updateCard.Id)
+	if err != nil {
+		return err
+	}
+
+	group, err := c.deps.GroupReader.Get(ctx, card.GroupId)
+
+	if err != nil {
+		return err
+	}
+
+	if err := checkEditGroupAccess(userId, group, op); err != nil {
+		return err
+	}
+
+	card.FrontText = updateCard.FrontText
+	card.BackText = updateCard.BackText
+
+	err = c.deps.CardWriter.Update(ctx, card)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

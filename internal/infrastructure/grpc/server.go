@@ -284,7 +284,28 @@ func (s *Server) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest) (*em
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	return nil, status.Errorf(codes.Unimplemented, "not implemented")
+	cardId := entity.CardId(req.CardId)
+
+	err = s.cardsUseCase.Update(
+		ctx, entity.UpdateCard{Id: cardId, FrontText: req.FrontText, BackText: req.BackText},
+	)
+
+	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
+		return nil, verificationErr
+	}
+
+	if err != nil {
+		switch {
+		case errors.Is(err, entity.ErrCardNotFound):
+			return nil, status.Error(codes.NotFound, "card not found")
+		default:
+			log.Info("failed to update card", sl.Err(err))
+			return nil, status.Error(codes.Internal, internalErrMessage)
+		}
+	}
+
+	log.Info("Card updated")
+	return &emptypb.Empty{}, nil
 }
 
 func (s *Server) DeleteCard(ctx context.Context, req *pb.DeleteCardRequest) (*emptypb.Empty, error) {

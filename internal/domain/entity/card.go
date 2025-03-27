@@ -4,6 +4,8 @@ import (
 	"time"
 )
 
+type CardId int64
+
 type Card struct {
 	Id         CardId
 	GroupId    GroupId
@@ -12,4 +14,8 @@ type Card struct {
 	CreateTime time.Time
 }
 
-type CardId int64
+type UpdateCard struct {
+	Id        CardId
+	FrontText string
+	BackText  string
+}
