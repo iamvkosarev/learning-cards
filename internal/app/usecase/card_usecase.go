@@ -137,3 +137,33 @@ func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard)
 
 	return nil
 }
+
+func (c *CardsUseCase) Delete(ctx context.Context, id entity.CardId) error {
+	op := "usecase.GroupUseCase.Delete"
+
+	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return err
+	}
+	card, err := c.deps.CardReader.Get(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	group, err := c.deps.GroupReader.Get(ctx, card.GroupId)
+
+	if err != nil {
+		return err
+	}
+
+	if err := checkEditGroupAccess(userId, group, op); err != nil {
+		return err
+	}
+
+	err = c.deps.CardWriter.Delete(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

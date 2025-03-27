@@ -14,12 +14,16 @@ import (
 )
 
 const internalErrMessage = "internal server error"
+const cardNotFoundMessage = "card not found"
+const groupForCardNotFoundMessage = "group for card not found"
+const groupNotFoundMessage = "group not found"
 
 type groupUseCase interface {
 	Create(ctx context.Context, name, description string, visibility entity.GroupVisibility) (entity.GroupId, error)
 	List(ctx context.Context) ([]entity.Group, error)
 	Get(ctx context.Context, id entity.GroupId) (entity.Group, error)
 	Update(ctx context.Context, updateGroup entity.UpdateGroup) error
+	Delete(ctx context.Context, id entity.GroupId) error
 }
 
 type cardsUseCase interface {
@@ -27,6 +31,7 @@ type cardsUseCase interface {
 	List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error)
 	Get(ctx context.Context, id entity.CardId) (entity.Card, error)
 	Update(ctx context.Context, card entity.UpdateCard) error
+	Delete(ctx context.Context, id entity.CardId) error
 }
 
 type Server struct {
@@ -180,9 +185,7 @@ func (s *Server) UpdateCardsGroup(ctx context.Context, req *pb.UpdateCardsGroupR
 	if err != nil {
 		switch {
 		case errors.Is(err, entity.ErrGroupNotFound):
-			return nil, status.Error(codes.NotFound, "group not found")
-		case errors.Is(err, entity.ErrCardNotFound):
-			return nil, status.Error(codes.NotFound, "card not found")
+			return nil, status.Error(codes.NotFound, groupNotFoundMessage)
 		default:
 			log.Info("failed to update group", sl.Err(err))
 			return nil, status.Error(codes.Internal, internalErrMessage)
@@ -195,8 +198,25 @@ func (s *Server) UpdateCardsGroup(ctx context.Context, req *pb.UpdateCardsGroupR
 
 func (s *Server) DeleteCardsGroup(ctx context.Context, req *pb.DeleteCardsGroupRequest) (*emptypb.Empty, error) {
 	const op = "grpc.DeleteCardsGroup"
-	//log := s.Logger.With(slog.String("op", op))
-	return nil, status.Errorf(codes.Unimplemented, "not implemented")
+	log := s.Logger.With(slog.String("op", op), slog.Int64("groupId", req.GroupId))
+
+	groupId := entity.GroupId(req.GroupId)
+	err := s.groupUseCase.Delete(ctx, groupId)
+	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
+		return nil, verificationErr
+	}
+	if err != nil {
+		switch {
+		case errors.Is(err, entity.ErrGroupNotFound):
+			return nil, status.Error(codes.NotFound, groupNotFoundMessage)
+		default:
+			log.Info("failed to delete group", sl.Err(err))
+			return nil, status.Error(codes.Internal, internalErrMessage)
+		}
+	}
+
+	log.Info("Group deleted")
+	return &emptypb.Empty{}, nil
 }
 
 func (s *Server) AddCard(ctx context.Context, req *pb.AddCardRequest) (*pb.AddCardResponse, error) {
@@ -258,9 +278,10 @@ func (s *Server) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.GetCa
 
 	if err != nil {
 		switch {
+		case errors.Is(err, entity.ErrGroupNotFound):
+			return nil, status.Error(codes.NotFound, groupForCardNotFoundMessage)
 		case errors.Is(err, entity.ErrCardNotFound):
-			log.Warn("card not found", sl.Err(err))
-			return nil, status.Error(codes.NotFound, "card not found")
+			return nil, status.Error(codes.NotFound, cardNotFoundMessage)
 		default:
 			log.Info("failed to get card", sl.Err(err))
 			return nil, status.Error(codes.Internal, internalErrMessage)
@@ -296,8 +317,10 @@ func (s *Server) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest) (*em
 
 	if err != nil {
 		switch {
+		case errors.Is(err, entity.ErrGroupNotFound):
+			return nil, status.Error(codes.NotFound, groupForCardNotFoundMessage)
 		case errors.Is(err, entity.ErrCardNotFound):
-			return nil, status.Error(codes.NotFound, "card not found")
+			return nil, status.Error(codes.NotFound, cardNotFoundMessage)
 		default:
 			log.Info("failed to update card", sl.Err(err))
 			return nil, status.Error(codes.Internal, internalErrMessage)
@@ -310,8 +333,27 @@ func (s *Server) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest) (*em
 
 func (s *Server) DeleteCard(ctx context.Context, req *pb.DeleteCardRequest) (*emptypb.Empty, error) {
 	const op = "grpc.DeleteCard"
-	//log := s.Logger.With(slog.String("op", op))
-	return nil, status.Errorf(codes.Unimplemented, "not implemented")
+	log := s.Logger.With(slog.String("op", op), slog.Int64("cardId", req.CardId))
+
+	cardId := entity.CardId(req.CardId)
+	err := s.cardsUseCase.Delete(ctx, cardId)
+	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
+		return nil, verificationErr
+	}
+	if err != nil {
+		switch {
+		case errors.Is(err, entity.ErrGroupNotFound):
+			return nil, status.Error(codes.NotFound, groupForCardNotFoundMessage)
+		case errors.Is(err, entity.ErrCardNotFound):
+			return nil, status.Error(codes.NotFound, cardNotFoundMessage)
+		default:
+			log.Info("failed to delete card", sl.Err(err))
+			return nil, status.Error(codes.Internal, internalErrMessage)
+		}
+	}
+
+	log.Info("Card deleted")
+	return &emptypb.Empty{}, nil
 }
 
 func getVerificationErr(log *slog.Logger, err error) error {

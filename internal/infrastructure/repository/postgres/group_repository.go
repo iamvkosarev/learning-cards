@@ -171,6 +171,21 @@ func (gr *GroupRepository) Update(ctx context.Context, group entity.Group) error
 }
 
 func (gr *GroupRepository) Delete(ctx context.Context, groupId entity.GroupId) error {
-	//TODO implement me
-	panic("implement me")
+	const op = "postgres.GroupRepository.Delete"
+
+	cmdTag, err := gr.db.Exec(
+		ctx,
+		`DELETE FROM card_groups WHERE id = $1`,
+		groupId,
+	)
+
+	if err != nil {
+		return fmt.Errorf("%s: delete error: %w", op, err)
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		return fmt.Errorf("%s: %w", op, entity.ErrGroupNotFound)
+	}
+
+	return nil
 }

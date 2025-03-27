@@ -130,6 +130,21 @@ func (cr CardRepository) Update(ctx context.Context, card entity.Card) error {
 }
 
 func (cr CardRepository) Delete(ctx context.Context, cardId entity.CardId) error {
-	//TODO implement me
-	panic("implement me")
+	const op = "postgres.CardRepository.Delete"
+
+	cmdTag, err := cr.db.Exec(
+		ctx,
+		`DELETE FROM cards WHERE id = $1`,
+		cardId,
+	)
+
+	if err != nil {
+		return fmt.Errorf("%s: delete error: %w", op, err)
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		return fmt.Errorf("%s: %w", op, entity.ErrCardNotFound)
+	}
+
+	return nil
 }

@@ -106,10 +106,40 @@ func (uc *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGro
 	if updateGroup.Visibility != entity.GROUP_VISIBILITY_NULL {
 		group.Visibility = updateGroup.Visibility
 	}
-	group.Description = updateGroup.Description
-	group.Name = updateGroup.Name
+	if updateGroup.Description != "" {
+		group.Description = updateGroup.Description
+	}
+	if updateGroup.Name != "" {
+		group.Name = updateGroup.Name
+	}
 
 	err = uc.deps.GroupWriter.Update(ctx, group)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *GroupUseCase) Delete(ctx context.Context, groupId entity.GroupId) error {
+	op := "usecase.GroupUseCase.Delete"
+
+	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	group, err := c.deps.GroupReader.Get(ctx, groupId)
+
+	if err != nil {
+		return err
+	}
+
+	if err := checkEditGroupAccess(userId, group, op); err != nil {
+		return err
+	}
+
+	err = c.deps.GroupWriter.Delete(ctx, groupId)
 	if err != nil {
 		return err
 	}
