@@ -33,7 +33,7 @@ make local-test-add-group name="Test"
 
 ### Add a card to a group
 ```bash
-make local-test-add-card group_id=1 front_text=こんいちは 
+make local-test-add-card group_id=1 front_text="こんいちは" back_text="hello" 
 ```
 
 ### Get all cards from a group
