@@ -7,8 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -50,27 +48,26 @@ func main() {
 	}
 
 	re := regexp.MustCompile(`^v` + major + `\.` + minor + `\.(\d+)$`)
-	var patchVersions []int
+	patchVersions := 0
 
 	scanner := bufio.NewScanner(strings.NewReader(string(output)))
 	for scanner.Scan() {
 		line := scanner.Text()
 		matches := re.FindStringSubmatch(line)
 		if len(matches) == 2 {
-			patch, _ := strconv.Atoi(matches[1])
-			patchVersions = append(patchVersions, patch)
+			patchVersions++
 		}
 	}
 
-	sort.Ints(patchVersions)
-	lastPatch := 0
-	if len(patchVersions) > 0 {
-		lastPatch = patchVersions[len(patchVersions)-1]
+	patch := patchVersions
+	lastPatch := patch
+	if patch != 0 {
+		lastPatch--
 	}
 
 	if *mode == "last" {
-		fmt.Printf("v%s.%s.%d\n", major, minor, lastPatch-1)
-	} else {
 		fmt.Printf("v%s.%s.%d\n", major, minor, lastPatch)
+	} else {
+		fmt.Printf("v%s.%s.%d\n", major, minor, patch)
 	}
 }
