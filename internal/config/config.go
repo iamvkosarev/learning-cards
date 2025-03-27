@@ -14,6 +14,8 @@ type Server struct {
 
 type SSO struct {
 	HostAddress string `yaml:"host_address"`
+	UseLocal    bool   `yaml:"use_local"`
+	LocalUserId int    `yaml:"local_user_id"`
 }
 
 type Config struct {

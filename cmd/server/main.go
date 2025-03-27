@@ -52,12 +52,8 @@ func main() {
 	cardRepo := sqlRepository.NewCardRepository(pool)
 
 	// === Auth connection ===
-	ssoConn, err := grpc.NewClient(cfg.SSO.HostAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatal(err)
-	}
-	ssoClient := sso_pb.NewSSOClient(ssoConn)
-	var authService contracts.AuthVerifier = auth.NewGRPCService(ssoClient)
+	var authService contracts.AuthVerifier
+	authService = getAuthVerifier(err, cfg)
 
 	// === UseCases ===
 	groupUseCase := usecase.NewGroupUseCase(
@@ -113,4 +109,20 @@ func main() {
 	if err := http.ListenAndServe(cfg.Server.RESTPort, httpMux); err != nil {
 		log.Fatalf("failed to serve HTTP: %v", err)
 	}
+}
+
+func getAuthVerifier(err error, cfg *config.Config) contracts.AuthVerifier {
+	var authService contracts.AuthVerifier
+	if cfg.SSO.UseLocal {
+		authService = auth.NewLocalService(cfg.SSO.LocalUserId)
+		return authService
+	}
+
+	ssoConn, err := grpc.NewClient(cfg.SSO.HostAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatal(err)
+	}
+	ssoClient := sso_pb.NewSSOClient(ssoConn)
+	authService = auth.NewGRPCService(ssoClient)
+	return authService
 }
