@@ -27,3 +27,4 @@ git-tag:
 .PHONY: docker-release git-tag docker-build docker-push
 docker-release: git-tag docker-build docker-push
 	@echo "Docker released into $(IMAGE_NAME)"
+

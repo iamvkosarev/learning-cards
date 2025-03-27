@@ -24,3 +24,9 @@ vps-deploy:
 		docker compose up -d --remove-orphans"
 
 	@echo "Deployed $(REMOTE_IMAGE) to $(VPS_USER)@$(VPS_HOST)"
+
+
+docker-logs:
+	@ssh $(VPS_USER)@$(VPS_HOST) "\
+		cd $(REMOTE_DIR) && \
+		docker compose logs -f"
