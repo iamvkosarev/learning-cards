@@ -1,5 +1,4 @@
-LAST_TAG = $(shell go run $(ROOT_DIR)/pkg/tools/versiongen -file $(VERSION_FILE) -mode=last)
-REMOTE_IMAGE = $(DOCKER_REPO):$(LAST_TAG)
+REMOTE_IMAGE = $(DOCKER_REPO):$(TAG)
 REMOTE_DIR := /root/$(PROJECT_NAME)
 
 vps-get-containers:
