@@ -106,7 +106,7 @@ func (gr *GroupRepository) Add(ctx context.Context, group entity.Group) (entity.
 func (gr *GroupRepository) Get(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
 	const op = "postgres.GroupRepository.Get"
 
-	var g entity.Group
+	var group entity.Group
 	var visibility int32
 	var description sql.NullString
 
@@ -117,35 +117,57 @@ func (gr *GroupRepository) Get(ctx context.Context, groupId entity.GroupId) (ent
 		 WHERE id = $1`,
 		groupId,
 	).Scan(
-		&g.Id,
-		&g.OwnerId,
-		&g.Name,
+		&group.Id,
+		&group.OwnerId,
+		&group.Name,
 		&description,
-		&g.CreateTime,
+		&group.CreateTime,
 		&visibility,
 	)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return g, fmt.Errorf("%s: group not found: %w", op, entity.ErrGroupNotFound)
+			return group, fmt.Errorf("%s: group not found: %w", op, entity.ErrGroupNotFound)
 		}
-		return g, fmt.Errorf("%s: query error: %w", op, err)
+		return group, fmt.Errorf("%s: query error: %w", op, err)
 	}
 
-	g.Visibility = entity.GroupVisibility(visibility)
+	group.Visibility = entity.GroupVisibility(visibility)
 
 	if description.Valid {
-		g.Description = description.String
+		group.Description = description.String
 	} else {
-		g.Description = ""
+		group.Description = ""
 	}
 
-	return g, nil
+	return group, nil
 }
 
 func (gr *GroupRepository) Update(ctx context.Context, group entity.Group) error {
-	//TODO implement me
-	panic("implement me")
+	const op = "postgres.GroupRepository.Update"
+
+	cmdTag, err := gr.db.Exec(
+		ctx,
+		`UPDATE card_groups
+		 SET name = $1,
+		     description = $2,
+		     visibility = $3
+		 WHERE id = $4`,
+		group.Name,
+		group.Description,
+		int32(group.Visibility),
+		group.Id,
+	)
+
+	if err != nil {
+		return fmt.Errorf("%s: update error: %w", op, err)
+	}
+
+	if cmdTag.RowsAffected() == 0 {
+		return fmt.Errorf("%s: %w", op, entity.ErrGroupNotFound)
+	}
+
+	return nil
 }
 
 func (gr *GroupRepository) Delete(ctx context.Context, groupId entity.GroupId) error {

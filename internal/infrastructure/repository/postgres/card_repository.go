@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -40,8 +41,30 @@ func (cr CardRepository) Add(ctx context.Context, card entity.Card) (entity.Card
 }
 
 func (cr CardRepository) Get(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
-	//TODO implement me
-	panic("implement me")
+	op := "postgres.CardRepository.Get"
+
+	var card entity.Card
+
+	err := cr.db.QueryRow(
+		ctx,
+		`SELECT id, group_id, front_text, back_text, created_at FROM cards WHERE id = $1`,
+		cardId,
+	).Scan(
+		&card.Id,
+		&card.GroupId,
+		&card.FrontText,
+		&card.BackText,
+		&card.CreateTime,
+	)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return card, fmt.Errorf("%s: card not found: %w", op, entity.ErrCardNotFound)
+		}
+		return card, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return card, nil
 }
 
 func (cr CardRepository) List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {

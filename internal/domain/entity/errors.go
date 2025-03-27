@@ -9,6 +9,7 @@ var (
 	ErrGroupExists     = errors.New("group already exists")
 	ErrGroupNotFound   = errors.New("access denied")
 	ErrMetadataIsEmpty = errors.New("metadata is empty")
+	ErrCardNotFound    = errors.New("card not found")
 )
 
 type VerificationError struct {

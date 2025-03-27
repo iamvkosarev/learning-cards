@@ -22,3 +22,10 @@ type Group struct {
 	CreateTime  time.Time
 	Visibility  GroupVisibility
 }
+
+type UpdateGroup struct {
+	Id          GroupId
+	Name        string
+	Description string
+	Visibility  GroupVisibility
+}

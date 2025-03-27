@@ -34,6 +34,10 @@ func (uc *GroupUseCase) Create(
 		return 0, err
 	}
 
+	if visibility == entity.GROUP_VISIBILITY_NULL {
+		visibility = entity.GROUP_VISIBILITY_PRIVATE
+	}
+
 	group := entity.Group{
 		Name:        name,
 		Description: description,
@@ -61,9 +65,8 @@ func (uc *GroupUseCase) Get(ctx context.Context, groupId entity.GroupId) (entity
 		return entity.Group{}, err
 	}
 
-	if userId != group.OwnerId && group.Visibility == entity.GROUP_VISIBILITY_PRIVATE {
-		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
-		return entity.Group{}, entity.NewVerificationError(message, codes.PermissionDenied)
+	if err := checkViewGroupAccess(userId, group, op); err != nil {
+		return entity.Group{}, err
 	}
 	return group, nil
 }
@@ -80,4 +83,46 @@ func (uc *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
 	}
 
 	return groups, nil
+}
+
+func (uc *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGroup) error {
+	op := "usecase.GroupUseCase.Update"
+
+	userId, err := uc.deps.AuthVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	group, err := uc.Get(ctx, updateGroup.Id)
+
+	if err != nil {
+		return err
+	}
+
+	if err := checkViewGroupAccess(userId, group, op); err != nil {
+		return err
+	}
+
+	if updateGroup.Visibility != entity.GROUP_VISIBILITY_NULL {
+		group.Visibility = updateGroup.Visibility
+	}
+	group.Description = updateGroup.Description
+	group.Name = updateGroup.Name
+
+	err = uc.deps.GroupWriter.Update(ctx, group)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func checkViewGroupAccess(userId entity.UserId, group entity.Group, op string) error {
+	if userId != group.OwnerId &&
+		(group.Visibility == entity.GROUP_VISIBILITY_PRIVATE ||
+			group.Visibility == entity.GROUP_VISIBILITY_NULL) {
+		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
+		return entity.NewVerificationError(message, codes.PermissionDenied)
+	}
+	return nil
 }

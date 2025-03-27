@@ -25,6 +25,54 @@ func NewCardsUseCase(deps CardsUseCaseDeps) *CardsUseCase {
 	}
 }
 
+func (c *CardsUseCase) Get(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
+	op := "usecase.CardsUseCase.Get"
+
+	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return entity.Card{}, err
+	}
+
+	card, err := c.deps.CardReader.Get(ctx, cardId)
+	if err != nil {
+		return entity.Card{}, err
+	}
+
+	group, err := c.deps.GroupReader.Get(ctx, card.GroupId)
+	if err != nil {
+		return entity.Card{}, err
+	}
+
+	if err := checkViewGroupAccess(userId, group, op); err != nil {
+		return entity.Card{}, err
+	}
+
+	return card, nil
+
+}
+
+func (c *CardsUseCase) List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {
+	op := "usecase.CardsUseCase.List"
+
+	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	group, err := c.deps.GroupReader.Get(ctx, groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := checkViewGroupAccess(userId, group, op); err != nil {
+		return nil, err
+	}
+	cards, err := c.deps.CardReader.List(ctx, groupId)
+	if err != nil {
+		return nil, err
+	}
+	return cards, nil
+}
+
 func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, frontText, backText string) (
 	entity.CardId,
 	error,
@@ -55,27 +103,4 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 		return 0, err
 	}
 	return cardId, nil
-}
-
-func (c *CardsUseCase) List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {
-	op := "usecase.CardsUseCase.List"
-
-	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-	group, err := c.deps.GroupReader.Get(ctx, groupId)
-	if err != nil {
-		return nil, err
-	}
-
-	if userId != group.OwnerId && group.Visibility == entity.GROUP_VISIBILITY_PRIVATE {
-		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
-		return nil, entity.NewVerificationError(message, codes.PermissionDenied)
-	}
-	cards, err := c.deps.CardReader.List(ctx, groupId)
-	if err != nil {
-		return nil, err
-	}
-	return cards, nil
 }
