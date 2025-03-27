@@ -99,7 +99,7 @@ func (uc *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGro
 		return err
 	}
 
-	if err := checkViewGroupAccess(userId, group, op); err != nil {
+	if err := checkEditGroupAccess(userId, group, op); err != nil {
 		return err
 	}
 
@@ -121,6 +121,14 @@ func checkViewGroupAccess(userId entity.UserId, group entity.Group, op string) e
 	if userId != group.OwnerId &&
 		(group.Visibility == entity.GROUP_VISIBILITY_PRIVATE ||
 			group.Visibility == entity.GROUP_VISIBILITY_NULL) {
+		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
+		return entity.NewVerificationError(message, codes.PermissionDenied)
+	}
+	return nil
+}
+
+func checkEditGroupAccess(userId entity.UserId, group entity.Group, op string) error {
+	if userId != group.OwnerId {
 		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
 		return entity.NewVerificationError(message, codes.PermissionDenied)
 	}
