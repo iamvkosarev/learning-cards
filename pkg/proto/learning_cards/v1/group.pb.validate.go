@@ -762,16 +762,7 @@ func (m *UpdateCardsGroupRequest) validate(all bool) error {
 
 	// no validation rules for GroupId
 
-	if utf8.RuneCountInString(m.GetGroupName()) < 1 {
-		err := UpdateCardsGroupRequestValidationError{
-			field:  "GroupName",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for GroupName
 
 	// no validation rules for Description
 

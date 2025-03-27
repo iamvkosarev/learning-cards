@@ -46,7 +46,7 @@ message ListCardsGroupsResponse {
 
 message UpdateCardsGroupRequest {
     int64 group_id = 1;
-    string group_name = 2 [(validate.rules).string = {min_len: 1}];
+    string group_name = 2;
     string description = 3;
     GroupVisibility visibility = 4;
 }

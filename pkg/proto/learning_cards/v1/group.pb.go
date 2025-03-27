@@ -536,11 +536,11 @@ const file_learning_cards_v1_group_proto_rawDesc = "" +
 	"\x15GetCardsGroupResponse\x123\n" +
 	"\x05group\x18\x01 \x01(\v2\x1d.learning_cards.v1.CardsGroupR\x05group\"P\n" +
 	"\x17ListCardsGroupsResponse\x125\n" +
-	"\x06groups\x18\x01 \x03(\v2\x1d.learning_cards.v1.CardsGroupR\x06groups\"\xc2\x01\n" +
+	"\x06groups\x18\x01 \x03(\v2\x1d.learning_cards.v1.CardsGroupR\x06groups\"\xb9\x01\n" +
 	"\x17UpdateCardsGroupRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12&\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x1d\n" +
 	"\n" +
-	"group_name\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\tgroupName\x12 \n" +
+	"group_name\x18\x02 \x01(\tR\tgroupName\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12B\n" +
 	"\n" +
 	"visibility\x18\x04 \x01(\x0e2\".learning_cards.v1.GroupVisibilityR\n" +
