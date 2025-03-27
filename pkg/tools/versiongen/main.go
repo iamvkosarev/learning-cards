@@ -69,8 +69,8 @@ func main() {
 	}
 
 	if *mode == "last" {
-		fmt.Printf("v%s.%s.%d\n", major, minor, lastPatch)
+		fmt.Printf("v%s.%s.%d\n", major, minor, lastPatch-1)
 	} else {
-		fmt.Printf("v%s.%s.%d\n", major, minor, lastPatch+1)
+		fmt.Printf("v%s.%s.%d\n", major, minor, lastPatch)
 	}
 }
