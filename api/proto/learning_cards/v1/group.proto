@@ -7,9 +7,10 @@ import "validate/validate.proto";
 option go_package = "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cards";
 
 enum GroupVisibility {
-    PRIVATE = 0;
-    PUBLIC = 1;
-    UNLISTED = 2;
+    NULL = 0;
+    PRIVATE = 1;
+    PUBLIC = 2;
+    UNLISTED = 3;
 }
 
 message CardsGroup {
@@ -43,14 +44,11 @@ message ListCardsGroupsResponse {
     repeated CardsGroup groups = 1;
 }
 
-message UpdateGroupAccessRequest {
+message UpdateCardsGroupRequest {
     int64 group_id = 1;
-    GroupVisibility visibility = 2;
-}
-
-message UpdateCardsGroupNameRequest {
-    int64 group_id = 1;
-    string new_name = 2 [(validate.rules).string = {min_len: 1}];
+    string group_name = 2 [(validate.rules).string = {min_len: 1}];
+    string description = 3;
+    GroupVisibility visibility = 4;
 }
 
 message DeleteCardsGroupRequest {

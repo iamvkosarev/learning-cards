@@ -153,9 +153,9 @@ func local_request_LearningCards_GetCardsGroupCards_0(ctx context.Context, marsh
 	return msg, metadata, err
 }
 
-func request_LearningCards_UpdateGroupAccess_0(ctx context.Context, marshaler runtime.Marshaler, client LearningCardsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_LearningCards_UpdateCardsGroup_0(ctx context.Context, marshaler runtime.Marshaler, client LearningCardsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq UpdateGroupAccessRequest
+		protoReq UpdateCardsGroupRequest
 		metadata runtime.ServerMetadata
 		err      error
 	)
@@ -170,13 +170,13 @@ func request_LearningCards_UpdateGroupAccess_0(ctx context.Context, marshaler ru
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
-	msg, err := client.UpdateGroupAccess(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.UpdateCardsGroup(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_LearningCards_UpdateGroupAccess_0(ctx context.Context, marshaler runtime.Marshaler, server LearningCardsServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_LearningCards_UpdateCardsGroup_0(ctx context.Context, marshaler runtime.Marshaler, server LearningCardsServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq UpdateGroupAccessRequest
+		protoReq UpdateCardsGroupRequest
 		metadata runtime.ServerMetadata
 		err      error
 	)
@@ -191,49 +191,7 @@ func local_request_LearningCards_UpdateGroupAccess_0(ctx context.Context, marsha
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
 	}
-	msg, err := server.UpdateGroupAccess(ctx, &protoReq)
-	return msg, metadata, err
-}
-
-func request_LearningCards_UpdateCardsGroupName_0(ctx context.Context, marshaler runtime.Marshaler, client LearningCardsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var (
-		protoReq UpdateCardsGroupNameRequest
-		metadata runtime.ServerMetadata
-		err      error
-	)
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	val, ok := pathParams["group_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_id")
-	}
-	protoReq.GroupId, err = runtime.Int64(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
-	}
-	msg, err := client.UpdateCardsGroupName(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-}
-
-func local_request_LearningCards_UpdateCardsGroupName_0(ctx context.Context, marshaler runtime.Marshaler, server LearningCardsServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var (
-		protoReq UpdateCardsGroupNameRequest
-		metadata runtime.ServerMetadata
-		err      error
-	)
-	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	val, ok := pathParams["group_id"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "group_id")
-	}
-	protoReq.GroupId, err = runtime.Int64(val)
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "group_id", err)
-	}
-	msg, err := server.UpdateCardsGroupName(ctx, &protoReq)
+	msg, err := server.UpdateCardsGroup(ctx, &protoReq)
 	return msg, metadata, err
 }
 
@@ -500,45 +458,25 @@ func RegisterLearningCardsHandlerServer(ctx context.Context, mux *runtime.ServeM
 		}
 		forward_LearningCards_GetCardsGroupCards_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodPut, pattern_LearningCards_UpdateGroupAccess_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPut, pattern_LearningCards_UpdateCardsGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/learning_cards.v1.LearningCards/UpdateGroupAccess", runtime.WithHTTPPathPattern("/v1/group/{group_id}/access"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/learning_cards.v1.LearningCards/UpdateCardsGroup", runtime.WithHTTPPathPattern("/v1/group/{group_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_LearningCards_UpdateGroupAccess_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_LearningCards_UpdateCardsGroup_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_LearningCards_UpdateGroupAccess_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPut, pattern_LearningCards_UpdateCardsGroupName_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		var stream runtime.ServerTransportStream
-		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/learning_cards.v1.LearningCards/UpdateCardsGroupName", runtime.WithHTTPPathPattern("/v1/group/{group_id}"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := local_request_LearningCards_UpdateCardsGroupName_0(annotatedContext, inboundMarshaler, server, req, pathParams)
-		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		forward_LearningCards_UpdateCardsGroupName_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_LearningCards_UpdateCardsGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_LearningCards_DeleteCardsGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -748,39 +686,22 @@ func RegisterLearningCardsHandlerClient(ctx context.Context, mux *runtime.ServeM
 		}
 		forward_LearningCards_GetCardsGroupCards_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodPut, pattern_LearningCards_UpdateGroupAccess_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPut, pattern_LearningCards_UpdateCardsGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/learning_cards.v1.LearningCards/UpdateGroupAccess", runtime.WithHTTPPathPattern("/v1/group/{group_id}/access"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/learning_cards.v1.LearningCards/UpdateCardsGroup", runtime.WithHTTPPathPattern("/v1/group/{group_id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_LearningCards_UpdateGroupAccess_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_LearningCards_UpdateCardsGroup_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_LearningCards_UpdateGroupAccess_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-	})
-	mux.Handle(http.MethodPut, pattern_LearningCards_UpdateCardsGroupName_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/learning_cards.v1.LearningCards/UpdateCardsGroupName", runtime.WithHTTPPathPattern("/v1/group/{group_id}"))
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_LearningCards_UpdateCardsGroupName_0(annotatedContext, inboundMarshaler, client, req, pathParams)
-		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
-		if err != nil {
-			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		forward_LearningCards_UpdateCardsGroupName_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_LearningCards_UpdateCardsGroup_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 	mux.Handle(http.MethodDelete, pattern_LearningCards_DeleteCardsGroup_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -871,29 +792,27 @@ func RegisterLearningCardsHandlerClient(ctx context.Context, mux *runtime.ServeM
 }
 
 var (
-	pattern_LearningCards_CreateCardsGroup_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "group"}, ""))
-	pattern_LearningCards_ListCardsGroups_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "group"}, ""))
-	pattern_LearningCards_GetCardsGroup_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "group", "group_id"}, ""))
-	pattern_LearningCards_GetCardsGroupCards_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "group", "group_id", "cards"}, ""))
-	pattern_LearningCards_UpdateGroupAccess_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "group", "group_id", "access"}, ""))
-	pattern_LearningCards_UpdateCardsGroupName_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "group", "group_id"}, ""))
-	pattern_LearningCards_DeleteCardsGroup_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "group", "group_id"}, ""))
-	pattern_LearningCards_AddCard_0              = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "card"}, ""))
-	pattern_LearningCards_GetCard_0              = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "card", "card_id"}, ""))
-	pattern_LearningCards_UpdateCard_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "card", "card_id"}, ""))
-	pattern_LearningCards_DeleteCard_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "card", "card_id"}, ""))
+	pattern_LearningCards_CreateCardsGroup_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "group"}, ""))
+	pattern_LearningCards_ListCardsGroups_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "group"}, ""))
+	pattern_LearningCards_GetCardsGroup_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "group", "group_id"}, ""))
+	pattern_LearningCards_GetCardsGroupCards_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 2, 3}, []string{"v1", "group", "group_id", "cards"}, ""))
+	pattern_LearningCards_UpdateCardsGroup_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "group", "group_id"}, ""))
+	pattern_LearningCards_DeleteCardsGroup_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "group", "group_id"}, ""))
+	pattern_LearningCards_AddCard_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "card"}, ""))
+	pattern_LearningCards_GetCard_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "card", "card_id"}, ""))
+	pattern_LearningCards_UpdateCard_0         = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "card", "card_id"}, ""))
+	pattern_LearningCards_DeleteCard_0         = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "card", "card_id"}, ""))
 )
 
 var (
-	forward_LearningCards_CreateCardsGroup_0     = runtime.ForwardResponseMessage
-	forward_LearningCards_ListCardsGroups_0      = runtime.ForwardResponseMessage
-	forward_LearningCards_GetCardsGroup_0        = runtime.ForwardResponseMessage
-	forward_LearningCards_GetCardsGroupCards_0   = runtime.ForwardResponseMessage
-	forward_LearningCards_UpdateGroupAccess_0    = runtime.ForwardResponseMessage
-	forward_LearningCards_UpdateCardsGroupName_0 = runtime.ForwardResponseMessage
-	forward_LearningCards_DeleteCardsGroup_0     = runtime.ForwardResponseMessage
-	forward_LearningCards_AddCard_0              = runtime.ForwardResponseMessage
-	forward_LearningCards_GetCard_0              = runtime.ForwardResponseMessage
-	forward_LearningCards_UpdateCard_0           = runtime.ForwardResponseMessage
-	forward_LearningCards_DeleteCard_0           = runtime.ForwardResponseMessage
+	forward_LearningCards_CreateCardsGroup_0   = runtime.ForwardResponseMessage
+	forward_LearningCards_ListCardsGroups_0    = runtime.ForwardResponseMessage
+	forward_LearningCards_GetCardsGroup_0      = runtime.ForwardResponseMessage
+	forward_LearningCards_GetCardsGroupCards_0 = runtime.ForwardResponseMessage
+	forward_LearningCards_UpdateCardsGroup_0   = runtime.ForwardResponseMessage
+	forward_LearningCards_DeleteCardsGroup_0   = runtime.ForwardResponseMessage
+	forward_LearningCards_AddCard_0            = runtime.ForwardResponseMessage
+	forward_LearningCards_GetCard_0            = runtime.ForwardResponseMessage
+	forward_LearningCards_UpdateCard_0         = runtime.ForwardResponseMessage
+	forward_LearningCards_DeleteCard_0         = runtime.ForwardResponseMessage
 )

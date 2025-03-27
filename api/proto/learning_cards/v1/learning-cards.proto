@@ -35,14 +35,7 @@ service LearningCards {
         };
     };
 
-    rpc UpdateGroupAccess (UpdateGroupAccessRequest) returns (google.protobuf.Empty) {
-        option (google.api.http) = {
-            put: "/v1/group/{group_id}/access"
-            body: "*"
-        };
-    }
-
-    rpc UpdateCardsGroupName (UpdateCardsGroupNameRequest) returns (google.protobuf.Empty) {
+    rpc UpdateCardsGroup (UpdateCardsGroupRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
             put: "/v1/group/{group_id}"
             body: "*"

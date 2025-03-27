@@ -25,22 +25,25 @@ const (
 type GroupVisibility int32
 
 const (
-	GroupVisibility_PRIVATE  GroupVisibility = 0
-	GroupVisibility_PUBLIC   GroupVisibility = 1
-	GroupVisibility_UNLISTED GroupVisibility = 2
+	GroupVisibility_NULL     GroupVisibility = 0
+	GroupVisibility_PRIVATE  GroupVisibility = 1
+	GroupVisibility_PUBLIC   GroupVisibility = 2
+	GroupVisibility_UNLISTED GroupVisibility = 3
 )
 
 // Enum value maps for GroupVisibility.
 var (
 	GroupVisibility_name = map[int32]string{
-		0: "PRIVATE",
-		1: "PUBLIC",
-		2: "UNLISTED",
+		0: "NULL",
+		1: "PRIVATE",
+		2: "PUBLIC",
+		3: "UNLISTED",
 	}
 	GroupVisibility_value = map[string]int32{
-		"PRIVATE":  0,
-		"PUBLIC":   1,
-		"UNLISTED": 2,
+		"NULL":     0,
+		"PRIVATE":  1,
+		"PUBLIC":   2,
+		"UNLISTED": 3,
 	}
 )
 
@@ -152,7 +155,7 @@ func (x *CardsGroup) GetVisibility() GroupVisibility {
 	if x != nil {
 		return x.Visibility
 	}
-	return GroupVisibility_PRIVATE
+	return GroupVisibility_NULL
 }
 
 type CreateCardsGroupRequest struct {
@@ -212,7 +215,7 @@ func (x *CreateCardsGroupRequest) GetVisibility() GroupVisibility {
 	if x != nil {
 		return x.Visibility
 	}
-	return GroupVisibility_PRIVATE
+	return GroupVisibility_NULL
 }
 
 type CreateCardsGroupResponse struct {
@@ -391,28 +394,30 @@ func (x *ListCardsGroupsResponse) GetGroups() []*CardsGroup {
 	return nil
 }
 
-type UpdateGroupAccessRequest struct {
+type UpdateCardsGroupRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	Visibility    GroupVisibility        `protobuf:"varint,2,opt,name=visibility,proto3,enum=learning_cards.v1.GroupVisibility" json:"visibility,omitempty"`
+	GroupName     string                 `protobuf:"bytes,2,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Visibility    GroupVisibility        `protobuf:"varint,4,opt,name=visibility,proto3,enum=learning_cards.v1.GroupVisibility" json:"visibility,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateGroupAccessRequest) Reset() {
-	*x = UpdateGroupAccessRequest{}
+func (x *UpdateCardsGroupRequest) Reset() {
+	*x = UpdateCardsGroupRequest{}
 	mi := &file_learning_cards_v1_group_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateGroupAccessRequest) String() string {
+func (x *UpdateCardsGroupRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateGroupAccessRequest) ProtoMessage() {}
+func (*UpdateCardsGroupRequest) ProtoMessage() {}
 
-func (x *UpdateGroupAccessRequest) ProtoReflect() protoreflect.Message {
+func (x *UpdateCardsGroupRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_learning_cards_v1_group_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -424,75 +429,37 @@ func (x *UpdateGroupAccessRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateGroupAccessRequest.ProtoReflect.Descriptor instead.
-func (*UpdateGroupAccessRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use UpdateCardsGroupRequest.ProtoReflect.Descriptor instead.
+func (*UpdateCardsGroupRequest) Descriptor() ([]byte, []int) {
 	return file_learning_cards_v1_group_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *UpdateGroupAccessRequest) GetGroupId() int64 {
+func (x *UpdateCardsGroupRequest) GetGroupId() int64 {
 	if x != nil {
 		return x.GroupId
 	}
 	return 0
 }
 
-func (x *UpdateGroupAccessRequest) GetVisibility() GroupVisibility {
+func (x *UpdateCardsGroupRequest) GetGroupName() string {
+	if x != nil {
+		return x.GroupName
+	}
+	return ""
+}
+
+func (x *UpdateCardsGroupRequest) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *UpdateCardsGroupRequest) GetVisibility() GroupVisibility {
 	if x != nil {
 		return x.Visibility
 	}
-	return GroupVisibility_PRIVATE
-}
-
-type UpdateCardsGroupNameRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	NewName       string                 `protobuf:"bytes,2,opt,name=new_name,json=newName,proto3" json:"new_name,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateCardsGroupNameRequest) Reset() {
-	*x = UpdateCardsGroupNameRequest{}
-	mi := &file_learning_cards_v1_group_proto_msgTypes[7]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateCardsGroupNameRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateCardsGroupNameRequest) ProtoMessage() {}
-
-func (x *UpdateCardsGroupNameRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_group_proto_msgTypes[7]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateCardsGroupNameRequest.ProtoReflect.Descriptor instead.
-func (*UpdateCardsGroupNameRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_group_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *UpdateCardsGroupNameRequest) GetGroupId() int64 {
-	if x != nil {
-		return x.GroupId
-	}
-	return 0
-}
-
-func (x *UpdateCardsGroupNameRequest) GetNewName() string {
-	if x != nil {
-		return x.NewName
-	}
-	return ""
+	return GroupVisibility_NULL
 }
 
 type DeleteCardsGroupRequest struct {
@@ -504,7 +471,7 @@ type DeleteCardsGroupRequest struct {
 
 func (x *DeleteCardsGroupRequest) Reset() {
 	*x = DeleteCardsGroupRequest{}
-	mi := &file_learning_cards_v1_group_proto_msgTypes[8]
+	mi := &file_learning_cards_v1_group_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -516,7 +483,7 @@ func (x *DeleteCardsGroupRequest) String() string {
 func (*DeleteCardsGroupRequest) ProtoMessage() {}
 
 func (x *DeleteCardsGroupRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_group_proto_msgTypes[8]
+	mi := &file_learning_cards_v1_group_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -529,7 +496,7 @@ func (x *DeleteCardsGroupRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCardsGroupRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCardsGroupRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_group_proto_rawDescGZIP(), []int{8}
+	return file_learning_cards_v1_group_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteCardsGroupRequest) GetGroupId() int64 {
@@ -569,22 +536,23 @@ const file_learning_cards_v1_group_proto_rawDesc = "" +
 	"\x15GetCardsGroupResponse\x123\n" +
 	"\x05group\x18\x01 \x01(\v2\x1d.learning_cards.v1.CardsGroupR\x05group\"P\n" +
 	"\x17ListCardsGroupsResponse\x125\n" +
-	"\x06groups\x18\x01 \x03(\v2\x1d.learning_cards.v1.CardsGroupR\x06groups\"y\n" +
-	"\x18UpdateGroupAccessRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12B\n" +
+	"\x06groups\x18\x01 \x03(\v2\x1d.learning_cards.v1.CardsGroupR\x06groups\"\xc2\x01\n" +
+	"\x17UpdateCardsGroupRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12&\n" +
 	"\n" +
-	"visibility\x18\x02 \x01(\x0e2\".learning_cards.v1.GroupVisibilityR\n" +
-	"visibility\"\\\n" +
-	"\x1bUpdateCardsGroupNameRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\"\n" +
-	"\bnew_name\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\anewName\"4\n" +
+	"group_name\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\tgroupName\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12B\n" +
+	"\n" +
+	"visibility\x18\x04 \x01(\x0e2\".learning_cards.v1.GroupVisibilityR\n" +
+	"visibility\"4\n" +
 	"\x17DeleteCardsGroupRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId*8\n" +
-	"\x0fGroupVisibility\x12\v\n" +
-	"\aPRIVATE\x10\x00\x12\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId*B\n" +
+	"\x0fGroupVisibility\x12\b\n" +
+	"\x04NULL\x10\x00\x12\v\n" +
+	"\aPRIVATE\x10\x01\x12\n" +
 	"\n" +
-	"\x06PUBLIC\x10\x01\x12\f\n" +
-	"\bUNLISTED\x10\x02BRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
+	"\x06PUBLIC\x10\x02\x12\f\n" +
+	"\bUNLISTED\x10\x03BRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
 
 var (
 	file_learning_cards_v1_group_proto_rawDescOnce sync.Once
@@ -599,25 +567,24 @@ func file_learning_cards_v1_group_proto_rawDescGZIP() []byte {
 }
 
 var file_learning_cards_v1_group_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_learning_cards_v1_group_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_learning_cards_v1_group_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_learning_cards_v1_group_proto_goTypes = []any{
-	(GroupVisibility)(0),                // 0: learning_cards.v1.GroupVisibility
-	(*CardsGroup)(nil),                  // 1: learning_cards.v1.CardsGroup
-	(*CreateCardsGroupRequest)(nil),     // 2: learning_cards.v1.CreateCardsGroupRequest
-	(*CreateCardsGroupResponse)(nil),    // 3: learning_cards.v1.CreateCardsGroupResponse
-	(*GetCardsGroupRequest)(nil),        // 4: learning_cards.v1.GetCardsGroupRequest
-	(*GetCardsGroupResponse)(nil),       // 5: learning_cards.v1.GetCardsGroupResponse
-	(*ListCardsGroupsResponse)(nil),     // 6: learning_cards.v1.ListCardsGroupsResponse
-	(*UpdateGroupAccessRequest)(nil),    // 7: learning_cards.v1.UpdateGroupAccessRequest
-	(*UpdateCardsGroupNameRequest)(nil), // 8: learning_cards.v1.UpdateCardsGroupNameRequest
-	(*DeleteCardsGroupRequest)(nil),     // 9: learning_cards.v1.DeleteCardsGroupRequest
+	(GroupVisibility)(0),             // 0: learning_cards.v1.GroupVisibility
+	(*CardsGroup)(nil),               // 1: learning_cards.v1.CardsGroup
+	(*CreateCardsGroupRequest)(nil),  // 2: learning_cards.v1.CreateCardsGroupRequest
+	(*CreateCardsGroupResponse)(nil), // 3: learning_cards.v1.CreateCardsGroupResponse
+	(*GetCardsGroupRequest)(nil),     // 4: learning_cards.v1.GetCardsGroupRequest
+	(*GetCardsGroupResponse)(nil),    // 5: learning_cards.v1.GetCardsGroupResponse
+	(*ListCardsGroupsResponse)(nil),  // 6: learning_cards.v1.ListCardsGroupsResponse
+	(*UpdateCardsGroupRequest)(nil),  // 7: learning_cards.v1.UpdateCardsGroupRequest
+	(*DeleteCardsGroupRequest)(nil),  // 8: learning_cards.v1.DeleteCardsGroupRequest
 }
 var file_learning_cards_v1_group_proto_depIdxs = []int32{
 	0, // 0: learning_cards.v1.CardsGroup.visibility:type_name -> learning_cards.v1.GroupVisibility
 	0, // 1: learning_cards.v1.CreateCardsGroupRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
 	1, // 2: learning_cards.v1.GetCardsGroupResponse.group:type_name -> learning_cards.v1.CardsGroup
 	1, // 3: learning_cards.v1.ListCardsGroupsResponse.groups:type_name -> learning_cards.v1.CardsGroup
-	0, // 4: learning_cards.v1.UpdateGroupAccessRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
+	0, // 4: learning_cards.v1.UpdateCardsGroupRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
 	5, // [5:5] is the sub-list for method output_type
 	5, // [5:5] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
@@ -636,7 +603,7 @@ func file_learning_cards_v1_group_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_learning_cards_v1_group_proto_rawDesc), len(file_learning_cards_v1_group_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   9,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
