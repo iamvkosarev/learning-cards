@@ -9,7 +9,7 @@ VALIDATE_DIR := $(ROOT_DIR)/third_party/protoc-gen-validate
 PROTO_FILES := $(shell find $(PROTO_DIR) -name "*.proto")
 
 
-.PHONY: googleapis validate-proto grpc-deps grpc-generate grpc-gateway grpc-swagger grpc-validate
+.PHONY: grpc-all
 grpc-all: googleapis validate-proto grpc-deps grpc-generate grpc-gateway grpc-swagger grpc-validate
 
 googleapis:

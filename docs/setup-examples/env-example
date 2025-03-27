@@ -1,0 +1,17 @@
+REPOSITORY_HOLDER=iamvkosarev
+PROJECT_NAME=learning-cards
+
+DB_NAME=learning_cards_db
+DB_USER=db_user
+DB_SERVICE_NAME=learning-cards-postgres
+DB_PORT=15433
+DB_PORT_INTERNAL=5432
+DB_PASSWORD=test_password # need to override
+
+VPS_USER=root
+VPS_HOST=test.com
+
+GRPC_PORT=50051
+REST_PORT=8080
+
+CONFIG_PATH=./config/config.yaml
