@@ -10,13 +10,17 @@ func CorsWithOptions(next http.Handler, options config.CorsOptions) http.Handler
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			origin := r.Header.Get("Origin")
+
+			if origin == "" {
+				next.ServeHTTP(w, r)
+				return
+			}
+
 			allowed := false
-			if origin != "" {
-				for _, allowedOrigin := range options.AllowedOrigins {
-					if origin == allowedOrigin {
-						allowed = true
-						break
-					}
+			for _, allowedOrigin := range options.AllowedOrigins {
+				if origin == allowedOrigin {
+					allowed = true
+					break
 				}
 			}
 
@@ -24,16 +28,16 @@ func CorsWithOptions(next http.Handler, options config.CorsOptions) http.Handler
 				w.Header().Set("Access-Control-Allow-Origin", origin)
 				w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+				w.Header().Set("Access-Control-Max-Age", strconv.Itoa(options.MaxAge))
 
 				if options.AllowCredentials {
 					w.Header().Set("Access-Control-Allow-Credentials", "true")
 				}
+			}
 
-				if r.Method == "OPTIONS" {
-					w.Header().Set("Access-Control-Max-Age", strconv.Itoa(options.MaxAge))
-					w.WriteHeader(http.StatusOK)
-					return
-				}
+			if r.Method == http.MethodOptions {
+				w.WriteHeader(http.StatusOK)
+				return
 			}
 
 			next.ServeHTTP(w, r)
