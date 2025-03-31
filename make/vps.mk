@@ -20,6 +20,7 @@ vps-deploy:
 	@echo "Deploying image $(REMOTE_IMAGE) on VPS..."
 	ssh $(VPS_USER)@$(VPS_HOST) "\
 		cd $(REMOTE_DIR) && \
+		docker compose down && \
 		docker compose pull && \
 		docker compose up -d --remove-orphans"
 
