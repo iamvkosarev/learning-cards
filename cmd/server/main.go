@@ -11,6 +11,7 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/database/postgres"
 	server "github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/http/middleware"
 	sqlRepository "github.com/iamvkosarev/learning-cards/internal/infrastructure/repository/postgres"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	sso_pb "github.com/iamvkosarev/sso/pkg/proto/sso/v1"
@@ -19,6 +20,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -93,6 +95,7 @@ func main() {
 	}()
 
 	httpMux := http.NewServeMux()
+
 	gwMux := runtime.NewServeMux()
 
 	err = pb.RegisterLearningCardsHandlerFromEndpoint(
@@ -100,13 +103,30 @@ func main() {
 		[]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())},
 	)
 
-	httpMux.Handle(cfg.Server.RestPrefix+"/", http.StripPrefix(cfg.Server.RestPrefix, gwMux))
 	if err != nil {
 		log.Fatalf("failed to start HTTP gateway: %v", err)
 	}
 
-	log.Println("Starting REST gateway on", cfg.Server.RESTPort)
-	if err := http.ListenAndServe(cfg.Server.RESTPort, httpMux); err != nil {
+	const firstVersion = "/v1/"
+
+	httpMux.Handle(firstVersion, gwMux)
+
+	httpMux.HandleFunc(
+		cfg.Server.RestPrefix+firstVersion, func(w http.ResponseWriter, r *http.Request) {
+			path := strings.TrimPrefix(r.URL.Path, cfg.Server.RestPrefix)
+			r2 := new(http.Request)
+			*r2 = *r
+			r2.URL.Path = path
+			gwMux.ServeHTTP(w, r2)
+		},
+	)
+
+	corsHandler := middleware.CorsWithOptions(httpMux, cfg.Server.CorsOptions)
+
+	httpAddr := fmt.Sprintf("0.0.0.0%s", cfg.Server.RESTPort)
+
+	log.Println("Starting REST gateway on", httpAddr)
+	if err := http.ListenAndServe(httpAddr, corsHandler); err != nil {
 		log.Fatalf("failed to serve HTTP: %v", err)
 	}
 }
