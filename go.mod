@@ -4,6 +4,7 @@ go 1.23.6
 
 require (
 	github.com/envoyproxy/protoc-gen-validate v1.2.1
+	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3
 	github.com/iamvkosarev/go-shared-utils v0.2.0
 	github.com/iamvkosarev/sso v1.0.4
