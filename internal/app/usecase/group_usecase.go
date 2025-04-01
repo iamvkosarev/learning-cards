@@ -6,6 +6,7 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type GroupUseCaseDeps struct {
@@ -152,7 +153,7 @@ func checkViewGroupAccess(userId entity.UserId, group entity.Group, op string) e
 		(group.Visibility == entity.GROUP_VISIBILITY_PRIVATE ||
 			group.Visibility == entity.GROUP_VISIBILITY_NULL) {
 		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
-		return entity.NewVerificationError(message, codes.PermissionDenied)
+		return entity.NewVerificationError(status.Error(codes.PermissionDenied, message))
 	}
 	return nil
 }
@@ -160,7 +161,7 @@ func checkViewGroupAccess(userId entity.UserId, group entity.Group, op string) e
 func checkEditGroupAccess(userId entity.UserId, group entity.Group, op string) error {
 	if userId != group.OwnerId {
 		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
-		return entity.NewVerificationError(message, codes.PermissionDenied)
+		return entity.NewVerificationError(status.Error(codes.PermissionDenied, message))
 	}
 	return nil
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type CardsUseCaseDeps struct {
@@ -90,7 +91,7 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 
 	if userId != group.OwnerId {
 		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
-		return 0, entity.NewVerificationError(message, codes.PermissionDenied)
+		return 0, entity.NewVerificationError(status.Error(codes.PermissionDenied, message))
 	}
 
 	card := entity.Card{

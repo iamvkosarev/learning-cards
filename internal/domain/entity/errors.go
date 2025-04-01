@@ -2,7 +2,6 @@ package entity
 
 import (
 	"errors"
-	"google.golang.org/grpc/codes"
 )
 
 var (
@@ -13,17 +12,25 @@ var (
 )
 
 type VerificationError struct {
-	Message    string
-	StatusCode codes.Code
+	err error
 }
 
-func NewVerificationError(message string, statusCode codes.Code) VerificationError {
-	return VerificationError{
-		Message:    message,
-		StatusCode: statusCode,
-	}
+func NewVerificationError(err error) *VerificationError {
+	return &VerificationError{err: err}
 }
 
-func (e VerificationError) Error() string {
-	return e.Message
+func (v *VerificationError) Error() string {
+	return v.err.Error()
+}
+
+type ValidationError struct {
+	err error
+}
+
+func NewValidationError(err error) *ValidationError {
+	return &ValidationError{err: err}
+}
+
+func (v *ValidationError) Error() string {
+	return v.err.Error()
 }

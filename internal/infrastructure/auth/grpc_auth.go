@@ -2,8 +2,8 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	sso_pb "github.com/iamvkosarev/sso/pkg/proto/sso/v1"
@@ -32,9 +32,14 @@ func (s *grpcService) VerifyUserByContext(ctx context.Context) (entity.UserId, e
 	if err != nil {
 		st, ok := status.FromError(err)
 		if ok {
-			return 0, entity.NewVerificationError(st.Message(), st.Code())
+			status.New(st.Code(), st.Message())
+			return 0, entity.NewVerificationError(
+				status.Error(
+					st.Code(), fmt.Sprintf("failed to verify token: %v", err),
+				),
+			)
 		}
-		return 0, entity.NewVerificationError(err.Error(), codes.PermissionDenied)
+		return 0, entity.NewVerificationError(fmt.Errorf("failed to verify token: %w", err))
 	}
 	return entity.UserId(res.GetUserId()), nil
 }
