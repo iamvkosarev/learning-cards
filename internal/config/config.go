@@ -1,9 +1,11 @@
 package config
 
 import (
+	"errors"
+	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
-	"log"
 	"os"
+	"time"
 )
 
 type CorsOptions struct {
@@ -13,10 +15,11 @@ type CorsOptions struct {
 }
 
 type Server struct {
-	RestPrefix  string `yaml:"rest_prefix"`
-	RESTPort    string `yaml:"rest_port"`
-	GRPCPort    string `yaml:"grpc_port"`
-	CorsOptions CorsOptions
+	RestPrefix      string        `yaml:"rest_prefix"`
+	RESTPort        string        `yaml:"rest_port"`
+	GRPCPort        string        `yaml:"grpc_port"`
+	ShutdownTimeout time.Duration `yaml:"shutdown_timeout"`
+	CorsOptions     CorsOptions   `yaml:"cors"`
 }
 
 type SSO struct {
@@ -31,20 +34,21 @@ type Config struct {
 	SSO    `yaml:"sso"`
 }
 
-func MustLoad() *Config {
+func Load() (*Config, error) {
 	path := os.Getenv("CONFIG_PATH")
 
 	if path == "" {
-		log.Fatal("CONFIG_PATH environment variable not set")
+
+		return nil, errors.New("CONFIG_PATH environment variable not set")
 	}
 
 	if _, err := os.Stat(path); err != nil {
-		log.Fatalf("CONFIG_PATH does not exist at: %s\n", path)
+		return nil, fmt.Errorf("CONFIG_PATH does not exist at: %s", path)
 	}
 	var config Config
 	err := cleanenv.ReadConfig(path, &config)
 	if err != nil {
-		log.Fatalf("error loading config: %v", err)
+		return nil, fmt.Errorf("failed load config at path %s: %w", path, err)
 	}
-	return &config
+	return &config, nil
 }
