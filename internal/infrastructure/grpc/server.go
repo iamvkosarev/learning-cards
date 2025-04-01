@@ -2,21 +2,11 @@ package grpc
 
 import (
 	"context"
-	"errors"
-	"fmt"
-	"github.com/iamvkosarev/go-shared-utils/logger/sl"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
 )
-
-const internalErrMessage = "internal server error"
-const cardNotFoundMessage = "card not found"
-const groupForCardNotFoundMessage = "group for card not found"
-const groupNotFoundMessage = "group not found"
 
 type groupUseCase interface {
 	Create(ctx context.Context, name, description string, visibility entity.GroupVisibility) (entity.GroupId, error)
@@ -53,43 +43,24 @@ func (s *Server) CreateCardsGroup(ctx context.Context, req *pb.CreateCardsGroupR
 	*pb.CreateCardsGroupResponse,
 	error,
 ) {
-	const op = "grpc.CreateCardsGroup"
-	log := s.Logger.With(slog.String("op", op))
-
-	err := req.Validate()
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
 
 	visibility := entity.GroupVisibility(req.Visibility)
-	cardId, err := s.groupUseCase.Create(ctx, req.GroupName, req.Description, visibility)
-
-	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
-		return nil, verificationErr
-	}
+	groupId, err := s.groupUseCase.Create(ctx, req.GroupName, req.Description, visibility)
 
 	if err != nil {
-		log.Info("failed to create group", sl.Err(err))
-		return nil, status.Error(codes.Internal, internalErrMessage)
+		return nil, err
 	}
 
-	resId := int64(cardId)
-	log.Info("Cards group created", slog.String("name", req.GroupName), slog.Int64("id", resId))
-	return &pb.CreateCardsGroupResponse{GroupId: resId}, nil
+	resGroupId := int64(groupId)
+	s.Logger.Info("Cards group created", slog.String("name", req.GroupName), slog.Int64("groupId", resGroupId))
+	return &pb.CreateCardsGroupResponse{GroupId: resGroupId}, nil
 }
 
 func (s *Server) ListCardsGroups(ctx context.Context, _ *emptypb.Empty) (*pb.ListCardsGroupsResponse, error) {
-	const op = "grpc.ListCardsGroups"
-	log := s.Logger.With(slog.String("op", op))
-
 	groups, err := s.groupUseCase.List(ctx)
 
-	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
-		return nil, verificationErr
-	}
 	if err != nil {
-		log.Info("failed to create card", sl.Err(err))
-		return nil, status.Error(codes.Internal, internalErrMessage)
+		return nil, err
 	}
 
 	var respGroups []*pb.CardsGroup
@@ -106,23 +77,12 @@ func (s *Server) GetCardsGroupCards(ctx context.Context, req *pb.GetCardsGroupCa
 	*pb.GetCardsGroupCardsResponse,
 	error,
 ) {
-	const op = "grpc.GetCardsGroupCards"
-	log := s.Logger.With(slog.String("op", op))
-
-	err := req.Validate()
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
 
 	groupId := entity.GroupId(req.GroupId)
 	cards, err := s.cardsUseCase.List(ctx, groupId)
 
-	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
-		return nil, verificationErr
-	}
 	if err != nil {
-		log.Info("failed to create card", sl.Err(err))
-		return nil, status.Error(codes.Internal, internalErrMessage)
+		return nil, err
 	}
 
 	var respCards []*pb.Card
@@ -136,239 +96,94 @@ func (s *Server) GetCardsGroupCards(ctx context.Context, req *pb.GetCardsGroupCa
 }
 
 func (s *Server) GetCardsGroup(ctx context.Context, req *pb.GetCardsGroupRequest) (*pb.GetCardsGroupResponse, error) {
-	const op = "grpc.GetCardsGroup"
-	log := s.Logger.With(slog.String("op", op))
-
 	groupId := entity.GroupId(req.GroupId)
 
 	group, err := s.groupUseCase.Get(ctx, groupId)
 
-	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
-		return nil, verificationErr
-	}
-
 	if err != nil {
-		log.Info("failed to create card", sl.Err(err))
-		return nil, status.Error(codes.Internal, internalErrMessage)
+		return nil, err
 	}
 
 	groupResp := groupToResponse(group)
 	return &pb.GetCardsGroupResponse{Group: groupResp}, nil
 }
 
-func (s *Server) UpdateCardsGroup(ctx context.Context, req *pb.UpdateCardsGroupRequest) (
-	*emptypb.Empty,
-	error,
-) {
-	const op = "grpc.UpdateCardsGroup"
-	log := s.Logger.With(
-		slog.String("op", op),
-		slog.Int64("groupId", req.GroupId),
-	)
-
-	err := req.Validate()
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
+func (s *Server) UpdateCardsGroup(ctx context.Context, req *pb.UpdateCardsGroupRequest) (*emptypb.Empty, error) {
 	groupId := entity.GroupId(req.GroupId)
 	visibility := entity.GroupVisibility(req.Visibility)
-
-	err = s.groupUseCase.Update(
-		ctx, entity.UpdateGroup{Id: groupId, Name: req.GroupName, Description: req.Description, Visibility: visibility},
-	)
-
-	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
-		return nil, verificationErr
+	group := entity.UpdateGroup{
+		Id:          groupId,
+		Name:        req.GroupName,
+		Description: req.Description,
+		Visibility:  visibility,
 	}
 
-	if err != nil {
-		switch {
-		case errors.Is(err, entity.ErrGroupNotFound):
-			return nil, status.Error(codes.NotFound, groupNotFoundMessage)
-		default:
-			log.Info("failed to update group", sl.Err(err))
-			return nil, status.Error(codes.Internal, internalErrMessage)
-		}
+	if err := s.groupUseCase.Update(ctx, group); err != nil {
+		return nil, err
 	}
 
-	log.Info("Group updated")
+	s.Logger.Info("Group updated", slog.Int64("groupId", req.GroupId))
 	return &emptypb.Empty{}, nil
 }
 
 func (s *Server) DeleteCardsGroup(ctx context.Context, req *pb.DeleteCardsGroupRequest) (*emptypb.Empty, error) {
-	const op = "grpc.DeleteCardsGroup"
-	log := s.Logger.With(slog.String("op", op), slog.Int64("groupId", req.GroupId))
-
 	groupId := entity.GroupId(req.GroupId)
-	err := s.groupUseCase.Delete(ctx, groupId)
-	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
-		return nil, verificationErr
-	}
-	if err != nil {
-		switch {
-		case errors.Is(err, entity.ErrGroupNotFound):
-			return nil, status.Error(codes.NotFound, groupNotFoundMessage)
-		default:
-			log.Info("failed to delete group", sl.Err(err))
-			return nil, status.Error(codes.Internal, internalErrMessage)
-		}
+
+	if err := s.groupUseCase.Delete(ctx, groupId); err != nil {
+		return nil, err
 	}
 
-	log.Info("Group deleted")
+	s.Logger.Info("Group deleted", slog.Int64("groupId", req.GroupId))
 	return &emptypb.Empty{}, nil
 }
 
 func (s *Server) AddCard(ctx context.Context, req *pb.AddCardRequest) (*pb.AddCardResponse, error) {
-	const op = "grpc.AddCard"
-	log := s.Logger.With(
-		slog.String("op", op),
-		slog.Int64("groupId", req.GroupId),
-	)
-
-	err := req.Validate()
-	if err != nil {
-		log.Warn("invalid request", sl.Err(err))
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
 	groupId := entity.GroupId(req.GroupId)
 	cardId, err := s.cardsUseCase.Create(ctx, groupId, req.FrontText, req.BackText)
 
-	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
-		return nil, verificationErr
-	}
-
 	if err != nil {
-		switch {
-		case errors.Is(err, entity.ErrGroupNotFound):
-			return nil, status.Error(
-				codes.NotFound,
-				fmt.Sprintf("group (id:%v) not found", req.GroupId),
-			)
-		default:
-			s.Logger.Info("failed to create card", sl.Err(err))
-			return nil, status.Error(
-				codes.Internal,
-				internalErrMessage,
-			)
-		}
+		return nil, err
 	}
 
 	resId := int64(cardId)
-	log.Info("Card created", slog.Int64("cardId", resId))
+	s.Logger.Info(
+		"Card added", slog.Int64("cardId", resId),
+		slog.Int64("groupId", req.GroupId),
+	)
 	return &pb.AddCardResponse{CardId: resId}, nil
 }
 
 func (s *Server) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.GetCardResponse, error) {
-	const op = "grpc.GetCard"
-	log := s.Logger.With(slog.String("op", op))
-
-	err := req.Validate()
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
 	cardId := entity.CardId(req.CardId)
 	card, err := s.cardsUseCase.Get(ctx, cardId)
 
-	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
-		return nil, verificationErr
-	}
-
 	if err != nil {
-		switch {
-		case errors.Is(err, entity.ErrGroupNotFound):
-			return nil, status.Error(codes.NotFound, groupForCardNotFoundMessage)
-		case errors.Is(err, entity.ErrCardNotFound):
-			return nil, status.Error(codes.NotFound, cardNotFoundMessage)
-		default:
-			log.Info("failed to get card", sl.Err(err))
-			return nil, status.Error(codes.Internal, internalErrMessage)
-		}
+		return nil, err
 	}
 
 	cardResp := cardToResponse(card)
-
 	return &pb.GetCardResponse{Card: cardResp}, nil
 }
 
 func (s *Server) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest) (*emptypb.Empty, error) {
-	const op = "grpc.UpdateCard"
-	log := s.Logger.With(
-		slog.String("op", op),
-		slog.Int64("cardId", req.CardId),
-	)
-
-	err := req.Validate()
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
 	cardId := entity.CardId(req.CardId)
+	card := entity.UpdateCard{Id: cardId, FrontText: req.FrontText, BackText: req.BackText}
 
-	err = s.cardsUseCase.Update(
-		ctx, entity.UpdateCard{Id: cardId, FrontText: req.FrontText, BackText: req.BackText},
-	)
-
-	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
-		return nil, verificationErr
+	if err := s.cardsUseCase.Update(ctx, card); err != nil {
+		return nil, err
 	}
 
-	if err != nil {
-		switch {
-		case errors.Is(err, entity.ErrGroupNotFound):
-			return nil, status.Error(codes.NotFound, groupForCardNotFoundMessage)
-		case errors.Is(err, entity.ErrCardNotFound):
-			return nil, status.Error(codes.NotFound, cardNotFoundMessage)
-		default:
-			log.Info("failed to update card", sl.Err(err))
-			return nil, status.Error(codes.Internal, internalErrMessage)
-		}
-	}
-
-	log.Info("Card updated")
+	s.Logger.Info("Card updated", slog.Int64("cardId", req.CardId))
 	return &emptypb.Empty{}, nil
 }
 
 func (s *Server) DeleteCard(ctx context.Context, req *pb.DeleteCardRequest) (*emptypb.Empty, error) {
-	const op = "grpc.DeleteCard"
-	log := s.Logger.With(slog.String("op", op), slog.Int64("cardId", req.CardId))
-
 	cardId := entity.CardId(req.CardId)
-	err := s.cardsUseCase.Delete(ctx, cardId)
-	if verificationErr := getVerificationErr(log, err); verificationErr != nil {
-		return nil, verificationErr
-	}
-	if err != nil {
-		switch {
-		case errors.Is(err, entity.ErrGroupNotFound):
-			return nil, status.Error(codes.NotFound, groupForCardNotFoundMessage)
-		case errors.Is(err, entity.ErrCardNotFound):
-			return nil, status.Error(codes.NotFound, cardNotFoundMessage)
-		default:
-			log.Info("failed to delete card", sl.Err(err))
-			return nil, status.Error(codes.Internal, internalErrMessage)
-		}
+
+	if err := s.cardsUseCase.Delete(ctx, cardId); err != nil {
+		return nil, err
 	}
 
-	log.Info("Card deleted")
+	s.Logger.Info("Card deleted", slog.Int64("cardId", req.CardId))
 	return &emptypb.Empty{}, nil
-}
-
-func getVerificationErr(log *slog.Logger, err error) error {
-	var verificationErr entity.VerificationError
-	switch {
-	case errors.Is(err, entity.ErrMetadataIsEmpty):
-		return status.Error(codes.InvalidArgument, err.Error())
-	case errors.As(err, &verificationErr):
-		if verificationErr.StatusCode != codes.PermissionDenied &&
-			verificationErr.StatusCode != codes.InvalidArgument {
-			log.Error("failed to verify user", sl.Err(verificationErr))
-			return status.Error(codes.Internal, "internal verification error")
-		} else {
-			return status.Error(verificationErr.StatusCode, verificationErr.Message)
-		}
-	}
-	return nil
 }
