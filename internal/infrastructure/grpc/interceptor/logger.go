@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor/verification"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -19,6 +20,8 @@ const validationErrMessage = "not correct input"
 const metadataEmptyErrMessage = "metadata is empty"
 const cardNotFoundMessage = "card not found"
 const groupNotFoundMessage = "group not found"
+
+const userIdLogArg = "user_id"
 
 func LoggerUnaryServerInterceptor(logger *slog.Logger) grpc.UnaryServerInterceptor {
 	return func(
@@ -67,6 +70,18 @@ func LoggerUnaryServerInterceptor(logger *slog.Logger) grpc.UnaryServerIntercept
 		}
 		return resp, err
 	}
+}
+
+func getUserIdAttr(ctx context.Context) slog.Attr {
+	return slog.String(userIdLogArg, getUserId(ctx))
+}
+
+func getUserId(ctx context.Context) string {
+	userId, err := verification.GetUserId(ctx)
+	if err != nil {
+		return unknownValue
+	}
+	return string(userId)
 }
 
 func mapDomainErrorToGRPC(err error) error {

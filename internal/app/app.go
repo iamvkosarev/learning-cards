@@ -58,8 +58,8 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		grpc.ChainUnaryInterceptor(
 			interceptor.SetupInterceptor(),
 			interceptor.RecoveryInterceptor(logger),
-			interceptor.LoggerUnaryServerInterceptor(logger),
 			interceptor.ValidationInterceptor(logger),
+			interceptor.LoggerUnaryServerInterceptor(logger),
 			verification.Interceptor(logger, verifier),
 		),
 	)
