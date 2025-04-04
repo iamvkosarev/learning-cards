@@ -39,8 +39,8 @@ func NewServer(groupUseCase groupUseCase, cardsUseCase cardsUseCase, logger *slo
 	}
 }
 
-func (s *Server) CreateCardsGroup(ctx context.Context, req *pb.CreateCardsGroupRequest) (
-	*pb.CreateCardsGroupResponse,
+func (s *Server) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (
+	*pb.CreateGroupResponse,
 	error,
 ) {
 
@@ -53,10 +53,10 @@ func (s *Server) CreateCardsGroup(ctx context.Context, req *pb.CreateCardsGroupR
 
 	resGroupId := int64(groupId)
 	s.Logger.Info("Cards group created", slog.String("name", req.GroupName), slog.Int64("groupId", resGroupId))
-	return &pb.CreateCardsGroupResponse{GroupId: resGroupId}, nil
+	return &pb.CreateGroupResponse{GroupId: resGroupId}, nil
 }
 
-func (s *Server) ListCardsGroups(ctx context.Context, _ *emptypb.Empty) (*pb.ListCardsGroupsResponse, error) {
+func (s *Server) ListGroups(ctx context.Context, _ *pb.ListGroupsRequest) (*pb.ListGroupsResponse, error) {
 	groups, err := s.groupUseCase.List(ctx)
 
 	if err != nil {
@@ -70,32 +70,10 @@ func (s *Server) ListCardsGroups(ctx context.Context, _ *emptypb.Empty) (*pb.Lis
 		)
 	}
 
-	return &pb.ListCardsGroupsResponse{Groups: respGroups}, nil
+	return &pb.ListGroupsResponse{Groups: respGroups}, nil
 }
 
-func (s *Server) GetCardsGroupCards(ctx context.Context, req *pb.GetCardsGroupCardsRequest) (
-	*pb.GetCardsGroupCardsResponse,
-	error,
-) {
-
-	groupId := entity.GroupId(req.GroupId)
-	cards, err := s.cardsUseCase.List(ctx, groupId)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var respCards []*pb.Card
-	for _, card := range cards {
-		respCards = append(
-			respCards, cardToResponse(card),
-		)
-	}
-
-	return &pb.GetCardsGroupCardsResponse{Cards: respCards}, nil
-}
-
-func (s *Server) GetCardsGroup(ctx context.Context, req *pb.GetCardsGroupRequest) (*pb.GetCardsGroupResponse, error) {
+func (s *Server) GetGroup(ctx context.Context, req *pb.GetGroupRequest) (*pb.GetGroupResponse, error) {
 	groupId := entity.GroupId(req.GroupId)
 
 	group, err := s.groupUseCase.Get(ctx, groupId)
@@ -105,10 +83,10 @@ func (s *Server) GetCardsGroup(ctx context.Context, req *pb.GetCardsGroupRequest
 	}
 
 	groupResp := groupToResponse(group)
-	return &pb.GetCardsGroupResponse{Group: groupResp}, nil
+	return &pb.GetGroupResponse{Group: groupResp}, nil
 }
 
-func (s *Server) UpdateCardsGroup(ctx context.Context, req *pb.UpdateCardsGroupRequest) (*emptypb.Empty, error) {
+func (s *Server) UpdateGroup(ctx context.Context, req *pb.UpdateGroupRequest) (*emptypb.Empty, error) {
 	groupId := entity.GroupId(req.GroupId)
 	visibility := entity.GroupVisibility(req.Visibility)
 	group := entity.UpdateGroup{
@@ -126,7 +104,7 @@ func (s *Server) UpdateCardsGroup(ctx context.Context, req *pb.UpdateCardsGroupR
 	return &emptypb.Empty{}, nil
 }
 
-func (s *Server) DeleteCardsGroup(ctx context.Context, req *pb.DeleteCardsGroupRequest) (*emptypb.Empty, error) {
+func (s *Server) DeleteGroup(ctx context.Context, req *pb.DeleteGroupRequest) (*emptypb.Empty, error) {
 	groupId := entity.GroupId(req.GroupId)
 
 	if err := s.groupUseCase.Delete(ctx, groupId); err != nil {
@@ -151,6 +129,28 @@ func (s *Server) AddCard(ctx context.Context, req *pb.AddCardRequest) (*pb.AddCa
 		slog.Int64("groupId", req.GroupId),
 	)
 	return &pb.AddCardResponse{CardId: resId}, nil
+}
+
+func (s *Server) ListCards(ctx context.Context, req *pb.ListCardsRequest) (
+	*pb.ListCardsResponse,
+	error,
+) {
+
+	groupId := entity.GroupId(req.GroupId)
+	cards, err := s.cardsUseCase.List(ctx, groupId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var respCards []*pb.Card
+	for _, card := range cards {
+		respCards = append(
+			respCards, cardToResponse(card),
+		)
+	}
+
+	return &pb.ListCardsResponse{Cards: respCards}, nil
 }
 
 func (s *Server) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.GetCardResponse, error) {

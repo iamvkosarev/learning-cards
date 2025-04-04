@@ -149,12 +149,12 @@
     },
     "/v1/group": {
       "get": {
-        "operationId": "LearningCards_ListCardsGroups",
+        "operationId": "LearningCards_ListGroups",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1ListCardsGroupsResponse"
+              "$ref": "#/definitions/v1ListGroupsResponse"
             }
           },
           "default": {
@@ -169,12 +169,12 @@
         ]
       },
       "post": {
-        "operationId": "LearningCards_CreateCardsGroup",
+        "operationId": "LearningCards_CreateGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1CreateCardsGroupResponse"
+              "$ref": "#/definitions/v1CreateGroupResponse"
             }
           },
           "default": {
@@ -190,7 +190,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1CreateCardsGroupRequest"
+              "$ref": "#/definitions/v1CreateGroupRequest"
             }
           }
         ],
@@ -201,12 +201,12 @@
     },
     "/v1/group/{groupId}": {
       "get": {
-        "operationId": "LearningCards_GetCardsGroup",
+        "operationId": "LearningCards_GetGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetCardsGroupResponse"
+              "$ref": "#/definitions/v1GetGroupResponse"
             }
           },
           "default": {
@@ -230,7 +230,7 @@
         ]
       },
       "delete": {
-        "operationId": "LearningCards_DeleteCardsGroup",
+        "operationId": "LearningCards_DeleteGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -260,7 +260,7 @@
         ]
       },
       "put": {
-        "operationId": "LearningCards_UpdateCardsGroup",
+        "operationId": "LearningCards_UpdateGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -289,7 +289,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/LearningCardsUpdateCardsGroupBody"
+              "$ref": "#/definitions/LearningCardsUpdateGroupBody"
             }
           }
         ],
@@ -300,12 +300,12 @@
     },
     "/v1/group/{groupId}/cards": {
       "get": {
-        "operationId": "LearningCards_GetCardsGroupCards",
+        "operationId": "LearningCards_ListCards",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetCardsGroupCardsResponse"
+              "$ref": "#/definitions/v1ListCardsResponse"
             }
           },
           "default": {
@@ -342,7 +342,7 @@
         }
       }
     },
-    "LearningCardsUpdateCardsGroupBody": {
+    "LearningCardsUpdateGroupBody": {
       "type": "object",
       "properties": {
         "groupName": {
@@ -455,7 +455,7 @@
         }
       }
     },
-    "v1CreateCardsGroupRequest": {
+    "v1CreateGroupRequest": {
       "type": "object",
       "properties": {
         "groupName": {
@@ -469,7 +469,7 @@
         }
       }
     },
-    "v1CreateCardsGroupResponse": {
+    "v1CreateGroupResponse": {
       "type": "object",
       "properties": {
         "groupId": {
@@ -486,19 +486,7 @@
         }
       }
     },
-    "v1GetCardsGroupCardsResponse": {
-      "type": "object",
-      "properties": {
-        "cards": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Card"
-          }
-        }
-      }
-    },
-    "v1GetCardsGroupResponse": {
+    "v1GetGroupResponse": {
       "type": "object",
       "properties": {
         "group": {
@@ -516,7 +504,19 @@
       ],
       "default": "NULL"
     },
-    "v1ListCardsGroupsResponse": {
+    "v1ListCardsResponse": {
+      "type": "object",
+      "properties": {
+        "cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Card"
+          }
+        }
+      }
+    },
+    "v1ListGroupsResponse": {
       "type": "object",
       "properties": {
         "groups": {

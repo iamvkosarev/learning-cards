@@ -32,11 +32,11 @@ message GetCardResponse {
     Card card = 1;
 }
 
-message GetCardsGroupCardsRequest {
+message ListCardsRequest {
     int64 group_id = 1;
 }
 
-message GetCardsGroupCardsResponse {
+message ListCardsResponse {
     repeated Card cards = 2;
 }
 

@@ -22,35 +22,38 @@ message CardsGroup {
     GroupVisibility visibility = 6;
 }
 
-message CreateCardsGroupRequest {
+message CreateGroupRequest {
     string group_name = 1 [(validate.rules).string = {min_len: 1}];
     string description = 2;
     GroupVisibility visibility = 3;
 }
 
-message CreateCardsGroupResponse {
+message CreateGroupResponse {
     int64 group_id = 1;
 }
 
-message GetCardsGroupRequest{
+message GetGroupRequest{
     int64 group_id = 1;
 }
 
-message GetCardsGroupResponse{
+message GetGroupResponse{
     CardsGroup group = 1;
 }
 
-message ListCardsGroupsResponse {
+message ListGroupsRequest {
+}
+
+message ListGroupsResponse {
     repeated CardsGroup groups = 1;
 }
 
-message UpdateCardsGroupRequest {
+message UpdateGroupRequest {
     int64 group_id = 1;
     string group_name = 2;
     string description = 3;
     GroupVisibility visibility = 4;
 }
 
-message DeleteCardsGroupRequest {
+message DeleteGroupRequest {
     int64 group_id = 1;
 }

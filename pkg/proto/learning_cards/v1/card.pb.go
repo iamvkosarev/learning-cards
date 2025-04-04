@@ -290,27 +290,27 @@ func (x *GetCardResponse) GetCard() *Card {
 	return nil
 }
 
-type GetCardsGroupCardsRequest struct {
+type ListCardsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetCardsGroupCardsRequest) Reset() {
-	*x = GetCardsGroupCardsRequest{}
+func (x *ListCardsRequest) Reset() {
+	*x = ListCardsRequest{}
 	mi := &file_learning_cards_v1_card_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetCardsGroupCardsRequest) String() string {
+func (x *ListCardsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetCardsGroupCardsRequest) ProtoMessage() {}
+func (*ListCardsRequest) ProtoMessage() {}
 
-func (x *GetCardsGroupCardsRequest) ProtoReflect() protoreflect.Message {
+func (x *ListCardsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_learning_cards_v1_card_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -322,39 +322,39 @@ func (x *GetCardsGroupCardsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCardsGroupCardsRequest.ProtoReflect.Descriptor instead.
-func (*GetCardsGroupCardsRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListCardsRequest.ProtoReflect.Descriptor instead.
+func (*ListCardsRequest) Descriptor() ([]byte, []int) {
 	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *GetCardsGroupCardsRequest) GetGroupId() int64 {
+func (x *ListCardsRequest) GetGroupId() int64 {
 	if x != nil {
 		return x.GroupId
 	}
 	return 0
 }
 
-type GetCardsGroupCardsResponse struct {
+type ListCardsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Cards         []*Card                `protobuf:"bytes,2,rep,name=cards,proto3" json:"cards,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetCardsGroupCardsResponse) Reset() {
-	*x = GetCardsGroupCardsResponse{}
+func (x *ListCardsResponse) Reset() {
+	*x = ListCardsResponse{}
 	mi := &file_learning_cards_v1_card_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetCardsGroupCardsResponse) String() string {
+func (x *ListCardsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetCardsGroupCardsResponse) ProtoMessage() {}
+func (*ListCardsResponse) ProtoMessage() {}
 
-func (x *GetCardsGroupCardsResponse) ProtoReflect() protoreflect.Message {
+func (x *ListCardsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_learning_cards_v1_card_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -366,12 +366,12 @@ func (x *GetCardsGroupCardsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetCardsGroupCardsResponse.ProtoReflect.Descriptor instead.
-func (*GetCardsGroupCardsResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListCardsResponse.ProtoReflect.Descriptor instead.
+func (*ListCardsResponse) Descriptor() ([]byte, []int) {
 	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *GetCardsGroupCardsResponse) GetCards() []*Card {
+func (x *ListCardsResponse) GetCards() []*Card {
 	if x != nil {
 		return x.Cards
 	}
@@ -505,10 +505,10 @@ const file_learning_cards_v1_card_proto_rawDesc = "" +
 	"\x0eGetCardRequest\x12\x17\n" +
 	"\acard_id\x18\x01 \x01(\x03R\x06cardId\">\n" +
 	"\x0fGetCardResponse\x12+\n" +
-	"\x04card\x18\x01 \x01(\v2\x17.learning_cards.v1.CardR\x04card\"6\n" +
-	"\x19GetCardsGroupCardsRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\"K\n" +
-	"\x1aGetCardsGroupCardsResponse\x12-\n" +
+	"\x04card\x18\x01 \x01(\v2\x17.learning_cards.v1.CardR\x04card\"-\n" +
+	"\x10ListCardsRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\"B\n" +
+	"\x11ListCardsResponse\x12-\n" +
 	"\x05cards\x18\x02 \x03(\v2\x17.learning_cards.v1.CardR\x05cards\"z\n" +
 	"\x11UpdateCardRequest\x12\x17\n" +
 	"\acard_id\x18\x01 \x01(\x03R\x06cardId\x12&\n" +
@@ -532,19 +532,19 @@ func file_learning_cards_v1_card_proto_rawDescGZIP() []byte {
 
 var file_learning_cards_v1_card_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_learning_cards_v1_card_proto_goTypes = []any{
-	(*Card)(nil),                       // 0: learning_cards.v1.Card
-	(*AddCardRequest)(nil),             // 1: learning_cards.v1.AddCardRequest
-	(*AddCardResponse)(nil),            // 2: learning_cards.v1.AddCardResponse
-	(*GetCardRequest)(nil),             // 3: learning_cards.v1.GetCardRequest
-	(*GetCardResponse)(nil),            // 4: learning_cards.v1.GetCardResponse
-	(*GetCardsGroupCardsRequest)(nil),  // 5: learning_cards.v1.GetCardsGroupCardsRequest
-	(*GetCardsGroupCardsResponse)(nil), // 6: learning_cards.v1.GetCardsGroupCardsResponse
-	(*UpdateCardRequest)(nil),          // 7: learning_cards.v1.UpdateCardRequest
-	(*DeleteCardRequest)(nil),          // 8: learning_cards.v1.DeleteCardRequest
+	(*Card)(nil),              // 0: learning_cards.v1.Card
+	(*AddCardRequest)(nil),    // 1: learning_cards.v1.AddCardRequest
+	(*AddCardResponse)(nil),   // 2: learning_cards.v1.AddCardResponse
+	(*GetCardRequest)(nil),    // 3: learning_cards.v1.GetCardRequest
+	(*GetCardResponse)(nil),   // 4: learning_cards.v1.GetCardResponse
+	(*ListCardsRequest)(nil),  // 5: learning_cards.v1.ListCardsRequest
+	(*ListCardsResponse)(nil), // 6: learning_cards.v1.ListCardsResponse
+	(*UpdateCardRequest)(nil), // 7: learning_cards.v1.UpdateCardRequest
+	(*DeleteCardRequest)(nil), // 8: learning_cards.v1.DeleteCardRequest
 }
 var file_learning_cards_v1_card_proto_depIdxs = []int32{
 	0, // 0: learning_cards.v1.GetCardResponse.card:type_name -> learning_cards.v1.Card
-	0, // 1: learning_cards.v1.GetCardsGroupCardsResponse.cards:type_name -> learning_cards.v1.Card
+	0, // 1: learning_cards.v1.ListCardsResponse.cards:type_name -> learning_cards.v1.Card
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
