@@ -21,6 +21,10 @@ github.com/iamvkosarev/go-shared-utils v0.2.0 h1:dfybWDWBxqQhCtTWFSG/xLBT1sNebvK
 github.com/iamvkosarev/go-shared-utils v0.2.0/go.mod h1:ZfBNG9H6zY1eP+FfjVpBkCJBocJieIbMS4Eg64EOSwo=
 github.com/iamvkosarev/sso v1.0.4 h1:GLYBfuJSVqIvI3IoUrYjgsbMTguJzILqL3BaqI46J/8=
 github.com/iamvkosarev/sso v1.0.4/go.mod h1:hbMeamCzE63bNFKkPFA3zrZWn7/3k7c0E3nl8i+AoC4=
+github.com/iamvkosarev/sso v1.3.0 h1:9anmLymUu2Evlgw6dZkolmXEU0g80RXGe/4EfetYFV8=
+github.com/iamvkosarev/sso v1.3.0/go.mod h1:qBv+AUqo8RHM1nM0IBszlK+KE+163MBIbyvLtVmhOac=
+github.com/iamvkosarev/sso v1.4.0 h1:AyASU1NhE6OYpNmN/Rs8Ca4wjNUjK7foFfWa6ibIQjw=
+github.com/iamvkosarev/sso v1.4.0/go.mod h1:qBv+AUqo8RHM1nM0IBszlK+KE+163MBIbyvLtVmhOac=
 github.com/ilyakaznacheev/cleanenv v1.5.0 h1:0VNZXggJE2OYdXE87bfSSwGxeiGt9moSR2lOrsHHvr4=
 github.com/ilyakaznacheev/cleanenv v1.5.0/go.mod h1:a5aDzaJrLCQZsazHol1w8InnDcOX0OColm64SlIi6gk=
 github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438 h1:Dj0L5fhJ9F82ZJyVOmBx6msDp/kfd1t9GRfny/mfJA0=

@@ -5,10 +5,13 @@ import (
 )
 
 var (
-	ErrGroupExists     = errors.New("group already exists")
-	ErrGroupNotFound   = errors.New("access denied")
-	ErrMetadataIsEmpty = errors.New("metadata is empty")
-	ErrCardNotFound    = errors.New("card not found")
+	ErrGroupExists         = errors.New("group already exists")
+	ErrGroupNotFound       = errors.New("access denied")
+	ErrMetadataIsEmpty     = errors.New("metadata is empty")
+	ErrNoAuthHeader        = errors.New("there is no authorization header")
+	ErrIncorrectAuthHeader = errors.New("not correct authorization header")
+	ErrCardNotFound        = errors.New("card not found")
+	ErrVerificationFailed  = errors.New("verification failed")
 )
 
 type VerificationError struct {

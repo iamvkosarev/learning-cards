@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor/verification"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type GroupUseCaseDeps struct {
-	GroupReader  contracts.GroupReader
-	GroupWriter  contracts.GroupWriter
-	AuthVerifier contracts.AuthVerifier
+	GroupReader contracts.GroupReader
+	GroupWriter contracts.GroupWriter
 }
 
 type GroupUseCase struct {
@@ -30,7 +30,7 @@ func (uc *GroupUseCase) Create(
 	name, description string,
 	visibility entity.GroupVisibility,
 ) (entity.GroupId, error) {
-	userId, err := uc.deps.AuthVerifier.VerifyUserByContext(ctx)
+	userId, err := verification.GetUserId(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -57,10 +57,11 @@ func (uc *GroupUseCase) Create(
 func (uc *GroupUseCase) Get(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
 	op := "usecase.GroupUseCase.Get"
 
-	userId, err := uc.deps.AuthVerifier.VerifyUserByContext(ctx)
+	userId, err := verification.GetUserId(ctx)
 	if err != nil {
 		return entity.Group{}, err
 	}
+
 	group, err := uc.deps.GroupReader.Get(ctx, groupId)
 	if err != nil {
 		return entity.Group{}, err
@@ -73,7 +74,8 @@ func (uc *GroupUseCase) Get(ctx context.Context, groupId entity.GroupId) (entity
 }
 
 func (uc *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
-	userId, err := uc.deps.AuthVerifier.VerifyUserByContext(ctx)
+
+	userId, err := verification.GetUserId(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +91,7 @@ func (uc *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
 func (uc *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGroup) error {
 	op := "usecase.GroupUseCase.Update"
 
-	userId, err := uc.deps.AuthVerifier.VerifyUserByContext(ctx)
+	userId, err := verification.GetUserId(ctx)
 	if err != nil {
 		return err
 	}
@@ -125,7 +127,7 @@ func (uc *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGro
 func (c *GroupUseCase) Delete(ctx context.Context, groupId entity.GroupId) error {
 	op := "usecase.GroupUseCase.Delete"
 
-	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	userId, err := verification.GetUserId(ctx)
 	if err != nil {
 		return err
 	}

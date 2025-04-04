@@ -8,15 +8,13 @@ import (
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
 	"github.com/iamvkosarev/learning-cards/internal/app/usecase"
 	"github.com/iamvkosarev/learning-cards/internal/config"
-	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
-	"github.com/iamvkosarev/learning-cards/internal/infrastructure/auth"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/database/postgres"
 	server "github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor/verification"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/http/middleware"
 	sqlRepository "github.com/iamvkosarev/learning-cards/internal/infrastructure/repository/postgres"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
-	sso_pb "github.com/iamvkosarev/sso/pkg/proto/sso/v1"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -46,7 +44,12 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, err
 	}
 
-	learningCardsServer, err := prepareLearningCardServer(cfg, dbPool, logger)
+	learningCardsServer, err := prepareLearningCardServer(dbPool, logger)
+	if err != nil {
+		return nil, err
+	}
+
+	verifier, err := selectVerifier(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -57,6 +60,7 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 			interceptor.RecoveryInterceptor(logger),
 			interceptor.LoggerUnaryServerInterceptor(logger),
 			interceptor.ValidationInterceptor(logger),
+			verification.Interceptor(logger, verifier),
 		),
 	)
 
@@ -93,6 +97,13 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 	}, nil
 }
 
+func selectVerifier(cfg *config.Config) (verification.Verifier, error) {
+	if cfg.SSO.UseLocal {
+		return verification.NewStubVerifier(cfg.SSO.LocalUserId), nil
+	}
+	return verification.NewGRPCVerifier(cfg.SSO.HostAddress)
+}
+
 func (a *App) Run() error {
 	lis, err := net.Listen("tcp", a.config.Server.GRPCPort)
 	if err != nil {
@@ -102,7 +113,7 @@ func (a *App) Run() error {
 	go func() {
 		a.logger.Info(fmt.Sprintf("Starting gRPC server on %s", a.config.Server.GRPCPort))
 		if err := a.grpcServer.Serve(lis); err != nil {
-			a.logger.Error("failed to serve: %v", err)
+			a.logger.Error("failed to serve: %v", sl.Err(err))
 		}
 	}()
 
@@ -128,29 +139,21 @@ func (a *App) Shutdown(ctx context.Context) {
 	a.dbPool.Close()
 }
 
-func prepareLearningCardServer(cfg *config.Config, dbPool *pgxpool.Pool, logger *slog.Logger) (*server.Server, error) {
+func prepareLearningCardServer(dbPool *pgxpool.Pool, logger *slog.Logger) (*server.Server, error) {
 	groupRepo := sqlRepository.NewGroupRepository(dbPool)
 	cardRepo := sqlRepository.NewCardRepository(dbPool)
 
-	var authService contracts.AuthVerifier
-	authService, err := getAuthVerifier(cfg)
-	if err != nil {
-		return nil, fmt.Errorf("failed to setup auth verifier: %w", err)
-	}
-
 	groupUseCase := usecase.NewGroupUseCase(
 		usecase.GroupUseCaseDeps{
-			GroupReader:  groupRepo,
-			GroupWriter:  groupRepo,
-			AuthVerifier: authService,
+			GroupReader: groupRepo,
+			GroupWriter: groupRepo,
 		},
 	)
 	cardsUseCase := usecase.NewCardsUseCase(
 		usecase.CardsUseCaseDeps{
-			GroupReader:  groupRepo,
-			CardWriter:   cardRepo,
-			CardReader:   cardRepo,
-			AuthVerifier: authService,
+			GroupReader: groupRepo,
+			CardWriter:  cardRepo,
+			CardReader:  cardRepo,
 		},
 	)
 
@@ -169,22 +172,6 @@ func prepareDatabase(ctx context.Context, err error) (*pgxpool.Pool, error) {
 		return nil, fmt.Errorf("error connecting to database: %w", err)
 	}
 	return dbPool, nil
-}
-
-func getAuthVerifier(cfg *config.Config) (contracts.AuthVerifier, error) {
-	var authService contracts.AuthVerifier
-	if cfg.SSO.UseLocal {
-		authService = auth.NewLocalService(cfg.SSO.LocalUserId)
-		return authService, nil
-	}
-
-	ssoConn, err := grpc.NewClient(cfg.SSO.HostAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		return nil, fmt.Errorf("error creating gRPC client: %w", err)
-	}
-	ssoClient := sso_pb.NewSSOClient(ssoConn)
-	authService = auth.NewGRPCService(ssoClient)
-	return authService, nil
 }
 
 func setupHTTPRouter(gwMux *runtime.ServeMux, restPrefix string) http.Handler {

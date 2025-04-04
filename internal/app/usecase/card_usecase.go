@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor/verification"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type CardsUseCaseDeps struct {
-	AuthVerifier contracts.AuthVerifier
-	CardReader   contracts.CardReader
-	CardWriter   contracts.CardWriter
-	GroupReader  contracts.GroupReader
+	CardReader  contracts.CardReader
+	CardWriter  contracts.CardWriter
+	GroupReader contracts.GroupReader
 }
 
 type CardsUseCase struct {
@@ -29,7 +29,7 @@ func NewCardsUseCase(deps CardsUseCaseDeps) *CardsUseCase {
 func (c *CardsUseCase) Get(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
 	op := "usecase.CardsUseCase.Get"
 
-	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	userId, err := verification.GetUserId(ctx)
 	if err != nil {
 		return entity.Card{}, err
 	}
@@ -55,7 +55,11 @@ func (c *CardsUseCase) Get(ctx context.Context, cardId entity.CardId) (entity.Ca
 func (c *CardsUseCase) List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {
 	op := "usecase.CardsUseCase.List"
 
-	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	userId, err := verification.GetUserId(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -80,10 +84,11 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 ) {
 	op := "usecase.CardsUseCase.Create"
 
-	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	userId, err := verification.GetUserId(ctx)
 	if err != nil {
 		return 0, err
 	}
+
 	group, err := c.deps.GroupReader.Get(ctx, groupId)
 	if err != nil {
 		return 0, err
@@ -109,10 +114,11 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard) error {
 	op := "usecase.GroupUseCase.Update"
 
-	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	userId, err := verification.GetUserId(ctx)
 	if err != nil {
 		return err
 	}
+
 	card, err := c.deps.CardReader.Get(ctx, updateCard.Id)
 	if err != nil {
 		return err
@@ -142,10 +148,11 @@ func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard)
 func (c *CardsUseCase) Delete(ctx context.Context, id entity.CardId) error {
 	op := "usecase.GroupUseCase.Delete"
 
-	userId, err := c.deps.AuthVerifier.VerifyUserByContext(ctx)
+	userId, err := verification.GetUserId(ctx)
 	if err != nil {
 		return err
 	}
+
 	card, err := c.deps.CardReader.Get(ctx, id)
 	if err != nil {
 		return err

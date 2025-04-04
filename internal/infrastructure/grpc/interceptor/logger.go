@@ -83,8 +83,13 @@ func mapDomainErrorToGRPC(err error) error {
 	switch {
 	case errors.Is(err, entity.ErrMetadataIsEmpty):
 		return status.Error(codes.InvalidArgument, metadataEmptyErrMessage)
-	case errors.Is(err, entity.ErrMetadataIsEmpty):
-		return status.Error(codes.InvalidArgument, metadataEmptyErrMessage)
+	case errors.Is(err, entity.ErrNoAuthHeader):
+		return status.Error(codes.InvalidArgument, verificationErrMessage)
+	case errors.Is(err, entity.ErrIncorrectAuthHeader):
+		return status.Error(codes.Unauthenticated, verificationErrMessage)
+	case errors.Is(err, entity.ErrVerificationFailed):
+		return status.Error(codes.Unauthenticated, verificationErrMessage)
+
 	case errors.Is(err, entity.ErrGroupNotFound):
 		return status.Error(codes.NotFound, cardNotFoundMessage)
 	case errors.Is(err, entity.ErrCardNotFound):
