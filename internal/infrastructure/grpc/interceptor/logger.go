@@ -81,7 +81,8 @@ func getUserId(ctx context.Context) string {
 	if err != nil {
 		return unknownValue
 	}
-	return string(userId)
+
+	return fmt.Sprintf("%d", userId)
 }
 
 func mapDomainErrorToGRPC(err error) error {
