@@ -6,6 +6,7 @@ include make/docker.mk
 include make/local-docker.mk
 include make/vps.mk
 include make/test-cmd.mk
+include make/test.mk
 
 
 release-and-deploy: docker-release vps-deploy
