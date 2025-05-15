@@ -20,16 +20,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	LearningCards_CreateGroup_FullMethodName = "/learning_cards.v1.LearningCards/CreateGroup"
-	LearningCards_ListGroups_FullMethodName  = "/learning_cards.v1.LearningCards/ListGroups"
-	LearningCards_GetGroup_FullMethodName    = "/learning_cards.v1.LearningCards/GetGroup"
-	LearningCards_UpdateGroup_FullMethodName = "/learning_cards.v1.LearningCards/UpdateGroup"
-	LearningCards_DeleteGroup_FullMethodName = "/learning_cards.v1.LearningCards/DeleteGroup"
-	LearningCards_AddCard_FullMethodName     = "/learning_cards.v1.LearningCards/AddCard"
-	LearningCards_ListCards_FullMethodName   = "/learning_cards.v1.LearningCards/ListCards"
-	LearningCards_GetCard_FullMethodName     = "/learning_cards.v1.LearningCards/GetCard"
-	LearningCards_UpdateCard_FullMethodName  = "/learning_cards.v1.LearningCards/UpdateCard"
-	LearningCards_DeleteCard_FullMethodName  = "/learning_cards.v1.LearningCards/DeleteCard"
+	LearningCards_CreateGroup_FullMethodName           = "/learning_cards.v1.LearningCards/CreateGroup"
+	LearningCards_ListGroups_FullMethodName            = "/learning_cards.v1.LearningCards/ListGroups"
+	LearningCards_GetGroup_FullMethodName              = "/learning_cards.v1.LearningCards/GetGroup"
+	LearningCards_UpdateGroup_FullMethodName           = "/learning_cards.v1.LearningCards/UpdateGroup"
+	LearningCards_DeleteGroup_FullMethodName           = "/learning_cards.v1.LearningCards/DeleteGroup"
+	LearningCards_AddCard_FullMethodName               = "/learning_cards.v1.LearningCards/AddCard"
+	LearningCards_ListCards_FullMethodName             = "/learning_cards.v1.LearningCards/ListCards"
+	LearningCards_GetCard_FullMethodName               = "/learning_cards.v1.LearningCards/GetCard"
+	LearningCards_UpdateCard_FullMethodName            = "/learning_cards.v1.LearningCards/UpdateCard"
+	LearningCards_DeleteCard_FullMethodName            = "/learning_cards.v1.LearningCards/DeleteCard"
+	LearningCards_ListGroupsProgress_FullMethodName    = "/learning_cards.v1.LearningCards/ListGroupsProgress"
+	LearningCards_ListCardsProgress_FullMethodName     = "/learning_cards.v1.LearningCards/ListCardsProgress"
+	LearningCards_GetGroupReviewInfo_FullMethodName    = "/learning_cards.v1.LearningCards/GetGroupReviewInfo"
+	LearningCards_UpdateGroupReviewInfo_FullMethodName = "/learning_cards.v1.LearningCards/UpdateGroupReviewInfo"
+	LearningCards_MakeReview_FullMethodName            = "/learning_cards.v1.LearningCards/MakeReview"
+	LearningCards_CompleteReview_FullMethodName        = "/learning_cards.v1.LearningCards/CompleteReview"
 )
 
 // LearningCardsClient is the client API for LearningCards service.
@@ -46,6 +52,12 @@ type LearningCardsClient interface {
 	GetCard(ctx context.Context, in *GetCardRequest, opts ...grpc.CallOption) (*GetCardResponse, error)
 	UpdateCard(ctx context.Context, in *UpdateCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	DeleteCard(ctx context.Context, in *DeleteCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ListGroupsProgress(ctx context.Context, in *ListGroupsProgressRequest, opts ...grpc.CallOption) (*ListGroupsProgressResponse, error)
+	ListCardsProgress(ctx context.Context, in *ListCardsProgressRequest, opts ...grpc.CallOption) (*ListCardsProgressResponse, error)
+	GetGroupReviewInfo(ctx context.Context, in *GetGroupReviewInfoRequest, opts ...grpc.CallOption) (*GetGroupReviewInfoResponse, error)
+	UpdateGroupReviewInfo(ctx context.Context, in *UpdateGroupReviewInfoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MakeReview(ctx context.Context, in *MakeReviewRequest, opts ...grpc.CallOption) (*MakeReviewResponse, error)
+	CompleteReview(ctx context.Context, in *CompleteReviewRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type learningCardsClient struct {
@@ -156,6 +168,66 @@ func (c *learningCardsClient) DeleteCard(ctx context.Context, in *DeleteCardRequ
 	return out, nil
 }
 
+func (c *learningCardsClient) ListGroupsProgress(ctx context.Context, in *ListGroupsProgressRequest, opts ...grpc.CallOption) (*ListGroupsProgressResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListGroupsProgressResponse)
+	err := c.cc.Invoke(ctx, LearningCards_ListGroupsProgress_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) ListCardsProgress(ctx context.Context, in *ListCardsProgressRequest, opts ...grpc.CallOption) (*ListCardsProgressResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListCardsProgressResponse)
+	err := c.cc.Invoke(ctx, LearningCards_ListCardsProgress_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) GetGroupReviewInfo(ctx context.Context, in *GetGroupReviewInfoRequest, opts ...grpc.CallOption) (*GetGroupReviewInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetGroupReviewInfoResponse)
+	err := c.cc.Invoke(ctx, LearningCards_GetGroupReviewInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) UpdateGroupReviewInfo(ctx context.Context, in *UpdateGroupReviewInfoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, LearningCards_UpdateGroupReviewInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) MakeReview(ctx context.Context, in *MakeReviewRequest, opts ...grpc.CallOption) (*MakeReviewResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MakeReviewResponse)
+	err := c.cc.Invoke(ctx, LearningCards_MakeReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *learningCardsClient) CompleteReview(ctx context.Context, in *CompleteReviewRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, LearningCards_CompleteReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LearningCardsServer is the server API for LearningCards service.
 // All implementations must embed UnimplementedLearningCardsServer
 // for forward compatibility.
@@ -170,6 +242,12 @@ type LearningCardsServer interface {
 	GetCard(context.Context, *GetCardRequest) (*GetCardResponse, error)
 	UpdateCard(context.Context, *UpdateCardRequest) (*emptypb.Empty, error)
 	DeleteCard(context.Context, *DeleteCardRequest) (*emptypb.Empty, error)
+	ListGroupsProgress(context.Context, *ListGroupsProgressRequest) (*ListGroupsProgressResponse, error)
+	ListCardsProgress(context.Context, *ListCardsProgressRequest) (*ListCardsProgressResponse, error)
+	GetGroupReviewInfo(context.Context, *GetGroupReviewInfoRequest) (*GetGroupReviewInfoResponse, error)
+	UpdateGroupReviewInfo(context.Context, *UpdateGroupReviewInfoRequest) (*emptypb.Empty, error)
+	MakeReview(context.Context, *MakeReviewRequest) (*MakeReviewResponse, error)
+	CompleteReview(context.Context, *CompleteReviewRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedLearningCardsServer()
 }
 
@@ -209,6 +287,24 @@ func (UnimplementedLearningCardsServer) UpdateCard(context.Context, *UpdateCardR
 }
 func (UnimplementedLearningCardsServer) DeleteCard(context.Context, *DeleteCardRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCard not implemented")
+}
+func (UnimplementedLearningCardsServer) ListGroupsProgress(context.Context, *ListGroupsProgressRequest) (*ListGroupsProgressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListGroupsProgress not implemented")
+}
+func (UnimplementedLearningCardsServer) ListCardsProgress(context.Context, *ListCardsProgressRequest) (*ListCardsProgressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCardsProgress not implemented")
+}
+func (UnimplementedLearningCardsServer) GetGroupReviewInfo(context.Context, *GetGroupReviewInfoRequest) (*GetGroupReviewInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupReviewInfo not implemented")
+}
+func (UnimplementedLearningCardsServer) UpdateGroupReviewInfo(context.Context, *UpdateGroupReviewInfoRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroupReviewInfo not implemented")
+}
+func (UnimplementedLearningCardsServer) MakeReview(context.Context, *MakeReviewRequest) (*MakeReviewResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MakeReview not implemented")
+}
+func (UnimplementedLearningCardsServer) CompleteReview(context.Context, *CompleteReviewRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CompleteReview not implemented")
 }
 func (UnimplementedLearningCardsServer) mustEmbedUnimplementedLearningCardsServer() {}
 func (UnimplementedLearningCardsServer) testEmbeddedByValue()                       {}
@@ -411,6 +507,114 @@ func _LearningCards_DeleteCard_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LearningCards_ListGroupsProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListGroupsProgressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).ListGroupsProgress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_ListGroupsProgress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).ListGroupsProgress(ctx, req.(*ListGroupsProgressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_ListCardsProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCardsProgressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).ListCardsProgress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_ListCardsProgress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).ListCardsProgress(ctx, req.(*ListCardsProgressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_GetGroupReviewInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetGroupReviewInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).GetGroupReviewInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_GetGroupReviewInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).GetGroupReviewInfo(ctx, req.(*GetGroupReviewInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_UpdateGroupReviewInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateGroupReviewInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).UpdateGroupReviewInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_UpdateGroupReviewInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).UpdateGroupReviewInfo(ctx, req.(*UpdateGroupReviewInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_MakeReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MakeReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).MakeReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_MakeReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).MakeReview(ctx, req.(*MakeReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LearningCards_CompleteReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompleteReviewRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LearningCardsServer).CompleteReview(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LearningCards_CompleteReview_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LearningCardsServer).CompleteReview(ctx, req.(*CompleteReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LearningCards_ServiceDesc is the grpc.ServiceDesc for LearningCards service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -457,6 +661,30 @@ var LearningCards_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteCard",
 			Handler:    _LearningCards_DeleteCard_Handler,
+		},
+		{
+			MethodName: "ListGroupsProgress",
+			Handler:    _LearningCards_ListGroupsProgress_Handler,
+		},
+		{
+			MethodName: "ListCardsProgress",
+			Handler:    _LearningCards_ListCardsProgress_Handler,
+		},
+		{
+			MethodName: "GetGroupReviewInfo",
+			Handler:    _LearningCards_GetGroupReviewInfo_Handler,
+		},
+		{
+			MethodName: "UpdateGroupReviewInfo",
+			Handler:    _LearningCards_UpdateGroupReviewInfo_Handler,
+		},
+		{
+			MethodName: "MakeReview",
+			Handler:    _LearningCards_MakeReview_Handler,
+		},
+		{
+			MethodName: "CompleteReview",
+			Handler:    _LearningCards_CompleteReview_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -199,6 +199,28 @@
         ]
       }
     },
+    "/v1/group/progress": {
+      "get": {
+        "operationId": "LearningCards_ListGroupsProgress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListGroupsProgressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "LearningCards"
+        ]
+      }
+    },
     "/v1/group/{groupId}": {
       "get": {
         "operationId": "LearningCards_GetGroup",
@@ -328,9 +350,206 @@
           "LearningCards"
         ]
       }
+    },
+    "/v1/group/{groupId}/cards/progress": {
+      "get": {
+        "operationId": "LearningCards_ListCardsProgress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListCardsProgressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      }
+    },
+    "/v1/group/{groupId}/review/complete": {
+      "post": {
+        "operationId": "LearningCards_CompleteReview",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LearningCardsCompleteReviewBody"
+            }
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      }
+    },
+    "/v1/group/{groupId}/review/make": {
+      "post": {
+        "operationId": "LearningCards_MakeReview",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1MakeReviewResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LearningCardsMakeReviewBody"
+            }
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      }
+    },
+    "/v1/group/{groupId}/review/settings": {
+      "get": {
+        "operationId": "LearningCards_GetGroupReviewInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetGroupReviewInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      },
+      "put": {
+        "operationId": "LearningCards_UpdateGroupReviewInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LearningCardsUpdateGroupReviewInfoBody"
+            }
+          }
+        ],
+        "tags": [
+          "LearningCards"
+        ]
+      }
     }
   },
   "definitions": {
+    "LearningCardsCompleteReviewBody": {
+      "type": "object",
+      "properties": {
+        "cardResults": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ReviewCardResult"
+          }
+        },
+        "checkDuration": {
+          "type": "boolean"
+        }
+      }
+    },
+    "LearningCardsMakeReviewBody": {
+      "type": "object"
+    },
     "LearningCardsUpdateCardBody": {
       "type": "object",
       "properties": {
@@ -353,6 +572,15 @@
         },
         "visibility": {
           "$ref": "#/definitions/v1GroupVisibility"
+        }
+      }
+    },
+    "LearningCardsUpdateGroupReviewInfoBody": {
+      "type": "object",
+      "properties": {
+        "cardsCount": {
+          "type": "integer",
+          "format": "int32"
         }
       }
     },
@@ -430,6 +658,32 @@
         }
       }
     },
+    "v1CardAnswer": {
+      "type": "string",
+      "enum": [
+        "EASY",
+        "GOOD",
+        "HARD",
+        "FAIL"
+      ],
+      "default": "EASY"
+    },
+    "v1CardProgress": {
+      "type": "object",
+      "properties": {
+        "cardId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "mark": {
+          "$ref": "#/definitions/v1Mark"
+        },
+        "lastReviewTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "v1CardsGroup": {
       "type": "object",
       "properties": {
@@ -494,6 +748,31 @@
         }
       }
     },
+    "v1GetGroupReviewInfoResponse": {
+      "type": "object",
+      "properties": {
+        "cardsCount": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "v1GroupProgress": {
+      "type": "object",
+      "properties": {
+        "groupId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "mark": {
+          "$ref": "#/definitions/v1Mark"
+        },
+        "lastReviewTime": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "v1GroupVisibility": {
       "type": "string",
       "enum": [
@@ -503,6 +782,18 @@
         "UNLISTED"
       ],
       "default": "NULL"
+    },
+    "v1ListCardsProgressResponse": {
+      "type": "object",
+      "properties": {
+        "cardsProgresses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1CardProgress"
+          }
+        }
+      }
     },
     "v1ListCardsResponse": {
       "type": "object",
@@ -516,6 +807,18 @@
         }
       }
     },
+    "v1ListGroupsProgressResponse": {
+      "type": "object",
+      "properties": {
+        "groupProgresses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1GroupProgress"
+          }
+        }
+      }
+    },
     "v1ListGroupsResponse": {
       "type": "object",
       "properties": {
@@ -525,6 +828,45 @@
             "type": "object",
             "$ref": "#/definitions/v1CardsGroup"
           }
+        }
+      }
+    },
+    "v1MakeReviewResponse": {
+      "type": "object",
+      "properties": {
+        "cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Card"
+          }
+        }
+      }
+    },
+    "v1Mark": {
+      "type": "string",
+      "enum": [
+        "MARK_NULL",
+        "MARK_A",
+        "MARK_B",
+        "MARK_C",
+        "MARK_D",
+        "MARK_E"
+      ],
+      "default": "MARK_NULL"
+    },
+    "v1ReviewCardResult": {
+      "type": "object",
+      "properties": {
+        "cardId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "cardAnswer": {
+          "$ref": "#/definitions/v1CardAnswer"
+        },
+        "duration": {
+          "type": "string"
         }
       }
     }

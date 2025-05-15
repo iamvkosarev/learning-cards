@@ -22,58 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type GroupVisibility int32
-
-const (
-	GroupVisibility_NULL     GroupVisibility = 0
-	GroupVisibility_PRIVATE  GroupVisibility = 1
-	GroupVisibility_PUBLIC   GroupVisibility = 2
-	GroupVisibility_UNLISTED GroupVisibility = 3
-)
-
-// Enum value maps for GroupVisibility.
-var (
-	GroupVisibility_name = map[int32]string{
-		0: "NULL",
-		1: "PRIVATE",
-		2: "PUBLIC",
-		3: "UNLISTED",
-	}
-	GroupVisibility_value = map[string]int32{
-		"NULL":     0,
-		"PRIVATE":  1,
-		"PUBLIC":   2,
-		"UNLISTED": 3,
-	}
-)
-
-func (x GroupVisibility) Enum() *GroupVisibility {
-	p := new(GroupVisibility)
-	*p = x
-	return p
-}
-
-func (x GroupVisibility) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (GroupVisibility) Descriptor() protoreflect.EnumDescriptor {
-	return file_learning_cards_v1_group_proto_enumTypes[0].Descriptor()
-}
-
-func (GroupVisibility) Type() protoreflect.EnumType {
-	return &file_learning_cards_v1_group_proto_enumTypes[0]
-}
-
-func (x GroupVisibility) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use GroupVisibility.Descriptor instead.
-func (GroupVisibility) EnumDescriptor() ([]byte, []int) {
-	return file_learning_cards_v1_group_proto_rawDescGZIP(), []int{0}
-}
-
 type CardsGroup struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -546,7 +494,7 @@ var File_learning_cards_v1_group_proto protoreflect.FileDescriptor
 
 const file_learning_cards_v1_group_proto_rawDesc = "" +
 	"\n" +
-	"\x1dlearning_cards/v1/group.proto\x12\x11learning_cards.v1\x1a\x17validate/validate.proto\"\xd0\x01\n" +
+	"\x1dlearning_cards/v1/group.proto\x12\x11learning_cards.v1\x1a\x1clearning_cards/v1/enum.proto\x1a\x17validate/validate.proto\"\xd0\x01\n" +
 	"\n" +
 	"CardsGroup\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
@@ -583,13 +531,7 @@ const file_learning_cards_v1_group_proto_rawDesc = "" +
 	"visibility\x18\x04 \x01(\x0e2\".learning_cards.v1.GroupVisibilityR\n" +
 	"visibility\"/\n" +
 	"\x12DeleteGroupRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId*B\n" +
-	"\x0fGroupVisibility\x12\b\n" +
-	"\x04NULL\x10\x00\x12\v\n" +
-	"\aPRIVATE\x10\x01\x12\n" +
-	"\n" +
-	"\x06PUBLIC\x10\x02\x12\f\n" +
-	"\bUNLISTED\x10\x03BRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupIdBRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
 
 var (
 	file_learning_cards_v1_group_proto_rawDescOnce sync.Once
@@ -603,26 +545,25 @@ func file_learning_cards_v1_group_proto_rawDescGZIP() []byte {
 	return file_learning_cards_v1_group_proto_rawDescData
 }
 
-var file_learning_cards_v1_group_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_learning_cards_v1_group_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_learning_cards_v1_group_proto_goTypes = []any{
-	(GroupVisibility)(0),        // 0: learning_cards.v1.GroupVisibility
-	(*CardsGroup)(nil),          // 1: learning_cards.v1.CardsGroup
-	(*CreateGroupRequest)(nil),  // 2: learning_cards.v1.CreateGroupRequest
-	(*CreateGroupResponse)(nil), // 3: learning_cards.v1.CreateGroupResponse
-	(*GetGroupRequest)(nil),     // 4: learning_cards.v1.GetGroupRequest
-	(*GetGroupResponse)(nil),    // 5: learning_cards.v1.GetGroupResponse
-	(*ListGroupsRequest)(nil),   // 6: learning_cards.v1.ListGroupsRequest
-	(*ListGroupsResponse)(nil),  // 7: learning_cards.v1.ListGroupsResponse
-	(*UpdateGroupRequest)(nil),  // 8: learning_cards.v1.UpdateGroupRequest
-	(*DeleteGroupRequest)(nil),  // 9: learning_cards.v1.DeleteGroupRequest
+	(*CardsGroup)(nil),          // 0: learning_cards.v1.CardsGroup
+	(*CreateGroupRequest)(nil),  // 1: learning_cards.v1.CreateGroupRequest
+	(*CreateGroupResponse)(nil), // 2: learning_cards.v1.CreateGroupResponse
+	(*GetGroupRequest)(nil),     // 3: learning_cards.v1.GetGroupRequest
+	(*GetGroupResponse)(nil),    // 4: learning_cards.v1.GetGroupResponse
+	(*ListGroupsRequest)(nil),   // 5: learning_cards.v1.ListGroupsRequest
+	(*ListGroupsResponse)(nil),  // 6: learning_cards.v1.ListGroupsResponse
+	(*UpdateGroupRequest)(nil),  // 7: learning_cards.v1.UpdateGroupRequest
+	(*DeleteGroupRequest)(nil),  // 8: learning_cards.v1.DeleteGroupRequest
+	(GroupVisibility)(0),        // 9: learning_cards.v1.GroupVisibility
 }
 var file_learning_cards_v1_group_proto_depIdxs = []int32{
-	0, // 0: learning_cards.v1.CardsGroup.visibility:type_name -> learning_cards.v1.GroupVisibility
-	0, // 1: learning_cards.v1.CreateGroupRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
-	1, // 2: learning_cards.v1.GetGroupResponse.group:type_name -> learning_cards.v1.CardsGroup
-	1, // 3: learning_cards.v1.ListGroupsResponse.groups:type_name -> learning_cards.v1.CardsGroup
-	0, // 4: learning_cards.v1.UpdateGroupRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
+	9, // 0: learning_cards.v1.CardsGroup.visibility:type_name -> learning_cards.v1.GroupVisibility
+	9, // 1: learning_cards.v1.CreateGroupRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
+	0, // 2: learning_cards.v1.GetGroupResponse.group:type_name -> learning_cards.v1.CardsGroup
+	0, // 3: learning_cards.v1.ListGroupsResponse.groups:type_name -> learning_cards.v1.CardsGroup
+	9, // 4: learning_cards.v1.UpdateGroupRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
 	5, // [5:5] is the sub-list for method output_type
 	5, // [5:5] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
@@ -635,19 +576,19 @@ func file_learning_cards_v1_group_proto_init() {
 	if File_learning_cards_v1_group_proto != nil {
 		return
 	}
+	file_learning_cards_v1_enum_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_learning_cards_v1_group_proto_rawDesc), len(file_learning_cards_v1_group_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_learning_cards_v1_group_proto_goTypes,
 		DependencyIndexes: file_learning_cards_v1_group_proto_depIdxs,
-		EnumInfos:         file_learning_cards_v1_group_proto_enumTypes,
 		MessageInfos:      file_learning_cards_v1_group_proto_msgTypes,
 	}.Build()
 	File_learning_cards_v1_group_proto = out.File
