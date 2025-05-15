@@ -5,32 +5,32 @@ import (
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
-	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor/verification"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type GroupUseCaseDeps struct {
-	GroupReader contracts.GroupReader
-	GroupWriter contracts.GroupWriter
+	GroupReader  contracts.GroupReader
+	GroupWriter  contracts.GroupWriter
+	AuthVerifier contracts.AuthVerifier
 }
 
 type GroupUseCase struct {
-	deps GroupUseCaseDeps
+	GroupUseCaseDeps
 }
 
 func NewGroupUseCase(deps GroupUseCaseDeps) *GroupUseCase {
 	return &GroupUseCase{
-		deps: deps,
+		GroupUseCaseDeps: deps,
 	}
 }
 
-func (uc *GroupUseCase) Create(
+func (g *GroupUseCase) Create(
 	ctx context.Context,
 	name, description string,
 	visibility entity.GroupVisibility,
 ) (entity.GroupId, error) {
-	userId, err := verification.GetUserId(ctx)
+	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -46,7 +46,7 @@ func (uc *GroupUseCase) Create(
 		OwnerId:     userId,
 	}
 
-	groupId, err := uc.deps.GroupWriter.Add(ctx, group)
+	groupId, err := g.GroupWriter.Add(ctx, group)
 	if err != nil {
 		return 0, err
 	}
@@ -54,15 +54,15 @@ func (uc *GroupUseCase) Create(
 	return groupId, nil
 }
 
-func (uc *GroupUseCase) Get(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
+func (g *GroupUseCase) Get(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
 	op := "usecase.GroupUseCase.Get"
 
-	userId, err := verification.GetUserId(ctx)
+	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return entity.Group{}, err
 	}
 
-	group, err := uc.deps.GroupReader.Get(ctx, groupId)
+	group, err := g.GroupReader.Get(ctx, groupId)
 	if err != nil {
 		return entity.Group{}, err
 	}
@@ -73,14 +73,14 @@ func (uc *GroupUseCase) Get(ctx context.Context, groupId entity.GroupId) (entity
 	return group, nil
 }
 
-func (uc *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
+func (g *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
 
-	userId, err := verification.GetUserId(ctx)
+	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	groups, err := uc.deps.GroupReader.ListByUser(ctx, userId)
+	groups, err := g.GroupReader.ListByUser(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -88,15 +88,15 @@ func (uc *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
 	return groups, nil
 }
 
-func (uc *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGroup) error {
+func (g *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGroup) error {
 	op := "usecase.GroupUseCase.Update"
 
-	userId, err := verification.GetUserId(ctx)
+	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	group, err := uc.deps.GroupReader.Get(ctx, updateGroup.Id)
+	group, err := g.GroupReader.Get(ctx, updateGroup.Id)
 
 	if err != nil {
 		return err
@@ -116,7 +116,7 @@ func (uc *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGro
 		group.Name = updateGroup.Name
 	}
 
-	err = uc.deps.GroupWriter.Update(ctx, group)
+	err = g.GroupWriter.Update(ctx, group)
 	if err != nil {
 		return err
 	}
@@ -124,15 +124,15 @@ func (uc *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGro
 	return nil
 }
 
-func (c *GroupUseCase) Delete(ctx context.Context, groupId entity.GroupId) error {
+func (g *GroupUseCase) Delete(ctx context.Context, groupId entity.GroupId) error {
 	op := "usecase.GroupUseCase.Delete"
 
-	userId, err := verification.GetUserId(ctx)
+	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	group, err := c.deps.GroupReader.Get(ctx, groupId)
+	group, err := g.GroupReader.Get(ctx, groupId)
 
 	if err != nil {
 		return err
@@ -142,7 +142,7 @@ func (c *GroupUseCase) Delete(ctx context.Context, groupId entity.GroupId) error
 		return err
 	}
 
-	err = c.deps.GroupWriter.Delete(ctx, groupId)
+	err = g.GroupWriter.Delete(ctx, groupId)
 	if err != nil {
 		return err
 	}

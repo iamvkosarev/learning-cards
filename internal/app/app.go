@@ -8,6 +8,7 @@ import (
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
 	"github.com/iamvkosarev/learning-cards/internal/app/usecase"
 	"github.com/iamvkosarev/learning-cards/internal/config"
+	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/database/postgres"
 	server "github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor"
@@ -143,21 +144,36 @@ func prepareLearningCardServer(dbPool *pgxpool.Pool, logger *slog.Logger) (*serv
 	groupRepo := sqlRepository.NewGroupRepository(dbPool)
 	cardRepo := sqlRepository.NewCardRepository(dbPool)
 
-	groupUseCase := usecase.NewGroupUseCase(
+	verifier := contracts.VerifyFunc(verification.GetUserId)
+
+	var groupUseCase server.GroupUseCase = usecase.NewGroupUseCase(
 		usecase.GroupUseCaseDeps{
-			GroupReader: groupRepo,
-			GroupWriter: groupRepo,
+			GroupReader:  groupRepo,
+			GroupWriter:  groupRepo,
+			AuthVerifier: verifier,
 		},
 	)
-	cardsUseCase := usecase.NewCardsUseCase(
+	var cardsUseCase server.CardsUseCase = usecase.NewCardsUseCase(
 		usecase.CardsUseCaseDeps{
-			GroupReader: groupRepo,
-			CardWriter:  cardRepo,
-			CardReader:  cardRepo,
+			GroupReader:  groupRepo,
+			CardWriter:   cardRepo,
+			CardReader:   cardRepo,
+			AuthVerifier: verifier,
 		},
 	)
 
-	learningCardsServer := server.NewServer(groupUseCase, cardsUseCase, logger)
+	var progressUseCase server.ProgressUseCase = usecase.NewProgressUseCase()
+	var reviewUseCase server.ReviewUseCase = usecase.NewReviewUseCase()
+
+	learningCardsServer := server.NewServer(
+		server.Deps{
+			GroupUseCase:    groupUseCase,
+			CardsUseCase:    cardsUseCase,
+			ProgressUseCase: progressUseCase,
+			ReviewUseCase:   reviewUseCase,
+			Logger:          logger,
+		},
+	)
 	return learningCardsServer, nil
 }
 

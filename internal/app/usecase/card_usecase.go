@@ -5,41 +5,41 @@ import (
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
-	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor/verification"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type CardsUseCaseDeps struct {
-	CardReader  contracts.CardReader
-	CardWriter  contracts.CardWriter
-	GroupReader contracts.GroupReader
+	CardReader   contracts.CardReader
+	CardWriter   contracts.CardWriter
+	GroupReader  contracts.GroupReader
+	AuthVerifier contracts.AuthVerifier
 }
 
 type CardsUseCase struct {
-	deps CardsUseCaseDeps
+	CardsUseCaseDeps
 }
 
 func NewCardsUseCase(deps CardsUseCaseDeps) *CardsUseCase {
 	return &CardsUseCase{
-		deps: deps,
+		CardsUseCaseDeps: deps,
 	}
 }
 
 func (c *CardsUseCase) Get(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
 	op := "usecase.CardsUseCase.Get"
 
-	userId, err := verification.GetUserId(ctx)
+	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return entity.Card{}, err
 	}
 
-	card, err := c.deps.CardReader.Get(ctx, cardId)
+	card, err := c.CardReader.Get(ctx, cardId)
 	if err != nil {
 		return entity.Card{}, err
 	}
 
-	group, err := c.deps.GroupReader.Get(ctx, card.GroupId)
+	group, err := c.GroupReader.Get(ctx, card.GroupId)
 	if err != nil {
 		return entity.Card{}, err
 	}
@@ -55,7 +55,7 @@ func (c *CardsUseCase) Get(ctx context.Context, cardId entity.CardId) (entity.Ca
 func (c *CardsUseCase) List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {
 	op := "usecase.CardsUseCase.List"
 
-	userId, err := verification.GetUserId(ctx)
+	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (c *CardsUseCase) List(ctx context.Context, groupId entity.GroupId) ([]enti
 	if err != nil {
 		return nil, err
 	}
-	group, err := c.deps.GroupReader.Get(ctx, groupId)
+	group, err := c.GroupReader.Get(ctx, groupId)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *CardsUseCase) List(ctx context.Context, groupId entity.GroupId) ([]enti
 	if err := checkViewGroupAccess(userId, group, op); err != nil {
 		return nil, err
 	}
-	cards, err := c.deps.CardReader.List(ctx, groupId)
+	cards, err := c.CardReader.List(ctx, groupId)
 	if err != nil {
 		return nil, err
 	}
@@ -84,12 +84,12 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 ) {
 	op := "usecase.CardsUseCase.Create"
 
-	userId, err := verification.GetUserId(ctx)
+	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return 0, err
 	}
 
-	group, err := c.deps.GroupReader.Get(ctx, groupId)
+	group, err := c.GroupReader.Get(ctx, groupId)
 	if err != nil {
 		return 0, err
 	}
@@ -104,7 +104,7 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 		FrontText: frontText,
 		BackText:  backText,
 	}
-	cardId, err := c.deps.CardWriter.Add(ctx, card)
+	cardId, err := c.CardWriter.Add(ctx, card)
 	if err != nil {
 		return 0, err
 	}
@@ -114,17 +114,17 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard) error {
 	op := "usecase.GroupUseCase.Update"
 
-	userId, err := verification.GetUserId(ctx)
+	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	card, err := c.deps.CardReader.Get(ctx, updateCard.Id)
+	card, err := c.CardReader.Get(ctx, updateCard.Id)
 	if err != nil {
 		return err
 	}
 
-	group, err := c.deps.GroupReader.Get(ctx, card.GroupId)
+	group, err := c.GroupReader.Get(ctx, card.GroupId)
 
 	if err != nil {
 		return err
@@ -137,7 +137,7 @@ func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard)
 	card.FrontText = updateCard.FrontText
 	card.BackText = updateCard.BackText
 
-	err = c.deps.CardWriter.Update(ctx, card)
+	err = c.CardWriter.Update(ctx, card)
 	if err != nil {
 		return err
 	}
@@ -148,17 +148,17 @@ func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard)
 func (c *CardsUseCase) Delete(ctx context.Context, id entity.CardId) error {
 	op := "usecase.GroupUseCase.Delete"
 
-	userId, err := verification.GetUserId(ctx)
+	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	card, err := c.deps.CardReader.Get(ctx, id)
+	card, err := c.CardReader.Get(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	group, err := c.deps.GroupReader.Get(ctx, card.GroupId)
+	group, err := c.GroupReader.Get(ctx, card.GroupId)
 
 	if err != nil {
 		return err
@@ -168,7 +168,7 @@ func (c *CardsUseCase) Delete(ctx context.Context, id entity.CardId) error {
 		return err
 	}
 
-	err = c.deps.CardWriter.Delete(ctx, id)
+	err = c.CardWriter.Delete(ctx, id)
 	if err != nil {
 		return err
 	}
