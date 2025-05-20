@@ -22,11 +22,11 @@ message UpdateGroupReviewInfoRequest {
     int32 cards_count = 2;
 }
 
-message MakeReviewRequest {
+message GetReviewRequest {
     int64 group_id = 1;
 }
 
-message MakeReviewResponse {
+message GetReviewResponse {
     repeated Card cards = 1;
 }
 message ReviewCardResult {

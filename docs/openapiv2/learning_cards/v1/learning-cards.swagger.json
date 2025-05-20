@@ -6,7 +6,13 @@
   },
   "tags": [
     {
-      "name": "LearningCards"
+      "name": "CardService"
+    },
+    {
+      "name": "ProgressService"
+    },
+    {
+      "name": "ReviewService"
     }
   ],
   "consumes": [
@@ -18,7 +24,7 @@
   "paths": {
     "/v1/card": {
       "post": {
-        "operationId": "LearningCards_AddCard",
+        "operationId": "CardService_AddCard",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -44,13 +50,13 @@
           }
         ],
         "tags": [
-          "LearningCards"
+          "CardService"
         ]
       }
     },
     "/v1/card/{cardId}": {
       "get": {
-        "operationId": "LearningCards_GetCard",
+        "operationId": "CardService_GetCard",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -75,11 +81,11 @@
           }
         ],
         "tags": [
-          "LearningCards"
+          "CardService"
         ]
       },
       "delete": {
-        "operationId": "LearningCards_DeleteCard",
+        "operationId": "CardService_DeleteCard",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -105,11 +111,11 @@
           }
         ],
         "tags": [
-          "LearningCards"
+          "CardService"
         ]
       },
       "put": {
-        "operationId": "LearningCards_UpdateCard",
+        "operationId": "CardService_UpdateCard",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -138,18 +144,18 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/LearningCardsUpdateCardBody"
+              "$ref": "#/definitions/CardServiceUpdateCardBody"
             }
           }
         ],
         "tags": [
-          "LearningCards"
+          "CardService"
         ]
       }
     },
     "/v1/group": {
       "get": {
-        "operationId": "LearningCards_ListGroups",
+        "operationId": "CardService_ListGroups",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -165,11 +171,11 @@
           }
         },
         "tags": [
-          "LearningCards"
+          "CardService"
         ]
       },
       "post": {
-        "operationId": "LearningCards_CreateGroup",
+        "operationId": "CardService_CreateGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -195,35 +201,13 @@
           }
         ],
         "tags": [
-          "LearningCards"
-        ]
-      }
-    },
-    "/v1/group/progress": {
-      "get": {
-        "operationId": "LearningCards_ListGroupsProgress",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1ListGroupsProgressResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "LearningCards"
+          "CardService"
         ]
       }
     },
     "/v1/group/{groupId}": {
       "get": {
-        "operationId": "LearningCards_GetGroup",
+        "operationId": "CardService_GetGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -248,11 +232,11 @@
           }
         ],
         "tags": [
-          "LearningCards"
+          "CardService"
         ]
       },
       "delete": {
-        "operationId": "LearningCards_DeleteGroup",
+        "operationId": "CardService_DeleteGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -278,11 +262,11 @@
           }
         ],
         "tags": [
-          "LearningCards"
+          "CardService"
         ]
       },
       "put": {
-        "operationId": "LearningCards_UpdateGroup",
+        "operationId": "CardService_UpdateGroup",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -311,18 +295,18 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/LearningCardsUpdateGroupBody"
+              "$ref": "#/definitions/CardServiceUpdateGroupBody"
             }
           }
         ],
         "tags": [
-          "LearningCards"
+          "CardService"
         ]
       }
     },
     "/v1/group/{groupId}/cards": {
       "get": {
-        "operationId": "LearningCards_ListCards",
+        "operationId": "CardService_ListCards",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -347,13 +331,35 @@
           }
         ],
         "tags": [
-          "LearningCards"
+          "CardService"
         ]
       }
     },
-    "/v1/group/{groupId}/cards/progress": {
+    "/v1/progress": {
       "get": {
-        "operationId": "LearningCards_ListCardsProgress",
+        "operationId": "ProgressService_ListGroupsProgress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListGroupsProgressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "ProgressService"
+        ]
+      }
+    },
+    "/v1/progress/{groupId}": {
+      "get": {
+        "operationId": "ProgressService_ListCardsProgress",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -378,13 +384,42 @@
           }
         ],
         "tags": [
-          "LearningCards"
+          "ProgressService"
         ]
       }
     },
-    "/v1/group/{groupId}/review/complete": {
+    "/v1/review/{groupId}": {
+      "get": {
+        "operationId": "ReviewService_GetReview",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetReviewResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "ReviewService"
+        ]
+      },
       "post": {
-        "operationId": "LearningCards_CompleteReview",
+        "operationId": "ReviewService_SaveReview",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -413,57 +448,18 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/LearningCardsCompleteReviewBody"
+              "$ref": "#/definitions/ReviewServiceSaveReviewBody"
             }
           }
         ],
         "tags": [
-          "LearningCards"
+          "ReviewService"
         ]
       }
     },
-    "/v1/group/{groupId}/review/make": {
-      "post": {
-        "operationId": "LearningCards_MakeReview",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1MakeReviewResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/LearningCardsMakeReviewBody"
-            }
-          }
-        ],
-        "tags": [
-          "LearningCards"
-        ]
-      }
-    },
-    "/v1/group/{groupId}/review/settings": {
+    "/v1/review/{groupId}/settings": {
       "get": {
-        "operationId": "LearningCards_GetGroupReviewInfo",
+        "operationId": "ReviewService_GetGroupReviewInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -488,11 +484,11 @@
           }
         ],
         "tags": [
-          "LearningCards"
+          "ReviewService"
         ]
       },
       "put": {
-        "operationId": "LearningCards_UpdateGroupReviewInfo",
+        "operationId": "ReviewService_UpdateGroupReviewInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -521,18 +517,43 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/LearningCardsUpdateGroupReviewInfoBody"
+              "$ref": "#/definitions/ReviewServiceUpdateGroupReviewInfoBody"
             }
           }
         ],
         "tags": [
-          "LearningCards"
+          "ReviewService"
         ]
       }
     }
   },
   "definitions": {
-    "LearningCardsCompleteReviewBody": {
+    "CardServiceUpdateCardBody": {
+      "type": "object",
+      "properties": {
+        "frontText": {
+          "type": "string"
+        },
+        "backText": {
+          "type": "string"
+        }
+      }
+    },
+    "CardServiceUpdateGroupBody": {
+      "type": "object",
+      "properties": {
+        "groupName": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "visibility": {
+          "$ref": "#/definitions/v1GroupVisibility"
+        }
+      }
+    },
+    "ReviewServiceSaveReviewBody": {
       "type": "object",
       "properties": {
         "cardResults": {
@@ -547,35 +568,7 @@
         }
       }
     },
-    "LearningCardsMakeReviewBody": {
-      "type": "object"
-    },
-    "LearningCardsUpdateCardBody": {
-      "type": "object",
-      "properties": {
-        "frontText": {
-          "type": "string"
-        },
-        "backText": {
-          "type": "string"
-        }
-      }
-    },
-    "LearningCardsUpdateGroupBody": {
-      "type": "object",
-      "properties": {
-        "groupName": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "visibility": {
-          "$ref": "#/definitions/v1GroupVisibility"
-        }
-      }
-    },
-    "LearningCardsUpdateGroupReviewInfoBody": {
+    "ReviewServiceUpdateGroupReviewInfoBody": {
       "type": "object",
       "properties": {
         "cardsCount": {
@@ -757,6 +750,18 @@
         }
       }
     },
+    "v1GetReviewResponse": {
+      "type": "object",
+      "properties": {
+        "cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Card"
+          }
+        }
+      }
+    },
     "v1GroupProgress": {
       "type": "object",
       "properties": {
@@ -786,7 +791,7 @@
     "v1ListCardsProgressResponse": {
       "type": "object",
       "properties": {
-        "cardsProgresses": {
+        "cardsProgress": {
           "type": "array",
           "items": {
             "type": "object",
@@ -810,7 +815,7 @@
     "v1ListGroupsProgressResponse": {
       "type": "object",
       "properties": {
-        "groupProgresses": {
+        "groupProgress": {
           "type": "array",
           "items": {
             "type": "object",
@@ -827,18 +832,6 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/v1CardsGroup"
-          }
-        }
-      }
-    },
-    "v1MakeReviewResponse": {
-      "type": "object",
-      "properties": {
-        "cards": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1Card"
           }
         }
       }

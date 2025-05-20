@@ -292,7 +292,7 @@ func (m *ListGroupsProgressResponse) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetGroupProgresses() {
+	for idx, item := range m.GetGroupProgress() {
 		_, _ = idx, item
 
 		if all {
@@ -300,7 +300,7 @@ func (m *ListGroupsProgressResponse) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ListGroupsProgressResponseValidationError{
-						field:  fmt.Sprintf("GroupProgresses[%v]", idx),
+						field:  fmt.Sprintf("GroupProgress[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -308,7 +308,7 @@ func (m *ListGroupsProgressResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ListGroupsProgressResponseValidationError{
-						field:  fmt.Sprintf("GroupProgresses[%v]", idx),
+						field:  fmt.Sprintf("GroupProgress[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -317,7 +317,7 @@ func (m *ListGroupsProgressResponse) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ListGroupsProgressResponseValidationError{
-					field:  fmt.Sprintf("GroupProgresses[%v]", idx),
+					field:  fmt.Sprintf("GroupProgress[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -664,7 +664,7 @@ func (m *ListCardsProgressResponse) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetCardsProgresses() {
+	for idx, item := range m.GetCardsProgress() {
 		_, _ = idx, item
 
 		if all {
@@ -672,7 +672,7 @@ func (m *ListCardsProgressResponse) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ListCardsProgressResponseValidationError{
-						field:  fmt.Sprintf("CardsProgresses[%v]", idx),
+						field:  fmt.Sprintf("CardsProgress[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -680,7 +680,7 @@ func (m *ListCardsProgressResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ListCardsProgressResponseValidationError{
-						field:  fmt.Sprintf("CardsProgresses[%v]", idx),
+						field:  fmt.Sprintf("CardsProgress[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -689,7 +689,7 @@ func (m *ListCardsProgressResponse) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ListCardsProgressResponseValidationError{
-					field:  fmt.Sprintf("CardsProgresses[%v]", idx),
+					field:  fmt.Sprintf("CardsProgress[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

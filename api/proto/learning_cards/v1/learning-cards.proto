@@ -11,7 +11,7 @@ import "learning_cards/v1/review.proto";
 
 option go_package = "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cards";
 
-service LearningCards {
+service CardService {
     rpc CreateGroup (CreateGroupRequest) returns (CreateGroupResponse) {
         option (google.api.http) = {
             post: "/v1/group"
@@ -75,42 +75,45 @@ service LearningCards {
             delete: "/v1/card/{card_id}"
         };
     };
+}
 
+service ProgressService {
     rpc ListGroupsProgress (ListGroupsProgressRequest) returns (ListGroupsProgressResponse) {
         option (google.api.http) = {
-            get: "/v1/group/progress"
+            get: "/v1/progress"
         };
     };
 
     rpc ListCardsProgress (ListCardsProgressRequest) returns (ListCardsProgressResponse) {
         option (google.api.http) = {
-            get: "/v1/group/{group_id}/cards/progress"
+            get: "/v1/progress/{group_id}"
         };
     };
+}
 
+service ReviewService {
     rpc GetGroupReviewInfo (GetGroupReviewInfoRequest) returns (GetGroupReviewInfoResponse) {
         option (google.api.http) = {
-            get: "/v1/group/{group_id}/review/settings"
+            get: "/v1/review/{group_id}/settings"
         };
     };
 
     rpc UpdateGroupReviewInfo (UpdateGroupReviewInfoRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
-            put: "/v1/group/{group_id}/review/settings"
+            put: "/v1/review/{group_id}/settings"
             body: "*"
         };
     };
 
-    rpc MakeReview (MakeReviewRequest) returns (MakeReviewResponse) {
+    rpc GetReview (GetReviewRequest) returns (GetReviewResponse) {
         option (google.api.http) = {
-            post: "/v1/group/{group_id}/review/make"
-            body: "*"
+            get: "/v1/review/{group_id}"
         };
     };
 
-    rpc CompleteReview (CompleteReviewRequest) returns (google.protobuf.Empty) {
+    rpc SaveReview (CompleteReviewRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
-            post: "/v1/group/{group_id}/review/complete"
+            post: "/v1/review/{group_id}"
             body: "*"
         };
     };

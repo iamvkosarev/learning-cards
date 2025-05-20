@@ -17,7 +17,7 @@ message ListGroupsProgressRequest {
 }
 
 message ListGroupsProgressResponse {
-    repeated GroupProgress group_progresses = 1;
+    repeated GroupProgress group_progress = 1;
 }
 
 message CardProgress {
@@ -31,5 +31,5 @@ message ListCardsProgressRequest {
 }
 
 message ListCardsProgressResponse {
-    repeated CardProgress cards_progresses = 1;
+    repeated CardProgress cards_progress = 1;
 }

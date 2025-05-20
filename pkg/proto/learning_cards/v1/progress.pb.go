@@ -119,10 +119,10 @@ func (*ListGroupsProgressRequest) Descriptor() ([]byte, []int) {
 }
 
 type ListGroupsProgressResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	GroupProgresses []*GroupProgress       `protobuf:"bytes,1,rep,name=group_progresses,json=groupProgresses,proto3" json:"group_progresses,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	GroupProgress []*GroupProgress       `protobuf:"bytes,1,rep,name=group_progress,json=groupProgress,proto3" json:"group_progress,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListGroupsProgressResponse) Reset() {
@@ -155,9 +155,9 @@ func (*ListGroupsProgressResponse) Descriptor() ([]byte, []int) {
 	return file_learning_cards_v1_progress_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ListGroupsProgressResponse) GetGroupProgresses() []*GroupProgress {
+func (x *ListGroupsProgressResponse) GetGroupProgress() []*GroupProgress {
 	if x != nil {
-		return x.GroupProgresses
+		return x.GroupProgress
 	}
 	return nil
 }
@@ -267,10 +267,10 @@ func (x *ListCardsProgressRequest) GetGroupId() int64 {
 }
 
 type ListCardsProgressResponse struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	CardsProgresses []*CardProgress        `protobuf:"bytes,1,rep,name=cards_progresses,json=cardsProgresses,proto3" json:"cards_progresses,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	CardsProgress []*CardProgress        `protobuf:"bytes,1,rep,name=cards_progress,json=cardsProgress,proto3" json:"cards_progress,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListCardsProgressResponse) Reset() {
@@ -303,9 +303,9 @@ func (*ListCardsProgressResponse) Descriptor() ([]byte, []int) {
 	return file_learning_cards_v1_progress_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListCardsProgressResponse) GetCardsProgresses() []*CardProgress {
+func (x *ListCardsProgressResponse) GetCardsProgress() []*CardProgress {
 	if x != nil {
-		return x.CardsProgresses
+		return x.CardsProgress
 	}
 	return nil
 }
@@ -319,17 +319,17 @@ const file_learning_cards_v1_progress_proto_rawDesc = "" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12+\n" +
 	"\x04mark\x18\x02 \x01(\x0e2\x17.learning_cards.v1.MarkR\x04mark\x12D\n" +
 	"\x10last_review_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0elastReviewTime\"\x1b\n" +
-	"\x19ListGroupsProgressRequest\"i\n" +
-	"\x1aListGroupsProgressResponse\x12K\n" +
-	"\x10group_progresses\x18\x01 \x03(\v2 .learning_cards.v1.GroupProgressR\x0fgroupProgresses\"\x9a\x01\n" +
+	"\x19ListGroupsProgressRequest\"e\n" +
+	"\x1aListGroupsProgressResponse\x12G\n" +
+	"\x0egroup_progress\x18\x01 \x03(\v2 .learning_cards.v1.GroupProgressR\rgroupProgress\"\x9a\x01\n" +
 	"\fCardProgress\x12\x17\n" +
 	"\acard_id\x18\x01 \x01(\x03R\x06cardId\x12+\n" +
 	"\x04mark\x18\x02 \x01(\x0e2\x17.learning_cards.v1.MarkR\x04mark\x12D\n" +
 	"\x10last_review_time\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x0elastReviewTime\"5\n" +
 	"\x18ListCardsProgressRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\"g\n" +
-	"\x19ListCardsProgressResponse\x12J\n" +
-	"\x10cards_progresses\x18\x01 \x03(\v2\x1f.learning_cards.v1.CardProgressR\x0fcardsProgressesBRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\"c\n" +
+	"\x19ListCardsProgressResponse\x12F\n" +
+	"\x0ecards_progress\x18\x01 \x03(\v2\x1f.learning_cards.v1.CardProgressR\rcardsProgressBRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
 
 var (
 	file_learning_cards_v1_progress_proto_rawDescOnce sync.Once
@@ -357,10 +357,10 @@ var file_learning_cards_v1_progress_proto_goTypes = []any{
 var file_learning_cards_v1_progress_proto_depIdxs = []int32{
 	6, // 0: learning_cards.v1.GroupProgress.mark:type_name -> learning_cards.v1.Mark
 	7, // 1: learning_cards.v1.GroupProgress.last_review_time:type_name -> google.protobuf.Timestamp
-	0, // 2: learning_cards.v1.ListGroupsProgressResponse.group_progresses:type_name -> learning_cards.v1.GroupProgress
+	0, // 2: learning_cards.v1.ListGroupsProgressResponse.group_progress:type_name -> learning_cards.v1.GroupProgress
 	6, // 3: learning_cards.v1.CardProgress.mark:type_name -> learning_cards.v1.Mark
 	7, // 4: learning_cards.v1.CardProgress.last_review_time:type_name -> google.protobuf.Timestamp
-	3, // 5: learning_cards.v1.ListCardsProgressResponse.cards_progresses:type_name -> learning_cards.v1.CardProgress
+	3, // 5: learning_cards.v1.ListCardsProgressResponse.cards_progress:type_name -> learning_cards.v1.CardProgress
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name
