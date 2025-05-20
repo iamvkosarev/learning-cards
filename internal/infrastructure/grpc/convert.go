@@ -3,6 +3,7 @@ package grpc
 import (
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 )
 
@@ -28,15 +29,15 @@ func cardToResponse(card entity.Card) *pb.Card {
 }
 func groupProgressToResponse(groupProgress entity.GroupProgress) *pb.GroupProgress {
 	return &pb.GroupProgress{
-		GroupId: int64(groupProgress.Id),
-		Mark:    markToResponse(groupProgress.Mark),
+		GroupId:        int64(groupProgress.GroupId),
+		LastReviewTime: timestamppb.New(groupProgress.LastReviewTime),
 	}
 }
 
 func cardProgressToResponse(card entity.CardProgress) *pb.CardProgress {
 	return &pb.CardProgress{
-		CardId: int64(card.Id),
-		Mark:   markToResponse(card.Mark),
+		CardId:         int64(card.Id),
+		LastReviewTime: timestamppb.New(card.LastReviewTime),
 	}
 }
 

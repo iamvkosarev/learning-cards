@@ -2,14 +2,20 @@ package usecase
 
 import (
 	"context"
+	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 )
 
-type ProgressUseCase struct {
+type ProgressUseCaseDeps struct {
+	ProgressReader contracts.ProgressReader
 }
 
-func NewProgressUseCase() *ProgressUseCase {
-	return &ProgressUseCase{}
+type ProgressUseCase struct {
+	ProgressUseCaseDeps
+}
+
+func NewProgressUseCase(deps ProgressUseCaseDeps) *ProgressUseCase {
+	return &ProgressUseCase{deps}
 }
 
 func (p ProgressUseCase) ListGroupsProgress(ctx context.Context) ([]entity.GroupProgress, error) {
@@ -18,11 +24,6 @@ func (p ProgressUseCase) ListGroupsProgress(ctx context.Context) ([]entity.Group
 }
 
 func (p ProgressUseCase) GetCardsProgress(ctx context.Context, id entity.GroupId) ([]entity.CardProgress, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (p ProgressUseCase) UpdateProgress(ctx context.Context, card []entity.ReviewCardResult) error {
 	//TODO implement me
 	panic("implement me")
 }

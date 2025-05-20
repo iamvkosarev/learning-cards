@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -27,8 +28,8 @@ func (gr *GroupRepository) ListByUser(ctx context.Context, userId entity.UserId)
 
 	rows, err := gr.db.Query(
 		ctx,
-		`SELECT id, user_id, name, description, created_at, visibility
-		 FROM card_groups
+		`SELECT id, user_id, name, description, visibility, created_at, updated_at
+		 FROM groups
 		 WHERE user_id = $1`,
 		userId,
 	)
@@ -41,7 +42,7 @@ func (gr *GroupRepository) ListByUser(ctx context.Context, userId entity.UserId)
 
 	for rows.Next() {
 		var group entity.Group
-		var visibility int32
+		var visibility uint8
 		var description sql.NullString
 
 		err := rows.Scan(
@@ -49,8 +50,9 @@ func (gr *GroupRepository) ListByUser(ctx context.Context, userId entity.UserId)
 			&group.OwnerId,
 			&group.Name,
 			&description,
-			&group.CreateTime,
 			&visibility,
+			&group.CreateTime,
+			&group.UpdateTime,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("%s: scan error: %w", op, err)
@@ -78,13 +80,14 @@ func (gr *GroupRepository) Add(ctx context.Context, group entity.Group) (entity.
 	var id int64
 	err := gr.db.QueryRow(
 		ctx,
-		`INSERT INTO card_groups (name, user_id, description, visibility)
-		 VALUES ($1, $2, $3, $4)
+		`INSERT INTO groups (user_id, name, description, visibility, update_at)
+		 VALUES ($1, $2, $3, $4, $5)
 		 RETURNING id`,
-		group.Name,
 		group.OwnerId,
+		group.Name,
 		group.Description,
-		int32(group.Visibility),
+		int8(group.Visibility),
+		time.Now(),
 	).Scan(&id)
 
 	if err != nil {
@@ -107,13 +110,13 @@ func (gr *GroupRepository) Get(ctx context.Context, groupId entity.GroupId) (ent
 	const op = "postgres.GroupRepository.Get"
 
 	var group entity.Group
-	var visibility int32
+	var visibility int8
 	var description sql.NullString
 
 	err := gr.db.QueryRow(
 		ctx,
-		`SELECT id, user_id, name, description, created_at, visibility
-		 FROM card_groups
+		`SELECT id, user_id, name, description, visibility, created_at, updated_at
+		 FROM groups
 		 WHERE id = $1`,
 		groupId,
 	).Scan(
@@ -121,8 +124,9 @@ func (gr *GroupRepository) Get(ctx context.Context, groupId entity.GroupId) (ent
 		&group.OwnerId,
 		&group.Name,
 		&description,
-		&group.CreateTime,
 		&visibility,
+		&group.CreateTime,
+		&group.UpdateTime,
 	)
 
 	if err != nil {
@@ -148,14 +152,16 @@ func (gr *GroupRepository) Update(ctx context.Context, group entity.Group) error
 
 	cmdTag, err := gr.db.Exec(
 		ctx,
-		`UPDATE card_groups
+		`UPDATE groups
 		 SET name = $1,
 		     description = $2,
-		     visibility = $3
-		 WHERE id = $4`,
+		     visibility = $3,
+		     update_at = $4
+		 WHERE id = $5`,
 		group.Name,
 		group.Description,
-		int32(group.Visibility),
+		int8(group.Visibility),
+		time.Now(),
 		group.Id,
 	)
 
@@ -175,7 +181,7 @@ func (gr *GroupRepository) Delete(ctx context.Context, groupId entity.GroupId) e
 
 	cmdTag, err := gr.db.Exec(
 		ctx,
-		`DELETE FROM card_groups WHERE id = $1`,
+		`DELETE FROM groups WHERE id = $1`,
 		groupId,
 	)
 

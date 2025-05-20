@@ -2,17 +2,29 @@ package usecase
 
 import (
 	"context"
+	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 )
 
-type ReviewUseCase struct {
+type ReviewUseCaseDeps struct {
+	ProgressReader contracts.ProgressReader
+	ProgressWriter contracts.ProgressWriter
 }
 
-func NewReviewUseCase() *ReviewUseCase {
-	return &ReviewUseCase{}
+type ReviewUseCase struct {
+	ReviewUseCaseDeps
+}
+
+func NewReviewUseCase(deps ReviewUseCaseDeps) *ReviewUseCase {
+	return &ReviewUseCase{deps}
 }
 
 func (r ReviewUseCase) GetReviewCards(ctx context.Context, id entity.GroupId) ([]entity.Card, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r ReviewUseCase) SaveResults(ctx context.Context, answers []entity.ReviewCardResult) error {
 	//TODO implement me
 	panic("implement me")
 }

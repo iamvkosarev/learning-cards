@@ -12,6 +12,7 @@ type Card struct {
 	FrontText  string
 	BackText   string
 	CreateTime time.Time
+	UpdateTime time.Time
 }
 
 type UpdateCard struct {

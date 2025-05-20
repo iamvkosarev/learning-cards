@@ -45,7 +45,7 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, err
 	}
 
-	learningCardsServer, err := prepareLearningCardServer(dbPool, logger)
+	cardService, err := prepareCardService(dbPool, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -65,11 +65,11 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		),
 	)
 
-	pb.RegisterLearningCardsServer(grpcServer, learningCardsServer)
+	pb.RegisterCardServiceServer(grpcServer, cardService)
 
 	gwMux := runtime.NewServeMux()
 
-	err = pb.RegisterLearningCardsHandlerFromEndpoint(
+	err = pb.RegisterCardServiceHandlerFromEndpoint(
 		ctx, gwMux, cfg.Server.GRPCPort,
 		[]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())},
 	)
@@ -140,9 +140,10 @@ func (a *App) Shutdown(ctx context.Context) {
 	a.dbPool.Close()
 }
 
-func prepareLearningCardServer(dbPool *pgxpool.Pool, logger *slog.Logger) (*server.Server, error) {
+func prepareCardService(dbPool *pgxpool.Pool, logger *slog.Logger) (*server.CardService, error) {
 	groupRepo := sqlRepository.NewGroupRepository(dbPool)
 	cardRepo := sqlRepository.NewCardRepository(dbPool)
+	progressRepo := sqlRepository.NewProgressRepository(dbPool)
 
 	verifier := contracts.VerifyFunc(verification.GetUserId)
 
@@ -162,8 +163,17 @@ func prepareLearningCardServer(dbPool *pgxpool.Pool, logger *slog.Logger) (*serv
 		},
 	)
 
-	var progressUseCase server.ProgressUseCase = usecase.NewProgressUseCase()
-	var reviewUseCase server.ReviewUseCase = usecase.NewReviewUseCase()
+	var progressUseCase server.ProgressUseCase = usecase.NewProgressUseCase(
+		usecase.ProgressUseCaseDeps{
+			ProgressReader: progressRepo,
+		},
+	)
+	var reviewUseCase server.ReviewUseCase = usecase.NewReviewUseCase(
+		usecase.ReviewUseCaseDeps{
+			ProgressReader: progressRepo,
+			ProgressWriter: progressRepo,
+		},
+	)
 
 	learningCardsServer := server.NewServer(
 		server.Deps{

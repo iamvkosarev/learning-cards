@@ -11,7 +11,7 @@ const (
 	GROUP_VISIBILITY_UNLISTED
 )
 
-type GroupVisibility int32
+type GroupVisibility uint8
 type GroupId int64
 
 type Group struct {
@@ -20,6 +20,7 @@ type Group struct {
 	Name        string
 	Description string
 	CreateTime  time.Time
+	UpdateTime  time.Time
 	Visibility  GroupVisibility
 }
 
