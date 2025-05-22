@@ -2,7 +2,7 @@
 .idea
 bin
 third_party
-config
+/config/*.yaml
 
 # Pattern files
 *.DS_Store

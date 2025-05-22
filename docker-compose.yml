@@ -1,7 +1,7 @@
 services:
   learning-cards-postgres:
     image: postgres:16.3
-    container_name: learning-cards-postgres-container
+    container_name: learning-cards-postgres
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -19,9 +19,8 @@ services:
     restart: unless-stopped
     networks:
       - net
-
   learning-cards:
-    container_name: learning-cards-container
+    container_name: learning-cards-cards
     image: ${IMAGE_NAME:-learning-cards:local}
     volumes:
       - ./.env:/app/.env
@@ -29,18 +28,43 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: cards
     ports:
-      - "${GRPC_PORT}:${GRPC_PORT}" # gRPC
-      - "${REST_PORT}:${REST_PORT}" # REST
+      - "${CARDS_GRPC_PORT}:${CARDS_GRPC_PORT}"
+      - "${CARDS_REST_PORT}:${CARDS_REST_PORT}"
     working_dir: /app
     environment:
-      DB_URL: "postgres://${DB_USER}:${DB_PASSWORD}@${DB_SERVICE_NAME}:${DB_PORT_INTERNAL}/${DB_NAME}?sslmode=disable"
-      GRPC_PORT: ${GRPC_PORT}
-      REST_PORT: ${REST_PORT}
+      DB_URL: "${LEARNING_CARDS_DB_DNS}"
+      GRPC_PORT: ${CARDS_GRPC_PORT}
+      REST_PORT: ${CARDS_REST_PORT}
     depends_on:
       learning-cards-postgres:
         condition: service_healthy
     command: ["./cards"]
+    networks:
+      - net
+  learning-cards-reviews:
+    container_name: learning-cards-reviews
+    image: ${IMAGE_REVIEWS_NAME:-learning-cards-reviews:local}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: reviews
+    volumes:
+      - ./.env:/app/.env
+      - ./config:/app/config/
+    ports:
+      - "${REVIEWS_GRPC_PORT}:${REVIEWS_GRPC_PORT}"
+      - "${REVIEWS_REST_PORT}:${REVIEWS_REST_PORT}"
+    working_dir: /app
+    environment:
+      DB_URL: "${LEARNING_CARDS_DB_DNS}"
+      GRPC_PORT: ${REVIEWS_GRPC_PORT}
+      REST_PORT: ${REVIEWS_REST_PORT}
+    depends_on:
+      learning-cards-postgres:
+        condition: service_healthy
+    command: [ "./reviews" ]
     networks:
       - net
 

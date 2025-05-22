@@ -10,17 +10,27 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY . .
+COPY ../.. .
 
 RUN go build -o cards ./cmd/cards
+RUN go build -o reviews ./cmd/reviews
 
-# ==== Runtime ====
-FROM scratch
+# ==== Runtime (cards) ====
+FROM scratch AS cards
 
 WORKDIR /
 
 COPY --from=builder /app/cards /cards
 
-EXPOSE ${GRPC_PORT} ${REST_PORT}
-
+EXPOSE ${CARDS_GRPC_PORT} ${CARDS_REST_PORT}
 ENTRYPOINT ["/cards"]
+
+# ==== Runtime (reviews) ====
+FROM scratch AS reviews
+
+WORKDIR /
+
+COPY --from=builder /app/reviews /reviews
+
+EXPOSE ${REVIEWS_GRPC_PORT} ${REVIEWS_REST_PORT}
+ENTRYPOINT ["/reviews"]
