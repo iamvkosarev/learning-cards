@@ -47,7 +47,7 @@ func (cr CardRepository) GetCard(ctx context.Context, cardId entity.CardId) (ent
 
 	err := cr.db.QueryRow(
 		ctx,
-		`SELECT id, group_id, front_text, back_text, created_at, update_at FROM cards WHERE id = $1`,
+		`SELECT id, group_id, front_text, back_text, created_at, updated_at FROM cards WHERE id = $1`,
 		cardId,
 	).Scan(
 		&card.Id,
@@ -73,7 +73,7 @@ func (cr CardRepository) ListCards(ctx context.Context, groupId entity.GroupId) 
 
 	rows, err := cr.db.Query(
 		ctx,
-		`SELECT id, group_id, front_text, back_text, created_at, update_at
+		`SELECT id, group_id, front_text, back_text, created_at, updated_at
 		FROM cards WHERE group_id = $1`, groupId,
 	)
 
@@ -114,7 +114,7 @@ func (cr CardRepository) UpdateCard(ctx context.Context, card entity.Card) error
 		`UPDATE cards
 		 SET front_text = $1,
 		     back_text = $2,
-		     update_at = $3
+		     updated_at = $3
 		 WHERE id = $4`,
 		card.FrontText,
 		card.BackText,

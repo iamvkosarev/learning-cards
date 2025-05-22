@@ -27,6 +27,14 @@ func cardToResponse(card entity.Card) *pb.Card {
 		CreatedAt: card.CreateTime.Format(time.RFC3339),
 	}
 }
+
+func cardToReviewResponse(card entity.Card) *pb.ReviewCard {
+	return &pb.ReviewCard{
+		Id:        int64(card.Id),
+		FrontText: card.FrontText,
+		BackText:  card.BackText,
+	}
+}
 func groupProgressToResponse(groupProgress entity.GroupProgress) *pb.GroupProgress {
 	return &pb.GroupProgress{
 		GroupId:        int64(groupProgress.GroupId),

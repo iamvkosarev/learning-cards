@@ -80,7 +80,7 @@ func (gr *GroupRepository) AddGroup(ctx context.Context, group entity.Group) (en
 	var id int64
 	err := gr.db.QueryRow(
 		ctx,
-		`INSERT INTO groups (user_id, name, description, visibility, update_at)
+		`INSERT INTO groups (user_id, name, description, visibility, updated_at)
 		 VALUES ($1, $2, $3, $4, $5)
 		 RETURNING id`,
 		group.OwnerId,
@@ -156,7 +156,7 @@ func (gr *GroupRepository) UpdateGroup(ctx context.Context, group entity.Group) 
 		 SET name = $1,
 		     description = $2,
 		     visibility = $3,
-		     update_at = $4
+		     updated_at = $4
 		 WHERE id = $5`,
 		group.Name,
 		group.Description,

@@ -56,9 +56,9 @@ func (r *ReviewService) GetReviewCards(ctx context.Context, req *pb.GetReviewCar
 		return nil, err
 	}
 
-	cardsResp := make([]*pb.Card, len(cards))
+	cardsResp := make([]*pb.ReviewCard, len(cards))
 	for i, card := range cards {
-		cardsResp[i] = cardToResponse(card)
+		cardsResp[i] = cardToReviewResponse(card)
 	}
 
 	return &pb.GetReviewCardsResponse{Cards: cardsResp}, nil

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"time"
 )
 
 type ProgressRepository struct {
@@ -32,6 +33,7 @@ func (p ProgressRepository) GetCardsProgress(
 	}
 	defer rows.Close()
 	var cards []entity.CardProgress
+	var avgReviewTime float64
 	for rows.Next() {
 		var card entity.CardProgress
 		err = rows.Scan(
@@ -41,11 +43,12 @@ func (p ProgressRepository) GetCardsProgress(
 			&card.HardCount,
 			&card.GoodCount,
 			&card.EasyCount,
-			&card.AverageReviewTime,
+			&avgReviewTime,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("%s: row scan: %w", op, err)
 		}
+		card.AverageReviewTime = time.Duration(avgReviewTime * float64(time.Second))
 		cards = append(cards, card)
 	}
 	if err = rows.Err(); err != nil {
@@ -96,7 +99,7 @@ func (p ProgressRepository) UpdateCardsProgress(
 			user, group, card.Id,
 			card.LastReviewTime,
 			card.FailsCount, card.HardCount, card.GoodCount, card.EasyCount,
-			card.AverageReviewTime,
+			card.AverageReviewTime.Seconds(),
 		)
 		if err != nil {
 			return fmt.Errorf("%s: exec for card_id %d: %w", op, card.Id, err)
