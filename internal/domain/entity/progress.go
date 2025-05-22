@@ -26,7 +26,6 @@ type CardProgress struct {
 	Id                CardId
 	LastReviewTime    time.Time
 	AverageReviewTime time.Duration
-	Mark              *Mark
 	FailsCount        int
 	HardCount         int
 	GoodCount         int

@@ -18,8 +18,7 @@ const (
 	ANSWER_FAIL
 )
 
-type GroupReviewInfo struct {
-	GroupId    GroupId
+type ReviewSettings struct {
 	CardsCount int
 }
 

@@ -12,15 +12,15 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o server ./cmd/server
+RUN go build -o cards ./cmd/cards
 
 # ==== Runtime ====
 FROM scratch
 
 WORKDIR /
 
-COPY --from=builder /app/server /server
+COPY --from=builder /app/cards /cards
 
 EXPOSE ${GRPC_PORT} ${REST_PORT}
 
-ENTRYPOINT ["/server"]
+ENTRYPOINT ["/cards"]

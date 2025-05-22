@@ -2,19 +2,29 @@ package grpc
 
 import (
 	"context"
+	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"log/slog"
 )
 
 type ReviewUseCase interface {
-	GetReviewCards(ctx context.Context, id entity.GroupId) ([]entity.Card, error)
-	GetGroupReviewInfo(ctx context.Context, id entity.GroupId) (entity.GroupReviewInfo, error)
-	UpdateGroupReviewInfo(ctx context.Context, reviewInfo entity.UpdateGroupReviewInfo) error
-	SaveResults(ctx context.Context, answers []entity.ReviewCardResult) error
+	GetReviewCards(
+		ctx context.Context,
+		userId entity.UserId,
+		groupId entity.GroupId,
+		settings entity.ReviewSettings,
+	) ([]entity.Card, error)
+	AddReviewResults(
+		ctx context.Context, userId entity.UserId, groupId entity.GroupId,
+		answers []entity.ReviewCardResult,
+	) error
 }
 type ReviewServiceDeps struct {
 	ReviewUseCase ReviewUseCase
+	AuthVerifier  contracts.AuthVerifier
+	Logger        *slog.Logger
 }
 
 type ReviewService struct {
@@ -26,40 +36,22 @@ func NewReviewService(deps ReviewServiceDeps) *ReviewService {
 	return &ReviewService{ReviewServiceDeps: deps}
 }
 
-func (r *ReviewService) GetGroupReviewInfo(
-	ctx context.Context,
-	req *pb.GetGroupReviewInfoRequest,
-) (
-	*pb.GetGroupReviewInfoResponse,
+func (r *ReviewService) GetReviewCards(ctx context.Context, req *pb.GetReviewCardsRequest) (
+	*pb.GetReviewCardsResponse,
 	error,
 ) {
-	groupId := entity.GroupId(req.GroupId)
-
-	reviewInfo, err := r.ReviewUseCase.GetGroupReviewInfo(ctx, groupId)
+	userId, err := r.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return &pb.GetGroupReviewInfoResponse{CardsCount: int32(reviewInfo.CardsCount)}, nil
-}
 
-func (r *ReviewService) UpdateGroupReviewInfo(ctx context.Context, req *pb.UpdateGroupReviewInfoRequest) (
-	*emptypb.Empty,
-	error,
-) {
 	groupId := entity.GroupId(req.GroupId)
 
-	reviewInfo := entity.UpdateGroupReviewInfo{GroupId: groupId, CardsCount: int(req.CardsCount)}
-
-	err := r.ReviewUseCase.UpdateGroupReviewInfo(ctx, reviewInfo)
-	if err != nil {
-		return nil, err
+	settings := entity.ReviewSettings{
+		CardsCount: int(req.CardsCount),
 	}
-	return &emptypb.Empty{}, nil
-}
-func (r *ReviewService) GetReview(ctx context.Context, req *pb.GetReviewRequest) (*pb.GetReviewResponse, error) {
-	groupId := entity.GroupId(req.GroupId)
 
-	cards, err := r.ReviewUseCase.GetReviewCards(ctx, groupId)
+	cards, err := r.ReviewUseCase.GetReviewCards(ctx, userId, groupId, settings)
 	if err != nil {
 		return nil, err
 	}
@@ -69,9 +61,19 @@ func (r *ReviewService) GetReview(ctx context.Context, req *pb.GetReviewRequest)
 		cardsResp[i] = cardToResponse(card)
 	}
 
-	return &pb.GetReviewResponse{Cards: cardsResp}, nil
+	return &pb.GetReviewCardsResponse{Cards: cardsResp}, nil
 }
-func (r *ReviewService) SaveReview(ctx context.Context, req *pb.CompleteReviewRequest) (*emptypb.Empty, error) {
+func (r *ReviewService) AddReviewResults(ctx context.Context, req *pb.AddReviewResultsRequest) (
+	*emptypb.Empty,
+	error,
+) {
+	userId, err := r.AuthVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	groupId := entity.GroupId(req.GroupId)
+
 	answers := make([]entity.ReviewCardResult, len(req.GetCardResults()))
 	for i, result := range req.GetCardResults() {
 		answers[i] = entity.ReviewCardResult{
@@ -81,7 +83,7 @@ func (r *ReviewService) SaveReview(ctx context.Context, req *pb.CompleteReviewRe
 		}
 	}
 
-	err := r.ReviewUseCase.SaveResults(ctx, answers)
+	err = r.ReviewUseCase.AddReviewResults(ctx, userId, groupId, answers)
 	if err != nil {
 		return nil, err
 	}

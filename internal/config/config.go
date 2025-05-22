@@ -1,7 +1,6 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
 	"os"
@@ -28,27 +27,31 @@ type SSO struct {
 	LocalUserId int64  `yaml:"local_user_id"`
 }
 
-type Config struct {
-	Env    string `yaml:"env" env-default:"development"`
-	Server `yaml:"server"`
-	SSO    `yaml:"sso"`
+type Database struct {
+	ConnectionStringKey string `yaml:"connection_string_key"`
 }
 
-func Load() (*Config, error) {
-	path := os.Getenv("CONFIG_PATH")
+type Config struct {
+	Env      string `yaml:"env" env-default:"development"`
+	Server   `yaml:"server"`
+	SSO      `yaml:"sso"`
+	Database `yaml:"database"`
+}
+
+func Load(configEnvKey string) (Config, error) {
+	path := os.Getenv(configEnvKey)
 
 	if path == "" {
-
-		return nil, errors.New("CONFIG_PATH environment variable not set")
+		return Config{}, fmt.Errorf("%s environment variable not set", configEnvKey)
 	}
 
 	if _, err := os.Stat(path); err != nil {
-		return nil, fmt.Errorf("CONFIG_PATH does not exist at: %s", path)
+		return Config{}, fmt.Errorf("%s does not exist at: %s", configEnvKey, path)
 	}
 	var config Config
 	err := cleanenv.ReadConfig(path, &config)
 	if err != nil {
-		return nil, fmt.Errorf("failed load config at path %s: %w", path, err)
+		return Config{}, fmt.Errorf("failed load config at path %s: %w", path, err)
 	}
-	return &config, nil
+	return config, nil
 }

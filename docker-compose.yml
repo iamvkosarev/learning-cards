@@ -40,7 +40,7 @@ services:
     depends_on:
       learning-cards-postgres:
         condition: service_healthy
-    command: ["./server"]
+    command: ["./cards"]
     networks:
       - net
 
