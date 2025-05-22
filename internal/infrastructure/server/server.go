@@ -2,35 +2,48 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
+	"github.com/iamvkosarev/learning-cards/internal/app"
 	"github.com/iamvkosarev/learning-cards/internal/config"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/database/postgres"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor/verification"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/http/middleware"
-	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"strings"
 )
 
-type NewServiceFunc[TService any] func(*pgxpool.Pool, *slog.Logger) (TService, error)
+type NewServiceFunc[TService any, TServiceDeps any] func(context.Context, *slog.Logger) (TService, TServiceDeps, error)
 type RegisterServiceFunc[TService any] func(grpc.ServiceRegistrar, TService)
-type NewServerFunc[TServer any] func(config.Config, *grpc.Server, *http.Server, *slog.Logger, *pgxpool.Pool) *TServer
+type RegisterEndpoint func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error
+type NewServerFunc[TServer any, TServiceDeps any] func(TServiceDeps) TServer
 
-func BuildServer[TService any, TServer any](
+type Wrapper struct {
+	Server       app.Server
+	serverConfig config.Server
+	logger       *slog.Logger
+	httpServer   *http.Server
+	grpcServer   *grpc.Server
+	verifier     verification.Verifier
+}
+
+func BuildServer[TService any, TServer app.Server, TServiceDeps any](
 	ctx context.Context, cfg config.Config,
-	newService NewServiceFunc[TService],
+	newService NewServiceFunc[TService, TServiceDeps],
 	registerService RegisterServiceFunc[TService],
-	newServer NewServerFunc[TServer],
+	registerEndPoint RegisterEndpoint,
+	newServer NewServerFunc[TServer, TServiceDeps],
 ) (
-	*TServer,
+	*Wrapper,
 	error,
 ) {
 	logger, err := sl.SetupLogger(cfg.Env)
@@ -38,17 +51,12 @@ func BuildServer[TService any, TServer any](
 		return nil, fmt.Errorf("error setting up logger: %v", err)
 	}
 
-	dbPool, err := ConnectToDbPool(ctx, cfg.Database)
+	service, serviceDeps, err := newService(ctx, logger)
 	if err != nil {
 		return nil, err
 	}
 
-	service, err := newService(dbPool, logger)
-	if err != nil {
-		return nil, err
-	}
-
-	verifier, err := SelectVerifier(cfg.SSO)
+	verifier, err := selectVerifier(cfg.SSO)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +75,7 @@ func BuildServer[TService any, TServer any](
 
 	gwMux := runtime.NewServeMux()
 
-	err = pb.RegisterCardServiceHandlerFromEndpoint(
+	err = registerEndPoint(
 		ctx, gwMux, cfg.Server.GRPCPort,
 		[]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())},
 	)
@@ -76,7 +84,7 @@ func BuildServer[TService any, TServer any](
 		return nil, fmt.Errorf("failed to prepare HTTP gateway: %w", err)
 	}
 
-	httpMux := setupHTTPRouter(gwMux, cfg.Server.RestPrefix)
+	httpMux := setupHTTPRouter(gwMux, cfg.Server)
 
 	corsHandler := middleware.CorsWithOptions(httpMux, cfg.Server.CorsOptions)
 
@@ -87,10 +95,62 @@ func BuildServer[TService any, TServer any](
 		Handler: corsHandler,
 	}
 
-	return newServer(cfg, grpcServer, httpServer, logger, dbPool), nil
+	server := &Wrapper{
+		Server:       newServer(serviceDeps),
+		logger:       logger,
+		serverConfig: cfg.Server,
+		httpServer:   httpServer,
+		grpcServer:   grpcServer,
+		verifier:     verifier,
+	}
+	return server, nil
 }
 
-func SelectVerifier(ssoConfig config.SSO) (verification.Verifier, error) {
+func (w *Wrapper) Start() error {
+	go func() {
+		w.Server.Start()
+	}()
+
+	lis, err := net.Listen("tcp", w.serverConfig.GRPCPort)
+	if err != nil {
+		return fmt.Errorf("error creating gRPC listener: %w", err)
+	}
+
+	go func() {
+		w.logger.Info(fmt.Sprintf("Starting gRPC server on %s", w.serverConfig.GRPCPort))
+		if err := w.grpcServer.Serve(lis); err != nil {
+			w.logger.Error("failed to serve: %v", sl.Err(err))
+		}
+	}()
+
+	w.logger.Info(
+		fmt.Sprintf(
+			"Starting REST gateway on %s%s/v%v/", w.httpServer.Addr, w.serverConfig.RestPrefix, w.serverConfig.Version,
+		),
+	)
+	if err = w.httpServer.ListenAndServe(); err != nil {
+		if !errors.Is(err, http.ErrServerClosed) {
+			return fmt.Errorf("failed to serve HTTP: %w", err)
+		}
+	}
+	return nil
+}
+
+func (w *Wrapper) Shutdown(ctx context.Context) {
+	shutdownCtx, cancel := context.WithTimeout(ctx, w.serverConfig.ShutdownTimeout)
+	defer cancel()
+
+	w.grpcServer.GracefulStop()
+	w.verifier.Close()
+
+	if err := w.httpServer.Shutdown(shutdownCtx); err != nil {
+		w.logger.Error("HTTP server shutdown error", sl.Err(err))
+	}
+
+	w.Server.Shutdown(shutdownCtx)
+}
+
+func selectVerifier(ssoConfig config.SSO) (verification.Verifier, error) {
 	if ssoConfig.UseLocal {
 		return verification.NewStubVerifier(ssoConfig.LocalUserId), nil
 	}
@@ -106,15 +166,15 @@ func ConnectToDbPool(ctx context.Context, database config.Database) (*pgxpool.Po
 	return dbPool, nil
 }
 
-func setupHTTPRouter(gwMux *runtime.ServeMux, restPrefix string) http.Handler {
+func setupHTTPRouter(gwMux *runtime.ServeMux, server config.Server) http.Handler {
 	httpMux := http.NewServeMux()
 
-	const firstVersion = "/v1/"
-	httpMux.Handle(firstVersion, gwMux)
+	version := fmt.Sprintf("/v%v/", server.Version)
+	httpMux.Handle(version, gwMux)
 
 	httpMux.HandleFunc(
-		restPrefix+firstVersion, func(w http.ResponseWriter, r *http.Request) {
-			path := strings.TrimPrefix(r.URL.Path, restPrefix)
+		server.RestPrefix+version, func(w http.ResponseWriter, r *http.Request) {
+			path := strings.TrimPrefix(r.URL.Path, server.RestPrefix)
 			r2 := new(http.Request)
 			*r2 = *r
 			r2.URL.Path = path

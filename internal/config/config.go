@@ -15,6 +15,7 @@ type CorsOptions struct {
 
 type Server struct {
 	RestPrefix      string        `yaml:"rest_prefix"`
+	Version         int           `yaml:"version"`
 	RESTPort        string        `yaml:"rest_port"`
 	GRPCPort        string        `yaml:"grpc_port"`
 	ShutdownTimeout time.Duration `yaml:"shutdown_timeout"`
@@ -32,26 +33,25 @@ type Database struct {
 }
 
 type Config struct {
-	Env      string `yaml:"env" env-default:"development"`
-	Server   `yaml:"server"`
-	SSO      `yaml:"sso"`
-	Database `yaml:"database"`
+	Env    string `yaml:"env" env-default:"development"`
+	Server `yaml:"server"`
+	SSO    `yaml:"sso"`
 }
 
-func Load(configEnvKey string) (Config, error) {
+func Load[TConfig any](configEnvKey string) (*TConfig, error) {
 	path := os.Getenv(configEnvKey)
 
 	if path == "" {
-		return Config{}, fmt.Errorf("%s environment variable not set", configEnvKey)
+		return nil, fmt.Errorf("%s environment variable not set", configEnvKey)
 	}
 
 	if _, err := os.Stat(path); err != nil {
-		return Config{}, fmt.Errorf("%s does not exist at: %s", configEnvKey, path)
+		return nil, fmt.Errorf("%s does not exist at: %s", configEnvKey, path)
 	}
-	var config Config
+	var config TConfig
 	err := cleanenv.ReadConfig(path, &config)
 	if err != nil {
-		return Config{}, fmt.Errorf("failed load config at path %s: %w", path, err)
+		return nil, fmt.Errorf("failed load config at path %s: %w", path, err)
 	}
-	return config, nil
+	return &config, nil
 }
