@@ -25,7 +25,7 @@ func NewGroupUseCase(deps GroupUseCaseDeps) *GroupUseCase {
 	}
 }
 
-func (g *GroupUseCase) Create(
+func (g *GroupUseCase) CreateGroup(
 	ctx context.Context,
 	name, description string,
 	visibility entity.GroupVisibility,
@@ -54,8 +54,8 @@ func (g *GroupUseCase) Create(
 	return groupId, nil
 }
 
-func (g *GroupUseCase) Get(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
-	op := "usecase.GroupUseCase.GetCard"
+func (g *GroupUseCase) GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
+	op := "usecase.GroupUseCase.GetGroup"
 
 	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
@@ -78,7 +78,7 @@ func getGroupAndCheckAccess(
 		return entity.Group{}, err
 	}
 
-	if err := checkViewGroupAccess(userId, group, op); err != nil {
+	if err = checkViewGroupAccess(userId, group, op); err != nil {
 		return entity.Group{}, err
 	}
 	return group, nil
@@ -99,8 +99,8 @@ func (g *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
 	return groups, nil
 }
 
-func (g *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGroup) error {
-	op := "usecase.GroupUseCase.UpdateCard"
+func (g *GroupUseCase) UpdateGroup(ctx context.Context, updateGroup entity.UpdateGroup) error {
+	op := "usecase.GroupUseCase.UpdateGroup"
 
 	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
@@ -135,8 +135,8 @@ func (g *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGrou
 	return nil
 }
 
-func (g *GroupUseCase) Delete(ctx context.Context, groupId entity.GroupId) error {
-	op := "usecase.GroupUseCase.DeleteCard"
+func (g *GroupUseCase) DeleteGroup(ctx context.Context, groupId entity.GroupId) error {
+	op := "usecase.GroupUseCase.DeleteGroup"
 
 	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {

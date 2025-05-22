@@ -10,6 +10,7 @@ import (
 
 type GRPCSSOVerifier struct {
 	client sso_pb.SSOClient
+	conn   *grpc.ClientConn
 }
 
 func NewGRPCVerifier(hostAddress string) (*GRPCSSOVerifier, error) {
@@ -18,7 +19,11 @@ func NewGRPCVerifier(hostAddress string) (*GRPCSSOVerifier, error) {
 		return nil, fmt.Errorf("error creating gRPC client: %w", err)
 	}
 	ssoClient := sso_pb.NewSSOClient(ssoConn)
-	return &GRPCSSOVerifier{client: ssoClient}, nil
+	return &GRPCSSOVerifier{client: ssoClient, conn: ssoConn}, nil
+}
+
+func (g *GRPCSSOVerifier) Close() {
+	g.conn.Close()
 }
 
 func (g *GRPCSSOVerifier) VerifyToken(ctx context.Context, token string) (int64, error) {

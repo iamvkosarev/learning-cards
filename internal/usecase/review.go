@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	"sort"
@@ -39,7 +40,7 @@ func (r *ReviewUseCase) GetReviewCards(
 
 	cardsProgressRow, err := r.ProgressReader.GetCardsProgress(ctx, userId, groupId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%s: error getting card progress: %w", op, err)
 	}
 	cardsProgress := make(map[entity.CardId]entity.CardProgress)
 	for _, card := range cardsProgressRow {
@@ -47,7 +48,7 @@ func (r *ReviewUseCase) GetReviewCards(
 	}
 	cardsRow, err := r.CardReader.ListCards(ctx, groupId)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%s: error getting list of cards: %w", op, err)
 	}
 	cards := make(map[entity.CardId]entity.Card)
 	for _, card := range cardsRow {
@@ -110,8 +111,11 @@ func getSortedByProgressCards(
 	progress map[entity.CardId]entity.CardProgress,
 	used map[entity.CardId]struct{},
 ) []entity.CardId {
-	cards := make([]entity.CardId, len(progress)-len(used))
+	cards := make([]entity.CardId, 0, len(progress)-len(used))
 	for id := range progress {
+		if _, ok := used[id]; ok {
+			continue
+		}
 		cards = append(cards, id)
 	}
 	marks := make(map[entity.CardId]float64)
@@ -186,7 +190,7 @@ func (r *ReviewUseCase) AddReviewResults(
 		cardsProgress[answer.CardId] = cardPr
 	}
 
-	cardsProgressToSave := make([]entity.CardProgress, len(cardsProgress))
+	cardsProgressToSave := make([]entity.CardProgress, 0, len(cardsProgress))
 	for _, progress := range cardsProgress {
 		cardsProgressToSave = append(cardsProgressToSave, progress)
 	}

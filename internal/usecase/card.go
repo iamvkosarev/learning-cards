@@ -82,7 +82,7 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 	entity.CardId,
 	error,
 ) {
-	op := "usecase.CardsUseCase.Create"
+	op := "usecase.CardsUseCase.CreateGroup"
 
 	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
@@ -111,7 +111,7 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 	return cardId, nil
 }
 
-func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard) error {
+func (c *CardsUseCase) UpdateCard(ctx context.Context, updateCard entity.UpdateCard) error {
 	op := "usecase.GroupUseCase.UpdateCard"
 
 	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
@@ -145,7 +145,7 @@ func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard)
 	return nil
 }
 
-func (c *CardsUseCase) Delete(ctx context.Context, id entity.CardId) error {
+func (c *CardsUseCase) DeleteCard(ctx context.Context, id entity.CardId) error {
 	op := "usecase.GroupUseCase.DeleteCard"
 
 	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)

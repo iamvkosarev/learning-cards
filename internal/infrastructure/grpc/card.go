@@ -9,19 +9,22 @@ import (
 )
 
 type GroupUseCase interface {
-	Create(ctx context.Context, name, description string, visibility entity.GroupVisibility) (entity.GroupId, error)
+	CreateGroup(ctx context.Context, name, description string, visibility entity.GroupVisibility) (
+		entity.GroupId,
+		error,
+	)
 	List(ctx context.Context) ([]entity.Group, error)
-	Get(ctx context.Context, id entity.GroupId) (entity.Group, error)
-	Update(ctx context.Context, updateGroup entity.UpdateGroup) error
-	Delete(ctx context.Context, id entity.GroupId) error
+	GetGroup(ctx context.Context, id entity.GroupId) (entity.Group, error)
+	UpdateGroup(ctx context.Context, updateGroup entity.UpdateGroup) error
+	DeleteGroup(ctx context.Context, id entity.GroupId) error
 }
 
 type CardsUseCase interface {
 	Create(ctx context.Context, groupId entity.GroupId, frontText, backText string) (entity.CardId, error)
 	ListCards(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error)
 	GetCard(ctx context.Context, id entity.CardId) (entity.Card, error)
-	Update(ctx context.Context, card entity.UpdateCard) error
-	Delete(ctx context.Context, id entity.CardId) error
+	UpdateCard(ctx context.Context, card entity.UpdateCard) error
+	DeleteCard(ctx context.Context, id entity.CardId) error
 }
 
 type CardServiceDeps struct {
@@ -47,7 +50,7 @@ func (s *CardService) CreateGroup(ctx context.Context, req *pb.CreateGroupReques
 ) {
 
 	visibility := entity.GroupVisibility(req.Visibility)
-	groupId, err := s.GroupUseCase.Create(ctx, req.GroupName, req.Description, visibility)
+	groupId, err := s.GroupUseCase.CreateGroup(ctx, req.GroupName, req.Description, visibility)
 
 	if err != nil {
 		return nil, err
@@ -78,7 +81,7 @@ func (s *CardService) ListGroups(ctx context.Context, _ *pb.ListGroupsRequest) (
 func (s *CardService) GetGroup(ctx context.Context, req *pb.GetGroupRequest) (*pb.GetGroupResponse, error) {
 	groupId := entity.GroupId(req.GroupId)
 
-	group, err := s.GroupUseCase.Get(ctx, groupId)
+	group, err := s.GroupUseCase.GetGroup(ctx, groupId)
 
 	if err != nil {
 		return nil, err
@@ -98,7 +101,7 @@ func (s *CardService) UpdateGroup(ctx context.Context, req *pb.UpdateGroupReques
 		Visibility:  visibility,
 	}
 
-	if err := s.GroupUseCase.Update(ctx, group); err != nil {
+	if err := s.GroupUseCase.UpdateGroup(ctx, group); err != nil {
 		return nil, err
 	}
 
@@ -109,7 +112,7 @@ func (s *CardService) UpdateGroup(ctx context.Context, req *pb.UpdateGroupReques
 func (s *CardService) DeleteGroup(ctx context.Context, req *pb.DeleteGroupRequest) (*emptypb.Empty, error) {
 	groupId := entity.GroupId(req.GroupId)
 
-	if err := s.GroupUseCase.Delete(ctx, groupId); err != nil {
+	if err := s.GroupUseCase.DeleteGroup(ctx, groupId); err != nil {
 		return nil, err
 	}
 
@@ -171,7 +174,7 @@ func (s *CardService) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest)
 	cardId := entity.CardId(req.CardId)
 	card := entity.UpdateCard{Id: cardId, FrontText: req.FrontText, BackText: req.BackText}
 
-	if err := s.CardsUseCase.Update(ctx, card); err != nil {
+	if err := s.CardsUseCase.UpdateCard(ctx, card); err != nil {
 		return nil, err
 	}
 
@@ -182,10 +185,14 @@ func (s *CardService) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest)
 func (s *CardService) DeleteCard(ctx context.Context, req *pb.DeleteCardRequest) (*emptypb.Empty, error) {
 	cardId := entity.CardId(req.CardId)
 
-	if err := s.CardsUseCase.Delete(ctx, cardId); err != nil {
+	if err := s.CardsUseCase.DeleteCard(ctx, cardId); err != nil {
 		return nil, err
 	}
 
 	s.Logger.Info("Card deleted", slog.Int64("cardId", req.CardId))
+	return &emptypb.Empty{}, nil
+}
+
+func (s *CardService) HealthCheck(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return &emptypb.Empty{}, nil
 }

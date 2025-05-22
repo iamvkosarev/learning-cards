@@ -150,6 +150,111 @@ var _ interface {
 	ErrorName() string
 } = GetReviewCardsRequestValidationError{}
 
+// Validate checks the field values on ReviewCard with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ReviewCard) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ReviewCard with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ReviewCardMultiError, or
+// nil if none found.
+func (m *ReviewCard) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ReviewCard) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for FrontText
+
+	// no validation rules for BackText
+
+	if len(errors) > 0 {
+		return ReviewCardMultiError(errors)
+	}
+
+	return nil
+}
+
+// ReviewCardMultiError is an error wrapping multiple validation errors
+// returned by ReviewCard.ValidateAll() if the designated constraints aren't met.
+type ReviewCardMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ReviewCardMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ReviewCardMultiError) AllErrors() []error { return m }
+
+// ReviewCardValidationError is the validation error returned by
+// ReviewCard.Validate if the designated constraints aren't met.
+type ReviewCardValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ReviewCardValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ReviewCardValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ReviewCardValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ReviewCardValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ReviewCardValidationError) ErrorName() string { return "ReviewCardValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ReviewCardValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sReviewCard.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ReviewCardValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ReviewCardValidationError{}
+
 // Validate checks the field values on GetReviewCardsResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

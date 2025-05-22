@@ -3,7 +3,6 @@ syntax = "proto3";
 package learning_cards.v1;
 
 import "google/protobuf/duration.proto";
-import "learning_cards/v1/card.proto";
 import "learning_cards/v1/enum.proto";
 import "validate/validate.proto";
 
@@ -14,8 +13,14 @@ message GetReviewCardsRequest {
     int32 cards_count = 2 [(validate.rules).int32 = {gt: 0}];
 }
 
+message ReviewCard {
+    int64 id = 1;
+    string front_text = 3;
+    string back_text = 4;
+}
+
 message GetReviewCardsResponse {
-    repeated Card cards = 1;
+    repeated ReviewCard cards = 1;
 }
 message ReviewCardResult {
     int64 card_id = 1;

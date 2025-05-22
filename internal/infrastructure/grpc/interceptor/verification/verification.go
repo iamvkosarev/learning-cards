@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"log/slog"
@@ -19,6 +20,7 @@ const (
 
 type Verifier interface {
 	VerifyToken(ctx context.Context, token string) (int64, error)
+	Close()
 }
 
 func Interceptor(log *slog.Logger, verificationService Verifier) grpc.UnaryServerInterceptor {
@@ -28,7 +30,10 @@ func Interceptor(log *slog.Logger, verificationService Verifier) grpc.UnaryServe
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-		token, err := getTokenFormContext(ctx)
+		if info.FullMethod == pb.CardService_HealthCheck_FullMethodName {
+			return nil, nil
+		}
+		token, err := GetTokenFormContext(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -57,18 +62,17 @@ func setUserId(ctx context.Context, userId entity.UserId) context.Context {
 	return context.WithValue(ctx, userIdKey, userId)
 }
 
-func getTokenFormContext(ctx context.Context) (string, error) {
+func GetTokenFormContext(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return "", entity.ErrMetadataIsEmpty
 	}
-
-	values := md[authMetaKey]
-	if len(values) == 0 {
+	authValues := md[authMetaKey]
+	if len(authValues) == 0 {
 		return "", entity.ErrNoAuthHeader
 	}
 
-	parts := strings.SplitN(values[0], " ", 2)
+	parts := strings.SplitN(authValues[0], " ", 2)
 	if len(parts) != 2 || !strings.EqualFold(parts[0], authBearer) {
 		return "", entity.ErrIncorrectAuthHeader
 	}

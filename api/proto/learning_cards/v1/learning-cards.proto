@@ -75,6 +75,8 @@ service CardService {
             delete: "/v1/card/{card_id}"
         };
     };
+
+    rpc HealthCheck (google.protobuf.Empty) returns (google.protobuf.Empty);
 }
 
 service ProgressService {

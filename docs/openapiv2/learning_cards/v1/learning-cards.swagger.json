@@ -689,7 +689,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1Card"
+            "$ref": "#/definitions/v1ReviewCard"
           }
         }
       }
@@ -779,6 +779,21 @@
         "MARK_E"
       ],
       "default": "MARK_NULL"
+    },
+    "v1ReviewCard": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "frontText": {
+          "type": "string"
+        },
+        "backText": {
+          "type": "string"
+        }
+      }
     },
     "v1ReviewCardResult": {
       "type": "object",
