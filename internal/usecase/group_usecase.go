@@ -46,7 +46,7 @@ func (g *GroupUseCase) Create(
 		OwnerId:     userId,
 	}
 
-	groupId, err := g.GroupWriter.Add(ctx, group)
+	groupId, err := g.GroupWriter.AddGroup(ctx, group)
 	if err != nil {
 		return 0, err
 	}
@@ -55,14 +55,25 @@ func (g *GroupUseCase) Create(
 }
 
 func (g *GroupUseCase) Get(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
-	op := "usecase.GroupUseCase.Get"
+	op := "usecase.GroupUseCase.GetCard"
 
 	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return entity.Group{}, err
 	}
 
-	group, err := g.GroupReader.Get(ctx, groupId)
+	group, err := getGroupAndCheckAccess(ctx, userId, groupId, op, g.GroupReader)
+	if err != nil {
+		return entity.Group{}, err
+	}
+	return group, nil
+}
+
+func getGroupAndCheckAccess(
+	ctx context.Context, userId entity.UserId, groupId entity.GroupId, op string,
+	r contracts.GroupReader,
+) (entity.Group, error) {
+	group, err := r.GetGroup(ctx, groupId)
 	if err != nil {
 		return entity.Group{}, err
 	}
@@ -80,7 +91,7 @@ func (g *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
 		return nil, err
 	}
 
-	groups, err := g.GroupReader.ListByUser(ctx, userId)
+	groups, err := g.GroupReader.ListGroups(ctx, userId)
 	if err != nil {
 		return nil, err
 	}
@@ -89,14 +100,14 @@ func (g *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
 }
 
 func (g *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGroup) error {
-	op := "usecase.GroupUseCase.Update"
+	op := "usecase.GroupUseCase.UpdateCard"
 
 	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	group, err := g.GroupReader.Get(ctx, updateGroup.Id)
+	group, err := g.GroupReader.GetGroup(ctx, updateGroup.Id)
 
 	if err != nil {
 		return err
@@ -116,7 +127,7 @@ func (g *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGrou
 		group.Name = updateGroup.Name
 	}
 
-	err = g.GroupWriter.Update(ctx, group)
+	err = g.GroupWriter.UpdateGroup(ctx, group)
 	if err != nil {
 		return err
 	}
@@ -125,14 +136,14 @@ func (g *GroupUseCase) Update(ctx context.Context, updateGroup entity.UpdateGrou
 }
 
 func (g *GroupUseCase) Delete(ctx context.Context, groupId entity.GroupId) error {
-	op := "usecase.GroupUseCase.Delete"
+	op := "usecase.GroupUseCase.DeleteCard"
 
 	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	group, err := g.GroupReader.Get(ctx, groupId)
+	group, err := g.GroupReader.GetGroup(ctx, groupId)
 
 	if err != nil {
 		return err
@@ -142,7 +153,7 @@ func (g *GroupUseCase) Delete(ctx context.Context, groupId entity.GroupId) error
 		return err
 	}
 
-	err = g.GroupWriter.Delete(ctx, groupId)
+	err = g.GroupWriter.DeleteGroup(ctx, groupId)
 	if err != nil {
 		return err
 	}

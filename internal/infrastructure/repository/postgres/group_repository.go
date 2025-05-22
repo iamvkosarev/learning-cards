@@ -23,8 +23,8 @@ func NewGroupRepository(pool *pgxpool.Pool) *GroupRepository {
 	return &GroupRepository{db: pool}
 }
 
-func (gr *GroupRepository) ListByUser(ctx context.Context, userId entity.UserId) ([]entity.Group, error) {
-	const op = "postgres.GroupRepository.List"
+func (gr *GroupRepository) ListGroups(ctx context.Context, userId entity.UserId) ([]entity.Group, error) {
+	const op = "postgres.GroupRepository.ListCards"
 
 	rows, err := gr.db.Query(
 		ctx,
@@ -74,8 +74,8 @@ func (gr *GroupRepository) ListByUser(ctx context.Context, userId entity.UserId)
 	return groups, nil
 }
 
-func (gr *GroupRepository) Add(ctx context.Context, group entity.Group) (entity.GroupId, error) {
-	const op = "postgres.GroupRepository.Add"
+func (gr *GroupRepository) AddGroup(ctx context.Context, group entity.Group) (entity.GroupId, error) {
+	const op = "postgres.GroupRepository.AddCard"
 
 	var id int64
 	err := gr.db.QueryRow(
@@ -106,8 +106,8 @@ func (gr *GroupRepository) Add(ctx context.Context, group entity.Group) (entity.
 	return entity.GroupId(id), nil
 }
 
-func (gr *GroupRepository) Get(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
-	const op = "postgres.GroupRepository.Get"
+func (gr *GroupRepository) GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
+	const op = "postgres.GroupRepository.GetCard"
 
 	var group entity.Group
 	var visibility int8
@@ -147,8 +147,8 @@ func (gr *GroupRepository) Get(ctx context.Context, groupId entity.GroupId) (ent
 	return group, nil
 }
 
-func (gr *GroupRepository) Update(ctx context.Context, group entity.Group) error {
-	const op = "postgres.GroupRepository.Update"
+func (gr *GroupRepository) UpdateGroup(ctx context.Context, group entity.Group) error {
+	const op = "postgres.GroupRepository.UpdateCard"
 
 	cmdTag, err := gr.db.Exec(
 		ctx,
@@ -176,8 +176,8 @@ func (gr *GroupRepository) Update(ctx context.Context, group entity.Group) error
 	return nil
 }
 
-func (gr *GroupRepository) Delete(ctx context.Context, groupId entity.GroupId) error {
-	const op = "postgres.GroupRepository.Delete"
+func (gr *GroupRepository) DeleteGroup(ctx context.Context, groupId entity.GroupId) error {
+	const op = "postgres.GroupRepository.DeleteCard"
 
 	cmdTag, err := gr.db.Exec(
 		ctx,

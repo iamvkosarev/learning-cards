@@ -18,28 +18,26 @@ type GroupUseCase interface {
 
 type CardsUseCase interface {
 	Create(ctx context.Context, groupId entity.GroupId, frontText, backText string) (entity.CardId, error)
-	List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error)
-	Get(ctx context.Context, id entity.CardId) (entity.Card, error)
+	ListCards(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error)
+	GetCard(ctx context.Context, id entity.CardId) (entity.Card, error)
 	Update(ctx context.Context, card entity.UpdateCard) error
 	Delete(ctx context.Context, id entity.CardId) error
 }
 
-type Deps struct {
-	GroupUseCase    GroupUseCase
-	CardsUseCase    CardsUseCase
-	ProgressUseCase ProgressUseCase
-	ReviewUseCase   ReviewUseCase
-	Logger          *slog.Logger
+type CardServiceDeps struct {
+	GroupUseCase GroupUseCase
+	CardsUseCase CardsUseCase
+	Logger       *slog.Logger
 }
 
 type CardService struct {
 	pb.UnimplementedCardServiceServer
-	Deps
+	CardServiceDeps
 }
 
-func NewServer(deps Deps) *CardService {
+func NewCardService(deps CardServiceDeps) *CardService {
 	return &CardService{
-		Deps: deps,
+		CardServiceDeps: deps,
 	}
 }
 
@@ -141,7 +139,7 @@ func (s *CardService) ListCards(ctx context.Context, req *pb.ListCardsRequest) (
 ) {
 
 	groupId := entity.GroupId(req.GroupId)
-	cards, err := s.CardsUseCase.List(ctx, groupId)
+	cards, err := s.CardsUseCase.ListCards(ctx, groupId)
 
 	if err != nil {
 		return nil, err
@@ -159,7 +157,7 @@ func (s *CardService) ListCards(ctx context.Context, req *pb.ListCardsRequest) (
 
 func (s *CardService) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.GetCardResponse, error) {
 	cardId := entity.CardId(req.CardId)
-	card, err := s.CardsUseCase.Get(ctx, cardId)
+	card, err := s.CardsUseCase.GetCard(ctx, cardId)
 
 	if err != nil {
 		return nil, err

@@ -18,8 +18,8 @@ func NewCardRepository(pool *pgxpool.Pool) *CardRepository {
 	return &CardRepository{db: pool}
 }
 
-func (cr CardRepository) Add(ctx context.Context, card entity.Card) (entity.CardId, error) {
-	const op = "postgres.CardRepository.Add"
+func (cr CardRepository) AddCard(ctx context.Context, card entity.Card) (entity.CardId, error) {
+	const op = "postgres.CardRepository.AddCard"
 
 	var id int64
 	err := cr.db.QueryRow(
@@ -40,8 +40,8 @@ func (cr CardRepository) Add(ctx context.Context, card entity.Card) (entity.Card
 	return entity.CardId(id), nil
 }
 
-func (cr CardRepository) Get(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
-	op := "postgres.CardRepository.Get"
+func (cr CardRepository) GetCard(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
+	op := "postgres.CardRepository.GetCard"
 
 	var card entity.Card
 
@@ -68,8 +68,8 @@ func (cr CardRepository) Get(ctx context.Context, cardId entity.CardId) (entity.
 	return card, nil
 }
 
-func (cr CardRepository) List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {
-	op := "postgres.CardRepository.List"
+func (cr CardRepository) ListCards(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {
+	op := "postgres.CardRepository.ListCards"
 
 	rows, err := cr.db.Query(
 		ctx,
@@ -86,7 +86,7 @@ func (cr CardRepository) List(ctx context.Context, groupId entity.GroupId) ([]en
 
 	for rows.Next() {
 		var card entity.Card
-		err := rows.Scan(
+		err = rows.Scan(
 			&card.Id,
 			&card.GroupId,
 			&card.FrontText,
@@ -106,8 +106,8 @@ func (cr CardRepository) List(ctx context.Context, groupId entity.GroupId) ([]en
 	return cards, nil
 }
 
-func (cr CardRepository) Update(ctx context.Context, card entity.Card) error {
-	op := "postgres.CardRepository.Update"
+func (cr CardRepository) UpdateCard(ctx context.Context, card entity.Card) error {
+	op := "postgres.CardRepository.UpdateCard"
 
 	cmdTag, err := cr.db.Exec(
 		ctx,
@@ -133,8 +133,8 @@ func (cr CardRepository) Update(ctx context.Context, card entity.Card) error {
 	return nil
 }
 
-func (cr CardRepository) Delete(ctx context.Context, cardId entity.CardId) error {
-	const op = "postgres.CardRepository.Delete"
+func (cr CardRepository) DeleteCard(ctx context.Context, cardId entity.CardId) error {
+	const op = "postgres.CardRepository.DeleteCard"
 
 	cmdTag, err := cr.db.Exec(
 		ctx,

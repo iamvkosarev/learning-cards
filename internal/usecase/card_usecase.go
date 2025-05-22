@@ -26,20 +26,20 @@ func NewCardsUseCase(deps CardsUseCaseDeps) *CardsUseCase {
 	}
 }
 
-func (c *CardsUseCase) Get(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
-	op := "usecase.CardsUseCase.Get"
+func (c *CardsUseCase) GetCard(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
+	op := "usecase.CardsUseCase.GetCard"
 
 	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return entity.Card{}, err
 	}
 
-	card, err := c.CardReader.Get(ctx, cardId)
+	card, err := c.CardReader.GetCard(ctx, cardId)
 	if err != nil {
 		return entity.Card{}, err
 	}
 
-	group, err := c.GroupReader.Get(ctx, card.GroupId)
+	group, err := c.GroupReader.GetGroup(ctx, card.GroupId)
 	if err != nil {
 		return entity.Card{}, err
 	}
@@ -52,8 +52,8 @@ func (c *CardsUseCase) Get(ctx context.Context, cardId entity.CardId) (entity.Ca
 
 }
 
-func (c *CardsUseCase) List(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {
-	op := "usecase.CardsUseCase.List"
+func (c *CardsUseCase) ListCards(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {
+	op := "usecase.CardsUseCase.ListCards"
 
 	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
@@ -63,7 +63,7 @@ func (c *CardsUseCase) List(ctx context.Context, groupId entity.GroupId) ([]enti
 	if err != nil {
 		return nil, err
 	}
-	group, err := c.GroupReader.Get(ctx, groupId)
+	group, err := c.GroupReader.GetGroup(ctx, groupId)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *CardsUseCase) List(ctx context.Context, groupId entity.GroupId) ([]enti
 	if err := checkViewGroupAccess(userId, group, op); err != nil {
 		return nil, err
 	}
-	cards, err := c.CardReader.List(ctx, groupId)
+	cards, err := c.CardReader.ListCards(ctx, groupId)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +89,7 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 		return 0, err
 	}
 
-	group, err := c.GroupReader.Get(ctx, groupId)
+	group, err := c.GroupReader.GetGroup(ctx, groupId)
 	if err != nil {
 		return 0, err
 	}
@@ -104,7 +104,7 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 		FrontText: frontText,
 		BackText:  backText,
 	}
-	cardId, err := c.CardWriter.Add(ctx, card)
+	cardId, err := c.CardWriter.AddCard(ctx, card)
 	if err != nil {
 		return 0, err
 	}
@@ -112,19 +112,19 @@ func (c *CardsUseCase) Create(ctx context.Context, groupId entity.GroupId, front
 }
 
 func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard) error {
-	op := "usecase.GroupUseCase.Update"
+	op := "usecase.GroupUseCase.UpdateCard"
 
 	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	card, err := c.CardReader.Get(ctx, updateCard.Id)
+	card, err := c.CardReader.GetCard(ctx, updateCard.Id)
 	if err != nil {
 		return err
 	}
 
-	group, err := c.GroupReader.Get(ctx, card.GroupId)
+	group, err := c.GroupReader.GetGroup(ctx, card.GroupId)
 
 	if err != nil {
 		return err
@@ -137,7 +137,7 @@ func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard)
 	card.FrontText = updateCard.FrontText
 	card.BackText = updateCard.BackText
 
-	err = c.CardWriter.Update(ctx, card)
+	err = c.CardWriter.UpdateCard(ctx, card)
 	if err != nil {
 		return err
 	}
@@ -146,19 +146,19 @@ func (c *CardsUseCase) Update(ctx context.Context, updateCard entity.UpdateCard)
 }
 
 func (c *CardsUseCase) Delete(ctx context.Context, id entity.CardId) error {
-	op := "usecase.GroupUseCase.Delete"
+	op := "usecase.GroupUseCase.DeleteCard"
 
 	userId, err := c.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	card, err := c.CardReader.Get(ctx, id)
+	card, err := c.CardReader.GetCard(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	group, err := c.GroupReader.Get(ctx, card.GroupId)
+	group, err := c.GroupReader.GetGroup(ctx, card.GroupId)
 
 	if err != nil {
 		return err
@@ -168,7 +168,7 @@ func (c *CardsUseCase) Delete(ctx context.Context, id entity.CardId) error {
 		return err
 	}
 
-	err = c.CardWriter.Delete(ctx, id)
+	err = c.CardWriter.DeleteCard(ctx, id)
 	if err != nil {
 		return err
 	}
