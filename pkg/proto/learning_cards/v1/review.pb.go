@@ -7,6 +7,7 @@
 package learning_cards
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -22,95 +23,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type GetGroupReviewInfoRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetGroupReviewInfoRequest) Reset() {
-	*x = GetGroupReviewInfoRequest{}
-	mi := &file_learning_cards_v1_review_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetGroupReviewInfoRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetGroupReviewInfoRequest) ProtoMessage() {}
-
-func (x *GetGroupReviewInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_review_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetGroupReviewInfoRequest.ProtoReflect.Descriptor instead.
-func (*GetGroupReviewInfoRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *GetGroupReviewInfoRequest) GetGroupId() int64 {
-	if x != nil {
-		return x.GroupId
-	}
-	return 0
-}
-
-type GetGroupReviewInfoResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CardsCount    int32                  `protobuf:"varint,1,opt,name=cards_count,json=cardsCount,proto3" json:"cards_count,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetGroupReviewInfoResponse) Reset() {
-	*x = GetGroupReviewInfoResponse{}
-	mi := &file_learning_cards_v1_review_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetGroupReviewInfoResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetGroupReviewInfoResponse) ProtoMessage() {}
-
-func (x *GetGroupReviewInfoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_review_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetGroupReviewInfoResponse.ProtoReflect.Descriptor instead.
-func (*GetGroupReviewInfoResponse) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *GetGroupReviewInfoResponse) GetCardsCount() int32 {
-	if x != nil {
-		return x.CardsCount
-	}
-	return 0
-}
-
-type UpdateGroupReviewInfoRequest struct {
+type GetReviewCardsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
 	CardsCount    int32                  `protobuf:"varint,2,opt,name=cards_count,json=cardsCount,proto3" json:"cards_count,omitempty"`
@@ -118,21 +31,21 @@ type UpdateGroupReviewInfoRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateGroupReviewInfoRequest) Reset() {
-	*x = UpdateGroupReviewInfoRequest{}
-	mi := &file_learning_cards_v1_review_proto_msgTypes[2]
+func (x *GetReviewCardsRequest) Reset() {
+	*x = GetReviewCardsRequest{}
+	mi := &file_learning_cards_v1_review_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateGroupReviewInfoRequest) String() string {
+func (x *GetReviewCardsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateGroupReviewInfoRequest) ProtoMessage() {}
+func (*GetReviewCardsRequest) ProtoMessage() {}
 
-func (x *UpdateGroupReviewInfoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_review_proto_msgTypes[2]
+func (x *GetReviewCardsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_learning_cards_v1_review_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -143,91 +56,47 @@ func (x *UpdateGroupReviewInfoRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateGroupReviewInfoRequest.ProtoReflect.Descriptor instead.
-func (*UpdateGroupReviewInfoRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use GetReviewCardsRequest.ProtoReflect.Descriptor instead.
+func (*GetReviewCardsRequest) Descriptor() ([]byte, []int) {
+	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UpdateGroupReviewInfoRequest) GetGroupId() int64 {
+func (x *GetReviewCardsRequest) GetGroupId() int64 {
 	if x != nil {
 		return x.GroupId
 	}
 	return 0
 }
 
-func (x *UpdateGroupReviewInfoRequest) GetCardsCount() int32 {
+func (x *GetReviewCardsRequest) GetCardsCount() int32 {
 	if x != nil {
 		return x.CardsCount
 	}
 	return 0
 }
 
-type GetReviewRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetReviewRequest) Reset() {
-	*x = GetReviewRequest{}
-	mi := &file_learning_cards_v1_review_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetReviewRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetReviewRequest) ProtoMessage() {}
-
-func (x *GetReviewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_review_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetReviewRequest.ProtoReflect.Descriptor instead.
-func (*GetReviewRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *GetReviewRequest) GetGroupId() int64 {
-	if x != nil {
-		return x.GroupId
-	}
-	return 0
-}
-
-type GetReviewResponse struct {
+type GetReviewCardsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Cards         []*Card                `protobuf:"bytes,1,rep,name=cards,proto3" json:"cards,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetReviewResponse) Reset() {
-	*x = GetReviewResponse{}
-	mi := &file_learning_cards_v1_review_proto_msgTypes[4]
+func (x *GetReviewCardsResponse) Reset() {
+	*x = GetReviewCardsResponse{}
+	mi := &file_learning_cards_v1_review_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetReviewResponse) String() string {
+func (x *GetReviewCardsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetReviewResponse) ProtoMessage() {}
+func (*GetReviewCardsResponse) ProtoMessage() {}
 
-func (x *GetReviewResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_review_proto_msgTypes[4]
+func (x *GetReviewCardsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_learning_cards_v1_review_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -238,12 +107,12 @@ func (x *GetReviewResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetReviewResponse.ProtoReflect.Descriptor instead.
-func (*GetReviewResponse) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{4}
+// Deprecated: Use GetReviewCardsResponse.ProtoReflect.Descriptor instead.
+func (*GetReviewCardsResponse) Descriptor() ([]byte, []int) {
+	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetReviewResponse) GetCards() []*Card {
+func (x *GetReviewCardsResponse) GetCards() []*Card {
 	if x != nil {
 		return x.Cards
 	}
@@ -261,7 +130,7 @@ type ReviewCardResult struct {
 
 func (x *ReviewCardResult) Reset() {
 	*x = ReviewCardResult{}
-	mi := &file_learning_cards_v1_review_proto_msgTypes[5]
+	mi := &file_learning_cards_v1_review_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -273,7 +142,7 @@ func (x *ReviewCardResult) String() string {
 func (*ReviewCardResult) ProtoMessage() {}
 
 func (x *ReviewCardResult) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_review_proto_msgTypes[5]
+	mi := &file_learning_cards_v1_review_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -286,7 +155,7 @@ func (x *ReviewCardResult) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReviewCardResult.ProtoReflect.Descriptor instead.
 func (*ReviewCardResult) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{5}
+	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ReviewCardResult) GetCardId() int64 {
@@ -310,7 +179,7 @@ func (x *ReviewCardResult) GetDuration() *durationpb.Duration {
 	return nil
 }
 
-type CompleteReviewRequest struct {
+type AddReviewResultsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
 	CardResults   []*ReviewCardResult    `protobuf:"bytes,2,rep,name=card_results,json=cardResults,proto3" json:"card_results,omitempty"`
@@ -319,21 +188,21 @@ type CompleteReviewRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CompleteReviewRequest) Reset() {
-	*x = CompleteReviewRequest{}
-	mi := &file_learning_cards_v1_review_proto_msgTypes[6]
+func (x *AddReviewResultsRequest) Reset() {
+	*x = AddReviewResultsRequest{}
+	mi := &file_learning_cards_v1_review_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CompleteReviewRequest) String() string {
+func (x *AddReviewResultsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CompleteReviewRequest) ProtoMessage() {}
+func (*AddReviewResultsRequest) ProtoMessage() {}
 
-func (x *CompleteReviewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_review_proto_msgTypes[6]
+func (x *AddReviewResultsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_learning_cards_v1_review_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -344,26 +213,26 @@ func (x *CompleteReviewRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CompleteReviewRequest.ProtoReflect.Descriptor instead.
-func (*CompleteReviewRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{6}
+// Deprecated: Use AddReviewResultsRequest.ProtoReflect.Descriptor instead.
+func (*AddReviewResultsRequest) Descriptor() ([]byte, []int) {
+	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CompleteReviewRequest) GetGroupId() int64 {
+func (x *AddReviewResultsRequest) GetGroupId() int64 {
 	if x != nil {
 		return x.GroupId
 	}
 	return 0
 }
 
-func (x *CompleteReviewRequest) GetCardResults() []*ReviewCardResult {
+func (x *AddReviewResultsRequest) GetCardResults() []*ReviewCardResult {
 	if x != nil {
 		return x.CardResults
 	}
 	return nil
 }
 
-func (x *CompleteReviewRequest) GetCheckDuration() bool {
+func (x *AddReviewResultsRequest) GetCheckDuration() bool {
 	if x != nil {
 		return x.CheckDuration
 	}
@@ -374,26 +243,19 @@ var File_learning_cards_v1_review_proto protoreflect.FileDescriptor
 
 const file_learning_cards_v1_review_proto_rawDesc = "" +
 	"\n" +
-	"\x1elearning_cards/v1/review.proto\x12\x11learning_cards.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1clearning_cards/v1/card.proto\x1a\x1clearning_cards/v1/enum.proto\"6\n" +
-	"\x19GetGroupReviewInfoRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\"=\n" +
-	"\x1aGetGroupReviewInfoResponse\x12\x1f\n" +
-	"\vcards_count\x18\x01 \x01(\x05R\n" +
-	"cardsCount\"Z\n" +
-	"\x1cUpdateGroupReviewInfoRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x1f\n" +
-	"\vcards_count\x18\x02 \x01(\x05R\n" +
-	"cardsCount\"-\n" +
-	"\x10GetReviewRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\"B\n" +
-	"\x11GetReviewResponse\x12-\n" +
+	"\x1elearning_cards/v1/review.proto\x12\x11learning_cards.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1clearning_cards/v1/card.proto\x1a\x1clearning_cards/v1/enum.proto\x1a\x17validate/validate.proto\"\\\n" +
+	"\x15GetReviewCardsRequest\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12(\n" +
+	"\vcards_count\x18\x02 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\n" +
+	"cardsCount\"G\n" +
+	"\x16GetReviewCardsResponse\x12-\n" +
 	"\x05cards\x18\x01 \x03(\v2\x17.learning_cards.v1.CardR\x05cards\"\xa2\x01\n" +
 	"\x10ReviewCardResult\x12\x17\n" +
 	"\acard_id\x18\x01 \x01(\x03R\x06cardId\x12>\n" +
 	"\vcard_answer\x18\x02 \x01(\x0e2\x1d.learning_cards.v1.CardAnswerR\n" +
 	"cardAnswer\x125\n" +
-	"\bduration\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\bduration\"\xa1\x01\n" +
-	"\x15CompleteReviewRequest\x12\x19\n" +
+	"\bduration\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\bduration\"\xa3\x01\n" +
+	"\x17AddReviewResultsRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12F\n" +
 	"\fcard_results\x18\x02 \x03(\v2#.learning_cards.v1.ReviewCardResultR\vcardResults\x12%\n" +
 	"\x0echeck_duration\x18\x03 \x01(\bR\rcheckDurationBRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
@@ -410,24 +272,21 @@ func file_learning_cards_v1_review_proto_rawDescGZIP() []byte {
 	return file_learning_cards_v1_review_proto_rawDescData
 }
 
-var file_learning_cards_v1_review_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_learning_cards_v1_review_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_learning_cards_v1_review_proto_goTypes = []any{
-	(*GetGroupReviewInfoRequest)(nil),    // 0: learning_cards.v1.GetGroupReviewInfoRequest
-	(*GetGroupReviewInfoResponse)(nil),   // 1: learning_cards.v1.GetGroupReviewInfoResponse
-	(*UpdateGroupReviewInfoRequest)(nil), // 2: learning_cards.v1.UpdateGroupReviewInfoRequest
-	(*GetReviewRequest)(nil),             // 3: learning_cards.v1.GetReviewRequest
-	(*GetReviewResponse)(nil),            // 4: learning_cards.v1.GetReviewResponse
-	(*ReviewCardResult)(nil),             // 5: learning_cards.v1.ReviewCardResult
-	(*CompleteReviewRequest)(nil),        // 6: learning_cards.v1.CompleteReviewRequest
-	(*Card)(nil),                         // 7: learning_cards.v1.Card
-	(CardAnswer)(0),                      // 8: learning_cards.v1.CardAnswer
-	(*durationpb.Duration)(nil),          // 9: google.protobuf.Duration
+	(*GetReviewCardsRequest)(nil),   // 0: learning_cards.v1.GetReviewCardsRequest
+	(*GetReviewCardsResponse)(nil),  // 1: learning_cards.v1.GetReviewCardsResponse
+	(*ReviewCardResult)(nil),        // 2: learning_cards.v1.ReviewCardResult
+	(*AddReviewResultsRequest)(nil), // 3: learning_cards.v1.AddReviewResultsRequest
+	(*Card)(nil),                    // 4: learning_cards.v1.Card
+	(CardAnswer)(0),                 // 5: learning_cards.v1.CardAnswer
+	(*durationpb.Duration)(nil),     // 6: google.protobuf.Duration
 }
 var file_learning_cards_v1_review_proto_depIdxs = []int32{
-	7, // 0: learning_cards.v1.GetReviewResponse.cards:type_name -> learning_cards.v1.Card
-	8, // 1: learning_cards.v1.ReviewCardResult.card_answer:type_name -> learning_cards.v1.CardAnswer
-	9, // 2: learning_cards.v1.ReviewCardResult.duration:type_name -> google.protobuf.Duration
-	5, // 3: learning_cards.v1.CompleteReviewRequest.card_results:type_name -> learning_cards.v1.ReviewCardResult
+	4, // 0: learning_cards.v1.GetReviewCardsResponse.cards:type_name -> learning_cards.v1.Card
+	5, // 1: learning_cards.v1.ReviewCardResult.card_answer:type_name -> learning_cards.v1.CardAnswer
+	6, // 2: learning_cards.v1.ReviewCardResult.duration:type_name -> google.protobuf.Duration
+	2, // 3: learning_cards.v1.AddReviewResultsRequest.card_results:type_name -> learning_cards.v1.ReviewCardResult
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -448,7 +307,7 @@ func file_learning_cards_v1_review_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_learning_cards_v1_review_proto_rawDesc), len(file_learning_cards_v1_review_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

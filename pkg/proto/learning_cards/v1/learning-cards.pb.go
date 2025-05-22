@@ -43,42 +43,36 @@ const file_learning_cards_v1_learning_cards_proto_rawDesc = "" +
 	"DeleteCard\x12$.learning_cards.v1.DeleteCardRequest\x1a\x16.google.protobuf.Empty\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/v1/card/{card_id}2\xad\x02\n" +
 	"\x0fProgressService\x12\x87\x01\n" +
 	"\x12ListGroupsProgress\x12,.learning_cards.v1.ListGroupsProgressRequest\x1a-.learning_cards.v1.ListGroupsProgressResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/v1/progress\x12\x8f\x01\n" +
-	"\x11ListCardsProgress\x12+.learning_cards.v1.ListCardsProgressRequest\x1a,.learning_cards.v1.ListCardsProgressResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/v1/progress/{group_id}2\xa2\x04\n" +
-	"\rReviewService\x12\x99\x01\n" +
-	"\x12GetGroupReviewInfo\x12,.learning_cards.v1.GetGroupReviewInfoRequest\x1a-.learning_cards.v1.GetGroupReviewInfoResponse\"&\x82\xd3\xe4\x93\x02 \x12\x1e/v1/review/{group_id}/settings\x12\x8b\x01\n" +
-	"\x15UpdateGroupReviewInfo\x12/.learning_cards.v1.UpdateGroupReviewInfoRequest\x1a\x16.google.protobuf.Empty\")\x82\xd3\xe4\x93\x02#:\x01*\x1a\x1e/v1/review/{group_id}/settings\x12u\n" +
-	"\tGetReview\x12#.learning_cards.v1.GetReviewRequest\x1a$.learning_cards.v1.GetReviewResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/v1/review/{group_id}\x12p\n" +
-	"\n" +
-	"SaveReview\x12(.learning_cards.v1.CompleteReviewRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/v1/review/{group_id}BRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
+	"\x11ListCardsProgress\x12+.learning_cards.v1.ListCardsProgressRequest\x1a,.learning_cards.v1.ListCardsProgressResponse\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17/v1/progress/{group_id}2\xa0\x02\n" +
+	"\rReviewService\x12\x8d\x01\n" +
+	"\x0eGetReviewCards\x12(.learning_cards.v1.GetReviewCardsRequest\x1a).learning_cards.v1.GetReviewCardsResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/v1/review/{group_id}/cards\x12\x7f\n" +
+	"\x10AddReviewResults\x12*.learning_cards.v1.AddReviewResultsRequest\x1a\x16.google.protobuf.Empty\"'\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/v1/review/{group_id}/resultBRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
 
 var file_learning_cards_v1_learning_cards_proto_goTypes = []any{
-	(*CreateGroupRequest)(nil),           // 0: learning_cards.v1.CreateGroupRequest
-	(*ListGroupsRequest)(nil),            // 1: learning_cards.v1.ListGroupsRequest
-	(*GetGroupRequest)(nil),              // 2: learning_cards.v1.GetGroupRequest
-	(*UpdateGroupRequest)(nil),           // 3: learning_cards.v1.UpdateGroupRequest
-	(*DeleteGroupRequest)(nil),           // 4: learning_cards.v1.DeleteGroupRequest
-	(*AddCardRequest)(nil),               // 5: learning_cards.v1.AddCardRequest
-	(*ListCardsRequest)(nil),             // 6: learning_cards.v1.ListCardsRequest
-	(*GetCardRequest)(nil),               // 7: learning_cards.v1.GetCardRequest
-	(*UpdateCardRequest)(nil),            // 8: learning_cards.v1.UpdateCardRequest
-	(*DeleteCardRequest)(nil),            // 9: learning_cards.v1.DeleteCardRequest
-	(*ListGroupsProgressRequest)(nil),    // 10: learning_cards.v1.ListGroupsProgressRequest
-	(*ListCardsProgressRequest)(nil),     // 11: learning_cards.v1.ListCardsProgressRequest
-	(*GetGroupReviewInfoRequest)(nil),    // 12: learning_cards.v1.GetGroupReviewInfoRequest
-	(*UpdateGroupReviewInfoRequest)(nil), // 13: learning_cards.v1.UpdateGroupReviewInfoRequest
-	(*GetReviewRequest)(nil),             // 14: learning_cards.v1.GetReviewRequest
-	(*CompleteReviewRequest)(nil),        // 15: learning_cards.v1.CompleteReviewRequest
-	(*CreateGroupResponse)(nil),          // 16: learning_cards.v1.CreateGroupResponse
-	(*ListGroupsResponse)(nil),           // 17: learning_cards.v1.ListGroupsResponse
-	(*GetGroupResponse)(nil),             // 18: learning_cards.v1.GetGroupResponse
-	(*emptypb.Empty)(nil),                // 19: google.protobuf.Empty
-	(*AddCardResponse)(nil),              // 20: learning_cards.v1.AddCardResponse
-	(*ListCardsResponse)(nil),            // 21: learning_cards.v1.ListCardsResponse
-	(*GetCardResponse)(nil),              // 22: learning_cards.v1.GetCardResponse
-	(*ListGroupsProgressResponse)(nil),   // 23: learning_cards.v1.ListGroupsProgressResponse
-	(*ListCardsProgressResponse)(nil),    // 24: learning_cards.v1.ListCardsProgressResponse
-	(*GetGroupReviewInfoResponse)(nil),   // 25: learning_cards.v1.GetGroupReviewInfoResponse
-	(*GetReviewResponse)(nil),            // 26: learning_cards.v1.GetReviewResponse
+	(*CreateGroupRequest)(nil),         // 0: learning_cards.v1.CreateGroupRequest
+	(*ListGroupsRequest)(nil),          // 1: learning_cards.v1.ListGroupsRequest
+	(*GetGroupRequest)(nil),            // 2: learning_cards.v1.GetGroupRequest
+	(*UpdateGroupRequest)(nil),         // 3: learning_cards.v1.UpdateGroupRequest
+	(*DeleteGroupRequest)(nil),         // 4: learning_cards.v1.DeleteGroupRequest
+	(*AddCardRequest)(nil),             // 5: learning_cards.v1.AddCardRequest
+	(*ListCardsRequest)(nil),           // 6: learning_cards.v1.ListCardsRequest
+	(*GetCardRequest)(nil),             // 7: learning_cards.v1.GetCardRequest
+	(*UpdateCardRequest)(nil),          // 8: learning_cards.v1.UpdateCardRequest
+	(*DeleteCardRequest)(nil),          // 9: learning_cards.v1.DeleteCardRequest
+	(*ListGroupsProgressRequest)(nil),  // 10: learning_cards.v1.ListGroupsProgressRequest
+	(*ListCardsProgressRequest)(nil),   // 11: learning_cards.v1.ListCardsProgressRequest
+	(*GetReviewCardsRequest)(nil),      // 12: learning_cards.v1.GetReviewCardsRequest
+	(*AddReviewResultsRequest)(nil),    // 13: learning_cards.v1.AddReviewResultsRequest
+	(*CreateGroupResponse)(nil),        // 14: learning_cards.v1.CreateGroupResponse
+	(*ListGroupsResponse)(nil),         // 15: learning_cards.v1.ListGroupsResponse
+	(*GetGroupResponse)(nil),           // 16: learning_cards.v1.GetGroupResponse
+	(*emptypb.Empty)(nil),              // 17: google.protobuf.Empty
+	(*AddCardResponse)(nil),            // 18: learning_cards.v1.AddCardResponse
+	(*ListCardsResponse)(nil),          // 19: learning_cards.v1.ListCardsResponse
+	(*GetCardResponse)(nil),            // 20: learning_cards.v1.GetCardResponse
+	(*ListGroupsProgressResponse)(nil), // 21: learning_cards.v1.ListGroupsProgressResponse
+	(*ListCardsProgressResponse)(nil),  // 22: learning_cards.v1.ListCardsProgressResponse
+	(*GetReviewCardsResponse)(nil),     // 23: learning_cards.v1.GetReviewCardsResponse
 }
 var file_learning_cards_v1_learning_cards_proto_depIdxs = []int32{
 	0,  // 0: learning_cards.v1.CardService.CreateGroup:input_type -> learning_cards.v1.CreateGroupRequest
@@ -93,28 +87,24 @@ var file_learning_cards_v1_learning_cards_proto_depIdxs = []int32{
 	9,  // 9: learning_cards.v1.CardService.DeleteCard:input_type -> learning_cards.v1.DeleteCardRequest
 	10, // 10: learning_cards.v1.ProgressService.ListGroupsProgress:input_type -> learning_cards.v1.ListGroupsProgressRequest
 	11, // 11: learning_cards.v1.ProgressService.ListCardsProgress:input_type -> learning_cards.v1.ListCardsProgressRequest
-	12, // 12: learning_cards.v1.ReviewService.GetGroupReviewInfo:input_type -> learning_cards.v1.GetGroupReviewInfoRequest
-	13, // 13: learning_cards.v1.ReviewService.UpdateGroupReviewInfo:input_type -> learning_cards.v1.UpdateGroupReviewInfoRequest
-	14, // 14: learning_cards.v1.ReviewService.GetReview:input_type -> learning_cards.v1.GetReviewRequest
-	15, // 15: learning_cards.v1.ReviewService.SaveReview:input_type -> learning_cards.v1.CompleteReviewRequest
-	16, // 16: learning_cards.v1.CardService.CreateGroup:output_type -> learning_cards.v1.CreateGroupResponse
-	17, // 17: learning_cards.v1.CardService.ListGroups:output_type -> learning_cards.v1.ListGroupsResponse
-	18, // 18: learning_cards.v1.CardService.GetGroup:output_type -> learning_cards.v1.GetGroupResponse
-	19, // 19: learning_cards.v1.CardService.UpdateGroup:output_type -> google.protobuf.Empty
-	19, // 20: learning_cards.v1.CardService.DeleteGroup:output_type -> google.protobuf.Empty
-	20, // 21: learning_cards.v1.CardService.AddCard:output_type -> learning_cards.v1.AddCardResponse
-	21, // 22: learning_cards.v1.CardService.ListCards:output_type -> learning_cards.v1.ListCardsResponse
-	22, // 23: learning_cards.v1.CardService.GetCard:output_type -> learning_cards.v1.GetCardResponse
-	19, // 24: learning_cards.v1.CardService.UpdateCard:output_type -> google.protobuf.Empty
-	19, // 25: learning_cards.v1.CardService.DeleteCard:output_type -> google.protobuf.Empty
-	23, // 26: learning_cards.v1.ProgressService.ListGroupsProgress:output_type -> learning_cards.v1.ListGroupsProgressResponse
-	24, // 27: learning_cards.v1.ProgressService.ListCardsProgress:output_type -> learning_cards.v1.ListCardsProgressResponse
-	25, // 28: learning_cards.v1.ReviewService.GetGroupReviewInfo:output_type -> learning_cards.v1.GetGroupReviewInfoResponse
-	19, // 29: learning_cards.v1.ReviewService.UpdateGroupReviewInfo:output_type -> google.protobuf.Empty
-	26, // 30: learning_cards.v1.ReviewService.GetReview:output_type -> learning_cards.v1.GetReviewResponse
-	19, // 31: learning_cards.v1.ReviewService.SaveReview:output_type -> google.protobuf.Empty
-	16, // [16:32] is the sub-list for method output_type
-	0,  // [0:16] is the sub-list for method input_type
+	12, // 12: learning_cards.v1.ReviewService.GetReviewCards:input_type -> learning_cards.v1.GetReviewCardsRequest
+	13, // 13: learning_cards.v1.ReviewService.AddReviewResults:input_type -> learning_cards.v1.AddReviewResultsRequest
+	14, // 14: learning_cards.v1.CardService.CreateGroup:output_type -> learning_cards.v1.CreateGroupResponse
+	15, // 15: learning_cards.v1.CardService.ListGroups:output_type -> learning_cards.v1.ListGroupsResponse
+	16, // 16: learning_cards.v1.CardService.GetGroup:output_type -> learning_cards.v1.GetGroupResponse
+	17, // 17: learning_cards.v1.CardService.UpdateGroup:output_type -> google.protobuf.Empty
+	17, // 18: learning_cards.v1.CardService.DeleteGroup:output_type -> google.protobuf.Empty
+	18, // 19: learning_cards.v1.CardService.AddCard:output_type -> learning_cards.v1.AddCardResponse
+	19, // 20: learning_cards.v1.CardService.ListCards:output_type -> learning_cards.v1.ListCardsResponse
+	20, // 21: learning_cards.v1.CardService.GetCard:output_type -> learning_cards.v1.GetCardResponse
+	17, // 22: learning_cards.v1.CardService.UpdateCard:output_type -> google.protobuf.Empty
+	17, // 23: learning_cards.v1.CardService.DeleteCard:output_type -> google.protobuf.Empty
+	21, // 24: learning_cards.v1.ProgressService.ListGroupsProgress:output_type -> learning_cards.v1.ListGroupsProgressResponse
+	22, // 25: learning_cards.v1.ProgressService.ListCardsProgress:output_type -> learning_cards.v1.ListCardsProgressResponse
+	23, // 26: learning_cards.v1.ReviewService.GetReviewCards:output_type -> learning_cards.v1.GetReviewCardsResponse
+	17, // 27: learning_cards.v1.ReviewService.AddReviewResults:output_type -> google.protobuf.Empty
+	14, // [14:28] is the sub-list for method output_type
+	0,  // [0:14] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

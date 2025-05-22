@@ -604,20 +604,16 @@ var ProgressService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ReviewService_GetGroupReviewInfo_FullMethodName    = "/learning_cards.v1.ReviewService/GetGroupReviewInfo"
-	ReviewService_UpdateGroupReviewInfo_FullMethodName = "/learning_cards.v1.ReviewService/UpdateGroupReviewInfo"
-	ReviewService_GetReview_FullMethodName             = "/learning_cards.v1.ReviewService/GetReview"
-	ReviewService_SaveReview_FullMethodName            = "/learning_cards.v1.ReviewService/SaveReview"
+	ReviewService_GetReviewCards_FullMethodName   = "/learning_cards.v1.ReviewService/GetReviewCards"
+	ReviewService_AddReviewResults_FullMethodName = "/learning_cards.v1.ReviewService/AddReviewResults"
 )
 
 // ReviewServiceClient is the client API for ReviewService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReviewServiceClient interface {
-	GetGroupReviewInfo(ctx context.Context, in *GetGroupReviewInfoRequest, opts ...grpc.CallOption) (*GetGroupReviewInfoResponse, error)
-	UpdateGroupReviewInfo(ctx context.Context, in *UpdateGroupReviewInfoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	GetReview(ctx context.Context, in *GetReviewRequest, opts ...grpc.CallOption) (*GetReviewResponse, error)
-	SaveReview(ctx context.Context, in *CompleteReviewRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetReviewCards(ctx context.Context, in *GetReviewCardsRequest, opts ...grpc.CallOption) (*GetReviewCardsResponse, error)
+	AddReviewResults(ctx context.Context, in *AddReviewResultsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type reviewServiceClient struct {
@@ -628,40 +624,20 @@ func NewReviewServiceClient(cc grpc.ClientConnInterface) ReviewServiceClient {
 	return &reviewServiceClient{cc}
 }
 
-func (c *reviewServiceClient) GetGroupReviewInfo(ctx context.Context, in *GetGroupReviewInfoRequest, opts ...grpc.CallOption) (*GetGroupReviewInfoResponse, error) {
+func (c *reviewServiceClient) GetReviewCards(ctx context.Context, in *GetReviewCardsRequest, opts ...grpc.CallOption) (*GetReviewCardsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetGroupReviewInfoResponse)
-	err := c.cc.Invoke(ctx, ReviewService_GetGroupReviewInfo_FullMethodName, in, out, cOpts...)
+	out := new(GetReviewCardsResponse)
+	err := c.cc.Invoke(ctx, ReviewService_GetReviewCards_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *reviewServiceClient) UpdateGroupReviewInfo(ctx context.Context, in *UpdateGroupReviewInfoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *reviewServiceClient) AddReviewResults(ctx context.Context, in *AddReviewResultsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, ReviewService_UpdateGroupReviewInfo_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *reviewServiceClient) GetReview(ctx context.Context, in *GetReviewRequest, opts ...grpc.CallOption) (*GetReviewResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetReviewResponse)
-	err := c.cc.Invoke(ctx, ReviewService_GetReview_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *reviewServiceClient) SaveReview(ctx context.Context, in *CompleteReviewRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, ReviewService_SaveReview_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, ReviewService_AddReviewResults_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -672,10 +648,8 @@ func (c *reviewServiceClient) SaveReview(ctx context.Context, in *CompleteReview
 // All implementations must embed UnimplementedReviewServiceServer
 // for forward compatibility.
 type ReviewServiceServer interface {
-	GetGroupReviewInfo(context.Context, *GetGroupReviewInfoRequest) (*GetGroupReviewInfoResponse, error)
-	UpdateGroupReviewInfo(context.Context, *UpdateGroupReviewInfoRequest) (*emptypb.Empty, error)
-	GetReview(context.Context, *GetReviewRequest) (*GetReviewResponse, error)
-	SaveReview(context.Context, *CompleteReviewRequest) (*emptypb.Empty, error)
+	GetReviewCards(context.Context, *GetReviewCardsRequest) (*GetReviewCardsResponse, error)
+	AddReviewResults(context.Context, *AddReviewResultsRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedReviewServiceServer()
 }
 
@@ -686,17 +660,11 @@ type ReviewServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedReviewServiceServer struct{}
 
-func (UnimplementedReviewServiceServer) GetGroupReviewInfo(context.Context, *GetGroupReviewInfoRequest) (*GetGroupReviewInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetGroupReviewInfo not implemented")
+func (UnimplementedReviewServiceServer) GetReviewCards(context.Context, *GetReviewCardsRequest) (*GetReviewCardsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetReviewCards not implemented")
 }
-func (UnimplementedReviewServiceServer) UpdateGroupReviewInfo(context.Context, *UpdateGroupReviewInfoRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateGroupReviewInfo not implemented")
-}
-func (UnimplementedReviewServiceServer) GetReview(context.Context, *GetReviewRequest) (*GetReviewResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetReview not implemented")
-}
-func (UnimplementedReviewServiceServer) SaveReview(context.Context, *CompleteReviewRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SaveReview not implemented")
+func (UnimplementedReviewServiceServer) AddReviewResults(context.Context, *AddReviewResultsRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddReviewResults not implemented")
 }
 func (UnimplementedReviewServiceServer) mustEmbedUnimplementedReviewServiceServer() {}
 func (UnimplementedReviewServiceServer) testEmbeddedByValue()                       {}
@@ -719,74 +687,38 @@ func RegisterReviewServiceServer(s grpc.ServiceRegistrar, srv ReviewServiceServe
 	s.RegisterService(&ReviewService_ServiceDesc, srv)
 }
 
-func _ReviewService_GetGroupReviewInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetGroupReviewInfoRequest)
+func _ReviewService_GetReviewCards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetReviewCardsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ReviewServiceServer).GetGroupReviewInfo(ctx, in)
+		return srv.(ReviewServiceServer).GetReviewCards(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ReviewService_GetGroupReviewInfo_FullMethodName,
+		FullMethod: ReviewService_GetReviewCards_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReviewServiceServer).GetGroupReviewInfo(ctx, req.(*GetGroupReviewInfoRequest))
+		return srv.(ReviewServiceServer).GetReviewCards(ctx, req.(*GetReviewCardsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ReviewService_UpdateGroupReviewInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateGroupReviewInfoRequest)
+func _ReviewService_AddReviewResults_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddReviewResultsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ReviewServiceServer).UpdateGroupReviewInfo(ctx, in)
+		return srv.(ReviewServiceServer).AddReviewResults(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ReviewService_UpdateGroupReviewInfo_FullMethodName,
+		FullMethod: ReviewService_AddReviewResults_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReviewServiceServer).UpdateGroupReviewInfo(ctx, req.(*UpdateGroupReviewInfoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ReviewService_GetReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetReviewRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ReviewServiceServer).GetReview(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ReviewService_GetReview_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReviewServiceServer).GetReview(ctx, req.(*GetReviewRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ReviewService_SaveReview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CompleteReviewRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ReviewServiceServer).SaveReview(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ReviewService_SaveReview_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReviewServiceServer).SaveReview(ctx, req.(*CompleteReviewRequest))
+		return srv.(ReviewServiceServer).AddReviewResults(ctx, req.(*AddReviewResultsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -799,20 +731,12 @@ var ReviewService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ReviewServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetGroupReviewInfo",
-			Handler:    _ReviewService_GetGroupReviewInfo_Handler,
+			MethodName: "GetReviewCards",
+			Handler:    _ReviewService_GetReviewCards_Handler,
 		},
 		{
-			MethodName: "UpdateGroupReviewInfo",
-			Handler:    _ReviewService_UpdateGroupReviewInfo_Handler,
-		},
-		{
-			MethodName: "GetReview",
-			Handler:    _ReviewService_GetReview_Handler,
-		},
-		{
-			MethodName: "SaveReview",
-			Handler:    _ReviewService_SaveReview_Handler,
+			MethodName: "AddReviewResults",
+			Handler:    _ReviewService_AddReviewResults_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

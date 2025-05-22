@@ -5,28 +5,16 @@ package learning_cards.v1;
 import "google/protobuf/duration.proto";
 import "learning_cards/v1/card.proto";
 import "learning_cards/v1/enum.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cards";
 
-
-message GetGroupReviewInfoRequest {
+message GetReviewCardsRequest {
     int64 group_id = 1;
+    int32 cards_count = 2 [(validate.rules).int32 = {gt: 0}];
 }
 
-message GetGroupReviewInfoResponse {
-    int32 cards_count = 1;
-}
-
-message UpdateGroupReviewInfoRequest {
-    int64 group_id = 1;
-    int32 cards_count = 2;
-}
-
-message GetReviewRequest {
-    int64 group_id = 1;
-}
-
-message GetReviewResponse {
+message GetReviewCardsResponse {
     repeated Card cards = 1;
 }
 message ReviewCardResult {
@@ -35,7 +23,7 @@ message ReviewCardResult {
     google.protobuf.Duration duration = 3;
 }
 
-message CompleteReviewRequest {
+message AddReviewResultsRequest {
     int64 group_id = 1;
     repeated ReviewCardResult card_results = 2;
     bool check_duration = 3;

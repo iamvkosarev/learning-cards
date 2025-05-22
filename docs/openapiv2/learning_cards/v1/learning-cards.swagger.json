@@ -388,44 +388,14 @@
         ]
       }
     },
-    "/v1/review/{groupId}": {
-      "get": {
-        "operationId": "ReviewService_GetReview",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1GetReviewResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "ReviewService"
-        ]
-      },
+    "/v1/review/{groupId}/cards": {
       "post": {
-        "operationId": "ReviewService_SaveReview",
+        "operationId": "ReviewService_GetReviewCards",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "type": "object",
-              "properties": {}
+              "$ref": "#/definitions/v1GetReviewCardsResponse"
             }
           },
           "default": {
@@ -448,7 +418,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ReviewServiceSaveReviewBody"
+              "$ref": "#/definitions/ReviewServiceGetReviewCardsBody"
             }
           }
         ],
@@ -457,38 +427,9 @@
         ]
       }
     },
-    "/v1/review/{groupId}/settings": {
-      "get": {
-        "operationId": "ReviewService_GetGroupReviewInfo",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1GetGroupReviewInfoResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "ReviewService"
-        ]
-      },
-      "put": {
-        "operationId": "ReviewService_UpdateGroupReviewInfo",
+    "/v1/review/{groupId}/result": {
+      "post": {
+        "operationId": "ReviewService_AddReviewResults",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -517,7 +458,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/ReviewServiceUpdateGroupReviewInfoBody"
+              "$ref": "#/definitions/ReviewServiceAddReviewResultsBody"
             }
           }
         ],
@@ -553,7 +494,7 @@
         }
       }
     },
-    "ReviewServiceSaveReviewBody": {
+    "ReviewServiceAddReviewResultsBody": {
       "type": "object",
       "properties": {
         "cardResults": {
@@ -568,7 +509,7 @@
         }
       }
     },
-    "ReviewServiceUpdateGroupReviewInfoBody": {
+    "ReviewServiceGetReviewCardsBody": {
       "type": "object",
       "properties": {
         "cardsCount": {
@@ -741,16 +682,7 @@
         }
       }
     },
-    "v1GetGroupReviewInfoResponse": {
-      "type": "object",
-      "properties": {
-        "cardsCount": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
-    "v1GetReviewResponse": {
+    "v1GetReviewCardsResponse": {
       "type": "object",
       "properties": {
         "cards": {

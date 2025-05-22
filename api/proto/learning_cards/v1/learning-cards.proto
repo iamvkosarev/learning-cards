@@ -92,28 +92,16 @@ service ProgressService {
 }
 
 service ReviewService {
-    rpc GetGroupReviewInfo (GetGroupReviewInfoRequest) returns (GetGroupReviewInfoResponse) {
+    rpc GetReviewCards (GetReviewCardsRequest) returns (GetReviewCardsResponse) {
         option (google.api.http) = {
-            get: "/v1/review/{group_id}/settings"
-        };
-    };
-
-    rpc UpdateGroupReviewInfo (UpdateGroupReviewInfoRequest) returns (google.protobuf.Empty) {
-        option (google.api.http) = {
-            put: "/v1/review/{group_id}/settings"
+            post: "/v1/review/{group_id}/cards"
             body: "*"
         };
     };
 
-    rpc GetReview (GetReviewRequest) returns (GetReviewResponse) {
+    rpc AddReviewResults (AddReviewResultsRequest) returns (google.protobuf.Empty) {
         option (google.api.http) = {
-            get: "/v1/review/{group_id}"
-        };
-    };
-
-    rpc SaveReview (CompleteReviewRequest) returns (google.protobuf.Empty) {
-        option (google.api.http) = {
-            post: "/v1/review/{group_id}"
+            post: "/v1/review/{group_id}/result"
             body: "*"
         };
     };
