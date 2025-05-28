@@ -663,3 +663,346 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = AddReviewResultsRequestValidationError{}
+
+// Validate checks the field values on GetCardsProgressRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCardsProgressRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCardsProgressRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCardsProgressRequestMultiError, or nil if none found.
+func (m *GetCardsProgressRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCardsProgressRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for GroupId
+
+	if len(errors) > 0 {
+		return GetCardsProgressRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCardsProgressRequestMultiError is an error wrapping multiple validation
+// errors returned by GetCardsProgressRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetCardsProgressRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCardsProgressRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCardsProgressRequestMultiError) AllErrors() []error { return m }
+
+// GetCardsProgressRequestValidationError is the validation error returned by
+// GetCardsProgressRequest.Validate if the designated constraints aren't met.
+type GetCardsProgressRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCardsProgressRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCardsProgressRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCardsProgressRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCardsProgressRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCardsProgressRequestValidationError) ErrorName() string {
+	return "GetCardsProgressRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCardsProgressRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCardsProgressRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCardsProgressRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCardsProgressRequestValidationError{}
+
+// Validate checks the field values on CardProgress with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CardProgress) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CardProgress with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CardProgressMultiError, or
+// nil if none found.
+func (m *CardProgress) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CardProgress) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CardId
+
+	// no validation rules for Mark
+
+	if len(errors) > 0 {
+		return CardProgressMultiError(errors)
+	}
+
+	return nil
+}
+
+// CardProgressMultiError is an error wrapping multiple validation errors
+// returned by CardProgress.ValidateAll() if the designated constraints aren't met.
+type CardProgressMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CardProgressMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CardProgressMultiError) AllErrors() []error { return m }
+
+// CardProgressValidationError is the validation error returned by
+// CardProgress.Validate if the designated constraints aren't met.
+type CardProgressValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CardProgressValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CardProgressValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CardProgressValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CardProgressValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CardProgressValidationError) ErrorName() string { return "CardProgressValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CardProgressValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCardProgress.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CardProgressValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CardProgressValidationError{}
+
+// Validate checks the field values on GetCardsProgressResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCardsProgressResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCardsProgressResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCardsProgressResponseMultiError, or nil if none found.
+func (m *GetCardsProgressResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCardsProgressResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetCards() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetCardsProgressResponseValidationError{
+						field:  fmt.Sprintf("Cards[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetCardsProgressResponseValidationError{
+						field:  fmt.Sprintf("Cards[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetCardsProgressResponseValidationError{
+					field:  fmt.Sprintf("Cards[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetCardsProgressResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCardsProgressResponseMultiError is an error wrapping multiple validation
+// errors returned by GetCardsProgressResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetCardsProgressResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCardsProgressResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCardsProgressResponseMultiError) AllErrors() []error { return m }
+
+// GetCardsProgressResponseValidationError is the validation error returned by
+// GetCardsProgressResponse.Validate if the designated constraints aren't met.
+type GetCardsProgressResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCardsProgressResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCardsProgressResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCardsProgressResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCardsProgressResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCardsProgressResponseValidationError) ErrorName() string {
+	return "GetCardsProgressResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCardsProgressResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCardsProgressResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCardsProgressResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCardsProgressResponseValidationError{}

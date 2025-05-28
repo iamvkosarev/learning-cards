@@ -33,3 +33,17 @@ message AddReviewResultsRequest {
     repeated ReviewCardResult card_results = 2;
     bool check_duration = 3;
 }
+
+message GetCardsProgressRequest{
+    int64 group_id = 1;
+}
+
+
+message CardProgress {
+    int64 card_id = 1;
+    Mark mark = 2;
+}
+
+message GetCardsProgressResponse{
+    repeated CardProgress cards = 1;
+}

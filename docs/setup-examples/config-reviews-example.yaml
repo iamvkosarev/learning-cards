@@ -1,7 +1,7 @@
 common:
   env: "local"
   server:
-    rest_prefix: "/api/learning-cards"
+    rest_prefix: "/api/reviews"
     version: 1
     rest_port: ":8083"
     grpc_port: ":50053"

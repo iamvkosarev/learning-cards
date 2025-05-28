@@ -9,9 +9,6 @@
       "name": "CardService"
     },
     {
-      "name": "ProgressService"
-    },
-    {
       "name": "ReviewService"
     }
   ],
@@ -335,59 +332,6 @@
         ]
       }
     },
-    "/v1/progress": {
-      "get": {
-        "operationId": "ProgressService_ListGroupsProgress",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1ListGroupsProgressResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "ProgressService"
-        ]
-      }
-    },
-    "/v1/progress/{groupId}": {
-      "get": {
-        "operationId": "ProgressService_ListCardsProgress",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/v1ListCardsProgressResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "groupId",
-            "in": "path",
-            "required": true,
-            "type": "string",
-            "format": "int64"
-          }
-        ],
-        "tags": [
-          "ProgressService"
-        ]
-      }
-    },
     "/v1/review/{groupId}/cards": {
       "post": {
         "operationId": "ReviewService_GetReviewCards",
@@ -420,6 +364,37 @@
             "schema": {
               "$ref": "#/definitions/ReviewServiceGetReviewCardsBody"
             }
+          }
+        ],
+        "tags": [
+          "ReviewService"
+        ]
+      }
+    },
+    "/v1/review/{groupId}/progress": {
+      "get": {
+        "operationId": "ReviewService_GetCardsProgress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1GetCardsProgressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "int64"
           }
         ],
         "tags": [
@@ -611,10 +586,6 @@
         },
         "mark": {
           "$ref": "#/definitions/v1Mark"
-        },
-        "lastReviewTime": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     },
@@ -674,6 +645,18 @@
         }
       }
     },
+    "v1GetCardsProgressResponse": {
+      "type": "object",
+      "properties": {
+        "cards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1CardProgress"
+          }
+        }
+      }
+    },
     "v1GetGroupResponse": {
       "type": "object",
       "properties": {
@@ -694,22 +677,6 @@
         }
       }
     },
-    "v1GroupProgress": {
-      "type": "object",
-      "properties": {
-        "groupId": {
-          "type": "string",
-          "format": "int64"
-        },
-        "mark": {
-          "$ref": "#/definitions/v1Mark"
-        },
-        "lastReviewTime": {
-          "type": "string",
-          "format": "date-time"
-        }
-      }
-    },
     "v1GroupVisibility": {
       "type": "string",
       "enum": [
@@ -720,18 +687,6 @@
       ],
       "default": "NULL"
     },
-    "v1ListCardsProgressResponse": {
-      "type": "object",
-      "properties": {
-        "cardsProgress": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1CardProgress"
-          }
-        }
-      }
-    },
     "v1ListCardsResponse": {
       "type": "object",
       "properties": {
@@ -740,18 +695,6 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/v1Card"
-          }
-        }
-      }
-    },
-    "v1ListGroupsProgressResponse": {
-      "type": "object",
-      "properties": {
-        "groupProgress": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1GroupProgress"
           }
         }
       }

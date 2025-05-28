@@ -502,148 +502,9 @@ var CardService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ProgressService_ListGroupsProgress_FullMethodName = "/learning_cards.v1.ProgressService/ListGroupsProgress"
-	ProgressService_ListCardsProgress_FullMethodName  = "/learning_cards.v1.ProgressService/ListCardsProgress"
-)
-
-// ProgressServiceClient is the client API for ProgressService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ProgressServiceClient interface {
-	ListGroupsProgress(ctx context.Context, in *ListGroupsProgressRequest, opts ...grpc.CallOption) (*ListGroupsProgressResponse, error)
-	ListCardsProgress(ctx context.Context, in *ListCardsProgressRequest, opts ...grpc.CallOption) (*ListCardsProgressResponse, error)
-}
-
-type progressServiceClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewProgressServiceClient(cc grpc.ClientConnInterface) ProgressServiceClient {
-	return &progressServiceClient{cc}
-}
-
-func (c *progressServiceClient) ListGroupsProgress(ctx context.Context, in *ListGroupsProgressRequest, opts ...grpc.CallOption) (*ListGroupsProgressResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListGroupsProgressResponse)
-	err := c.cc.Invoke(ctx, ProgressService_ListGroupsProgress_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *progressServiceClient) ListCardsProgress(ctx context.Context, in *ListCardsProgressRequest, opts ...grpc.CallOption) (*ListCardsProgressResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListCardsProgressResponse)
-	err := c.cc.Invoke(ctx, ProgressService_ListCardsProgress_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// ProgressServiceServer is the server API for ProgressService service.
-// All implementations must embed UnimplementedProgressServiceServer
-// for forward compatibility.
-type ProgressServiceServer interface {
-	ListGroupsProgress(context.Context, *ListGroupsProgressRequest) (*ListGroupsProgressResponse, error)
-	ListCardsProgress(context.Context, *ListCardsProgressRequest) (*ListCardsProgressResponse, error)
-	mustEmbedUnimplementedProgressServiceServer()
-}
-
-// UnimplementedProgressServiceServer must be embedded to have
-// forward compatible implementations.
-//
-// NOTE: this should be embedded by value instead of pointer to avoid a nil
-// pointer dereference when methods are called.
-type UnimplementedProgressServiceServer struct{}
-
-func (UnimplementedProgressServiceServer) ListGroupsProgress(context.Context, *ListGroupsProgressRequest) (*ListGroupsProgressResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListGroupsProgress not implemented")
-}
-func (UnimplementedProgressServiceServer) ListCardsProgress(context.Context, *ListCardsProgressRequest) (*ListCardsProgressResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListCardsProgress not implemented")
-}
-func (UnimplementedProgressServiceServer) mustEmbedUnimplementedProgressServiceServer() {}
-func (UnimplementedProgressServiceServer) testEmbeddedByValue()                         {}
-
-// UnsafeProgressServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ProgressServiceServer will
-// result in compilation errors.
-type UnsafeProgressServiceServer interface {
-	mustEmbedUnimplementedProgressServiceServer()
-}
-
-func RegisterProgressServiceServer(s grpc.ServiceRegistrar, srv ProgressServiceServer) {
-	// If the following call pancis, it indicates UnimplementedProgressServiceServer was
-	// embedded by pointer and is nil.  This will cause panics if an
-	// unimplemented method is ever invoked, so we test this at initialization
-	// time to prevent it from happening at runtime later due to I/O.
-	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
-		t.testEmbeddedByValue()
-	}
-	s.RegisterService(&ProgressService_ServiceDesc, srv)
-}
-
-func _ProgressService_ListGroupsProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListGroupsProgressRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProgressServiceServer).ListGroupsProgress(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProgressService_ListGroupsProgress_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProgressServiceServer).ListGroupsProgress(ctx, req.(*ListGroupsProgressRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ProgressService_ListCardsProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListCardsProgressRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProgressServiceServer).ListCardsProgress(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ProgressService_ListCardsProgress_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProgressServiceServer).ListCardsProgress(ctx, req.(*ListCardsProgressRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// ProgressService_ServiceDesc is the grpc.ServiceDesc for ProgressService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var ProgressService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "learning_cards.v1.ProgressService",
-	HandlerType: (*ProgressServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "ListGroupsProgress",
-			Handler:    _ProgressService_ListGroupsProgress_Handler,
-		},
-		{
-			MethodName: "ListCardsProgress",
-			Handler:    _ProgressService_ListCardsProgress_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "learning_cards/v1/learning-cards.proto",
-}
-
-const (
 	ReviewService_GetReviewCards_FullMethodName   = "/learning_cards.v1.ReviewService/GetReviewCards"
 	ReviewService_AddReviewResults_FullMethodName = "/learning_cards.v1.ReviewService/AddReviewResults"
+	ReviewService_GetCardsProgress_FullMethodName = "/learning_cards.v1.ReviewService/GetCardsProgress"
 )
 
 // ReviewServiceClient is the client API for ReviewService service.
@@ -652,6 +513,7 @@ const (
 type ReviewServiceClient interface {
 	GetReviewCards(ctx context.Context, in *GetReviewCardsRequest, opts ...grpc.CallOption) (*GetReviewCardsResponse, error)
 	AddReviewResults(ctx context.Context, in *AddReviewResultsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetCardsProgress(ctx context.Context, in *GetCardsProgressRequest, opts ...grpc.CallOption) (*GetCardsProgressResponse, error)
 }
 
 type reviewServiceClient struct {
@@ -682,12 +544,23 @@ func (c *reviewServiceClient) AddReviewResults(ctx context.Context, in *AddRevie
 	return out, nil
 }
 
+func (c *reviewServiceClient) GetCardsProgress(ctx context.Context, in *GetCardsProgressRequest, opts ...grpc.CallOption) (*GetCardsProgressResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCardsProgressResponse)
+	err := c.cc.Invoke(ctx, ReviewService_GetCardsProgress_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReviewServiceServer is the server API for ReviewService service.
 // All implementations must embed UnimplementedReviewServiceServer
 // for forward compatibility.
 type ReviewServiceServer interface {
 	GetReviewCards(context.Context, *GetReviewCardsRequest) (*GetReviewCardsResponse, error)
 	AddReviewResults(context.Context, *AddReviewResultsRequest) (*emptypb.Empty, error)
+	GetCardsProgress(context.Context, *GetCardsProgressRequest) (*GetCardsProgressResponse, error)
 	mustEmbedUnimplementedReviewServiceServer()
 }
 
@@ -703,6 +576,9 @@ func (UnimplementedReviewServiceServer) GetReviewCards(context.Context, *GetRevi
 }
 func (UnimplementedReviewServiceServer) AddReviewResults(context.Context, *AddReviewResultsRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddReviewResults not implemented")
+}
+func (UnimplementedReviewServiceServer) GetCardsProgress(context.Context, *GetCardsProgressRequest) (*GetCardsProgressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCardsProgress not implemented")
 }
 func (UnimplementedReviewServiceServer) mustEmbedUnimplementedReviewServiceServer() {}
 func (UnimplementedReviewServiceServer) testEmbeddedByValue()                       {}
@@ -761,6 +637,24 @@ func _ReviewService_AddReviewResults_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReviewService_GetCardsProgress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCardsProgressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReviewServiceServer).GetCardsProgress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReviewService_GetCardsProgress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReviewServiceServer).GetCardsProgress(ctx, req.(*GetCardsProgressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReviewService_ServiceDesc is the grpc.ServiceDesc for ReviewService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -775,6 +669,10 @@ var ReviewService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddReviewResults",
 			Handler:    _ReviewService_AddReviewResults_Handler,
+		},
+		{
+			MethodName: "GetCardsProgress",
+			Handler:    _ReviewService_GetCardsProgress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
