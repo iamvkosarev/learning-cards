@@ -11,6 +11,7 @@ var (
 	ErrNoAuthHeader        = errors.New("there is no authorization header")
 	ErrIncorrectAuthHeader = errors.New("not correct authorization header")
 	ErrCardNotFound        = errors.New("card not found")
+	ErrUserNotFound        = errors.New("user not found")
 	ErrVerificationFailed  = errors.New("verification failed")
 )
 

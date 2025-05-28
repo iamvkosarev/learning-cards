@@ -55,6 +55,7 @@ func prepareCardService(ctx context.Context, cfg *config.CardsConfig, logger *sl
 	}
 
 	groupRepo := sqlRepository.NewGroupRepository(dbPool)
+	userRepo := sqlRepository.NewUserRepository(dbPool)
 	cardRepo := sqlRepository.NewCardRepository(dbPool)
 
 	verifier := contracts.VerifyFunc(verification.GetUserId)
@@ -63,6 +64,8 @@ func prepareCardService(ctx context.Context, cfg *config.CardsConfig, logger *sl
 		usecase.GroupUseCaseDeps{
 			GroupReader:  groupRepo,
 			GroupWriter:  groupRepo,
+			UserReader:   userRepo,
+			UserWriter:   userRepo,
 			AuthVerifier: verifier,
 		},
 	)

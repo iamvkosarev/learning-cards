@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
@@ -12,6 +13,8 @@ import (
 type GroupUseCaseDeps struct {
 	GroupReader  contracts.GroupReader
 	GroupWriter  contracts.GroupWriter
+	UserReader   contracts.UserReader
+	UserWriter   contracts.UserWriter
 	AuthVerifier contracts.AuthVerifier
 }
 
@@ -33,6 +36,21 @@ func (g *GroupUseCase) CreateGroup(
 	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return 0, err
+	}
+	_, err = g.UserReader.GetUser(ctx, userId)
+	if err != nil {
+		if errors.Is(err, entity.ErrUserNotFound) {
+			err = g.UserWriter.AddUser(
+				ctx, entity.User{
+					UserId: userId,
+				},
+			)
+			if err != nil {
+				return 0, fmt.Errorf("error creating user: %w", err)
+			}
+		} else {
+			return 0, fmt.Errorf("error getting user: %w", err)
+		}
 	}
 
 	if visibility == entity.GROUP_VISIBILITY_NULL {

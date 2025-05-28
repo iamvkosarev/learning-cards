@@ -24,7 +24,7 @@ func NewGroupRepository(pool *pgxpool.Pool) *GroupRepository {
 }
 
 func (gr *GroupRepository) ListGroups(ctx context.Context, userId entity.UserId) ([]entity.Group, error) {
-	const op = "postgres.GroupRepository.ListCards"
+	const op = "postgres.GroupRepository.ListGroups"
 
 	rows, err := gr.db.Query(
 		ctx,
@@ -75,7 +75,7 @@ func (gr *GroupRepository) ListGroups(ctx context.Context, userId entity.UserId)
 }
 
 func (gr *GroupRepository) AddGroup(ctx context.Context, group entity.Group) (entity.GroupId, error) {
-	const op = "postgres.GroupRepository.AddCard"
+	const op = "postgres.GroupRepository.AddGroup"
 
 	var id int64
 	err := gr.db.QueryRow(
@@ -107,7 +107,7 @@ func (gr *GroupRepository) AddGroup(ctx context.Context, group entity.Group) (en
 }
 
 func (gr *GroupRepository) GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
-	const op = "postgres.GroupRepository.GetCard"
+	const op = "postgres.GroupRepository.GetGroup"
 
 	var group entity.Group
 	var visibility int8
@@ -148,7 +148,7 @@ func (gr *GroupRepository) GetGroup(ctx context.Context, groupId entity.GroupId)
 }
 
 func (gr *GroupRepository) UpdateGroup(ctx context.Context, group entity.Group) error {
-	const op = "postgres.GroupRepository.UpdateCard"
+	const op = "postgres.GroupRepository.UpdateGroup"
 
 	cmdTag, err := gr.db.Exec(
 		ctx,
@@ -177,7 +177,7 @@ func (gr *GroupRepository) UpdateGroup(ctx context.Context, group entity.Group) 
 }
 
 func (gr *GroupRepository) DeleteGroup(ctx context.Context, groupId entity.GroupId) error {
-	const op = "postgres.GroupRepository.DeleteCard"
+	const op = "postgres.GroupRepository.DeleteGroup"
 
 	cmdTag, err := gr.db.Exec(
 		ctx,
