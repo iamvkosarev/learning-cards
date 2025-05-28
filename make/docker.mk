@@ -12,9 +12,9 @@ REVIEWS_IMAGE_NAME := $(REPOSITORY_HOLDER)/$(REVIEWS_PROJECT_NAME):$(TAG)
 
 docker-build:
 	@echo "Building: $(CARDS_IMAGE_NAME)"
-	cd $(ROOT_DIR)/cmd/cards docker build --platform=linux/amd64 --target cards -t $(CARDS_IMAGE_NAME) .
+	docker build --platform=linux/amd64 --target cards -f cmd/cards/Dockerfile -t $(CARDS_IMAGE_NAME) .
 	@echo "Building: $(REVIEWS_IMAGE_NAME)"
-	cd $(ROOT_DIR)/cmd/cards  build --platform=linux/amd64 --target reviews -t $(REVIEWS_IMAGE_NAME) .
+	docker build --platform=linux/amd64 --target reviews -f cmd/reviews/Dockerfile -t $(REVIEWS_IMAGE_NAME) .
 
 docker-push:
 	docker push $(CARDS_IMAGE_NAME)
