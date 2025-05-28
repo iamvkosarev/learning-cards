@@ -1,0 +1,21 @@
+common:
+  env: "local"
+  server:
+    rest_prefix: "/api/learning-cards"
+    version: 1
+    rest_port: ":8083"
+    grpc_port: ":50053"
+    shutdown_timeout: 5s
+    cors:
+      allowed_origins:
+        - "https://kosarev.app"
+      allow_credentials: true
+      max_age: 86400
+  sso:
+    host_address: "sso:50052"
+    use_local: false
+    local_user_id: 0
+database:
+  connection_string_key: "DB_DNS"
+cards_server:
+  address: "cards-server:50051"

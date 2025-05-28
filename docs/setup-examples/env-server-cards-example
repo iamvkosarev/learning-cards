@@ -1,0 +1,11 @@
+DB_DNS=postgres://user:password@host:5432/database
+
+DB_NAME=database
+DB_USER=user
+DB_SERVICE_NAME=host
+DB_PORT=15433
+DB_PORT_INTERNAL=5432
+DB_PASSWORD=password
+
+VPS_USER=admin
+VPS_HOST=test.app

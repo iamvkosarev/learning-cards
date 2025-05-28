@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-const cardsConfigPathEnvKey = "CARDS_CONFIG_PATH"
+const cardsConfigPathEnvKey = "CONFIG_PATH"
 
 func main() {
 	if err := godotenv.Load(); err != nil {

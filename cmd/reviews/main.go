@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-const reviewsConfigPathEnvKey = "REVIEWS_CONFIG_PATH"
+const reviewsConfigPathEnvKey = "CONFIG_PATH"
 
 func main() {
 	if err := godotenv.Load(); err != nil {

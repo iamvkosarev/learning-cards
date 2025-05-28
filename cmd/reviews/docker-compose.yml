@@ -1,0 +1,27 @@
+services:
+  reviews:
+    container_name: reviews-server
+    image: ${IMAGE_NAME:-learning-cards-reviews:local}
+    volumes:
+      - ./.env:/app/.env
+      - ./config.yaml:/app/config.yaml
+    build:
+      context: ../..
+      dockerfile: cmd/reviews/Dockerfile
+      target: reviews
+    ports:
+      - "${GRPC_PORT}:${GRPC_PORT}"
+      - "${REST_PORT}:${REST_PORT}"
+    working_dir: /app
+    environment:
+      DB_URL: "${DB_DNS}"
+      GRPC_PORT: ${GRPC_PORT}
+      REST_PORT: ${REST_PORT}
+      CARDS_GRPC_ADDR: learning-cards:50051
+    networks:
+      - net
+
+networks:
+  net:
+    external: true
+    name: iamvkosarev_network

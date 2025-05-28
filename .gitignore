@@ -2,10 +2,10 @@
 .idea
 bin
 third_party
-/config/*.yaml
 
 # Pattern files
 *.DS_Store
 
 # Certain files
 .env
+config.yaml

@@ -1,13 +1,31 @@
 local-docker-restart: local-docker-down local-docker-build local-docker-up
 
-local-docker-build:
-	docker-compose build
+.PHONY: ensure-network up-cards up-reviews down-cards down-reviews
 
-local-docker-up:
-	@docker-compose up -d learning-cards-postgres learning-cards learning-cards-reviews
+ensure-network:
+	@if ! docker network ls --format '{{.Name}}' | grep -q '^iamvkosarev_network$$'; then \
+		echo "Creating external network iamvkosarev_network..."; \
+		docker network create iamvkosarev_network; \
+	else \
+		echo "Network iamvkosarev_network already exists."; \
+	fi
+.PHONY: up-cards up-reviews
 
-local-docker-down:
-	docker-compose down
 
-local-docker-logs:
-	docker-compose logs -f
+up-cards: ensure-network
+	cd cmd/cards && docker compose -f docker-compose.yml --env-file .env up -d --build
+
+up-reviews: ensure-network
+	cd cmd/reviews && docker compose -f docker-compose.yml --env-file .env up -d --build
+
+down-cards:
+	cd cmd/cards && docker compose -f docker-compose.yml --env-file .env down
+
+down-reviews:
+	cd cmd/reviews && docker compose -f docker-compose.yml --env-file .env down
+
+logs-cards:
+	cd cmd/cards && docker compose -f docker-compose.yml logs -f
+
+logs-reviews:
+	cd cmd/reviews && docker compose -f docker-compose.yml logs -f
