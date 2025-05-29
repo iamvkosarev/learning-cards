@@ -21,7 +21,7 @@ func (p ProgressRepository) GetCardsProgress(
 	user entity.UserId,
 	group entity.GroupId,
 ) ([]entity.CardProgress, error) {
-	op := "postgres.ProgressRepository.GetCardsProgress"
+	op := "postgres.ProgressRepository.GetCardsMarks"
 
 	rows, err := p.db.Query(
 		ctx,

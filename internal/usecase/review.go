@@ -9,6 +9,20 @@ import (
 	"time"
 )
 
+const (
+	ANSWER_FAIL_SCORE = iota + 1.0
+	ANSWER_HARD_CARDS
+	ANSWER_GOOD_CARDS
+	ANSWER_EASY_CARDS
+)
+
+const (
+	MARK_A_START = 1 + (ANSWER_EASY_CARDS-iota)*(ANSWER_EASY_CARDS-1.0)/(ANSWER_EASY_CARDS+1.0)
+	MARK_B_START
+	MARK_C_START
+	MARK_D_START
+)
+
 type ReviewUseCaseDeps struct {
 	ProgressReader contracts.ProgressReader
 	ProgressWriter contracts.ProgressWriter
@@ -38,17 +52,93 @@ func (r *ReviewUseCase) GetReviewCards(
 		return nil, err
 	}
 
-	cardsProgressRow, err := r.ProgressReader.GetCardsProgress(ctx, userId, groupId)
+	cards, progress, err := r.getCardsAndProgress(ctx, userId, group)
 	if err != nil {
-		return nil, fmt.Errorf("%s: error getting card progress: %w", op, err)
+		return nil, err
+	}
+
+	reviewCards := make([]entity.Card, 0)
+	usedCards := make(map[entity.CardId]struct{})
+	// AddCard new cards
+	for cardId, pr := range progress {
+		if group.CreateTime.Equal(pr.LastReviewTime) {
+			reviewCards = append(reviewCards, cards[cardId])
+			usedCards[cardId] = struct{}{}
+
+			if len(reviewCards) >= settings.CardsCount {
+				return reviewCards, nil
+			}
+		}
+	}
+	// AddCard long time no reviewed cards
+	longTimeDuration := time.Hour * 24 * 3
+	for cardId, pr := range progress {
+		if _, ok := usedCards[cardId]; ok {
+			continue
+		}
+		if time.Now().After(pr.LastReviewTime.Add(longTimeDuration)) {
+			reviewCards = append(reviewCards, cards[cardId])
+			usedCards[cardId] = struct{}{}
+
+			if len(reviewCards) >= settings.CardsCount {
+				return reviewCards, nil
+			}
+		}
+	}
+
+	// AddCard sorted by marks cards
+	sortedByProgressCards := getSortedCardsByScores(removeUniqueCards(progress, usedCards))
+	for _, cardId := range sortedByProgressCards {
+		reviewCards = append(reviewCards, cards[cardId])
+		usedCards[cardId] = struct{}{}
+
+		if len(reviewCards) >= settings.CardsCount {
+			return reviewCards, nil
+		}
+	}
+
+	return reviewCards, nil
+}
+
+func (r *ReviewUseCase) GetCardsMarks(
+	ctx context.Context,
+	userId entity.UserId,
+	groupId entity.GroupId,
+) ([]entity.CardMark, error) {
+	op := "usecase.ReviewUseCase.GetCardsMarks"
+
+	group, err := getGroupAndCheckAccess(ctx, userId, groupId, op, r.GroupReader)
+	if err != nil {
+		return nil, err
+	}
+
+	_, progress, err := r.getCardsAndProgress(ctx, userId, group)
+	if err != nil {
+		return nil, err
+	}
+
+	return getMarks(progress), nil
+}
+
+func (r *ReviewUseCase) getCardsAndProgress(
+	ctx context.Context,
+	userId entity.UserId, group entity.Group,
+) (
+	map[entity.CardId]entity.
+	Card, map[entity.CardId]entity.CardProgress, error,
+) {
+
+	cardsProgressRow, err := r.ProgressReader.GetCardsProgress(ctx, userId, group.Id)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error getting card progress: %w", err)
 	}
 	cardsProgress := make(map[entity.CardId]entity.CardProgress)
 	for _, card := range cardsProgressRow {
 		cardsProgress[card.Id] = card
 	}
-	cardsRow, err := r.CardReader.ListCards(ctx, groupId)
+	cardsRow, err := r.CardReader.ListCards(ctx, group.Id)
 	if err != nil {
-		return nil, fmt.Errorf("%s: error getting list of cards: %w", op, err)
+		return nil, nil, fmt.Errorf("error getting list of cards: %w", err)
 	}
 	cards := make(map[entity.CardId]entity.Card)
 	for _, card := range cardsRow {
@@ -64,81 +154,113 @@ func (r *ReviewUseCase) GetReviewCards(
 			}
 		}
 	}
-	reviewCards := make([]entity.Card, 0)
-	usedCards := make(map[entity.CardId]struct{})
-	// AddCard new cards
-	for cardId, cardProgress := range cardsProgress {
-		if group.CreateTime.Equal(cardProgress.LastReviewTime) {
-			reviewCards = append(reviewCards, cards[cardId])
-			usedCards[cardId] = struct{}{}
-
-			if len(reviewCards) >= settings.CardsCount {
-				return reviewCards, nil
-			}
-		}
-	}
-	// AddCard long time no reviewed cards
-	longTimeDuration := time.Hour * 24 * 3
-	for cardId, cardProgress := range cardsProgress {
-		if _, ok := usedCards[cardId]; ok {
-			continue
-		}
-		if time.Now().After(cardProgress.LastReviewTime.Add(longTimeDuration)) {
-			reviewCards = append(reviewCards, cards[cardId])
-			usedCards[cardId] = struct{}{}
-
-			if len(reviewCards) >= settings.CardsCount {
-				return reviewCards, nil
-			}
-		}
-	}
-
-	// AddCard sorted by marks cards
-	sortedByProgressCards := getSortedByProgressCards(cardsProgress, usedCards)
-	for _, cardId := range sortedByProgressCards {
-		reviewCards = append(reviewCards, cards[cardId])
-		usedCards[cardId] = struct{}{}
-
-		if len(reviewCards) >= settings.CardsCount {
-			return reviewCards, nil
-		}
-	}
-
-	return reviewCards, nil
+	return cards, cardsProgress, nil
 }
 
-func getSortedByProgressCards(
+func removeUniqueCards[TCards any](
+	cards map[entity.CardId]TCards,
+	uniqueCards map[entity.CardId]struct{},
+) map[entity.CardId]TCards {
+	for id := range uniqueCards {
+		delete(cards, id)
+	}
+	return cards
+}
+
+func getSortedCardsByScores(
 	progress map[entity.CardId]entity.CardProgress,
-	used map[entity.CardId]struct{},
 ) []entity.CardId {
-	cards := make([]entity.CardId, 0, len(progress)-len(used))
+	cards := make([]entity.CardId, 0, len(progress))
 	for id := range progress {
-		if _, ok := used[id]; ok {
-			continue
-		}
 		cards = append(cards, id)
 	}
-	marks := make(map[entity.CardId]float64)
-	for _, cardId := range cards {
-		marks[cardId] = getCardMark(progress[cardId])
-	}
+	marks := getMarks(progress)
 	sort.Slice(
 		cards, func(i, j int) bool {
-			return marks[cards[i]] < marks[cards[j]]
+			return marks[cards[i]].Mark < marks[cards[j]].Mark
 		},
 	)
 	return cards
 }
 
-func getCardReviewsCount(progress entity.CardProgress) int {
-	return progress.HardCount + progress.GoodCount + progress.FailsCount + progress.EasyCount
+func getMarks(progress map[entity.CardId]entity.CardProgress) []entity.CardMark {
+	marks := make([]entity.CardMark, 0, len(progress))
+	minAnswerDuration, maxAnswerDuration := getMinMaxAnswerDuration(progress)
+	for id, pr := range progress {
+		var mark entity.Mark
+		reviewsCount := getCardReviewsCount(pr)
+		if reviewsCount > 0 {
+			answerScore := getCardAnswerScore(pr)
+			durationScore := getDurationScore(
+				minAnswerDuration.Seconds(), maxAnswerDuration.Seconds(),
+				pr.AverageReviewTime.Seconds(),
+			)
+			score := answerScore + durationScore
+			switch {
+			case score > MARK_A_START:
+				mark = entity.MARK_A
+			case score > MARK_B_START:
+				mark = entity.MARK_B
+			case score > MARK_C_START:
+				mark = entity.MARK_C
+			case score > MARK_D_START:
+				mark = entity.MARK_D
+			default:
+				mark = entity.MARK_E
+			}
+		} else {
+			mark = entity.MARK_NULL
+		}
+
+		marks = append(
+			marks, entity.CardMark{
+				Mark: mark,
+				Id:   id,
+			},
+		)
+	}
+	return marks
 }
 
-func getCardMark(progress entity.CardProgress) float64 {
+func getDurationScore(
+	min float64,
+	max float64,
+	duration float64,
+) float64 {
+	if max-min <= 0 {
+		return ANSWER_FAIL_SCORE
+	}
+	return (duration-min)/(max-min)*(ANSWER_EASY_CARDS-ANSWER_FAIL_SCORE) + ANSWER_FAIL_SCORE
+}
+
+func getMinMaxAnswerDuration(progress map[entity.CardId]entity.CardProgress) (
+	min time.Duration,
+	max time.Duration,
+) {
+	max = time.Duration(-1 << 63)
+	min = time.Duration(int64(1<<63 - 1))
+	for _, pr := range progress {
+		if pr.AverageReviewTime > max {
+			max = pr.AverageReviewTime
+		}
+		if pr.AverageReviewTime < min {
+			min = pr.AverageReviewTime
+		}
+	}
+	return min, max
+}
+
+func getCardAnswerScore(progress entity.CardProgress) float64 {
 	reviewsCount := getCardReviewsCount(progress)
-	reviewsAvgValue := progress.FailsCount*1 + progress.HardCount*2 + progress.GoodCount*3 + progress.
-		EasyCount*4
+	reviewsAvgValue := progress.FailsCount*ANSWER_FAIL_SCORE +
+		progress.HardCount*ANSWER_HARD_CARDS +
+		progress.GoodCount*ANSWER_GOOD_CARDS +
+		progress.EasyCount*ANSWER_EASY_CARDS
 	return float64(reviewsAvgValue) / float64(reviewsCount)
+}
+
+func getCardReviewsCount(progress entity.CardProgress) int {
+	return progress.HardCount + progress.GoodCount + progress.FailsCount + progress.EasyCount
 }
 
 func (r *ReviewUseCase) AddReviewResults(

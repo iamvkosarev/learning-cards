@@ -31,3 +31,8 @@ type CardProgress struct {
 	GoodCount         int
 	EasyCount         int
 }
+
+type CardMark struct {
+	Id CardId
+	Mark
+}

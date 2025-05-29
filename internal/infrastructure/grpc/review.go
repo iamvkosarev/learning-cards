@@ -20,6 +20,7 @@ type ReviewUseCase interface {
 		ctx context.Context, userId entity.UserId, groupId entity.GroupId,
 		answers []entity.ReviewCardResult,
 	) error
+	GetCardsMarks(ctx context.Context, userId entity.UserId, groupId entity.GroupId) ([]entity.CardMark, error)
 }
 type ReviewServiceDeps struct {
 	ReviewUseCase ReviewUseCase
@@ -89,4 +90,28 @@ func (r *ReviewService) AddReviewResults(ctx context.Context, req *pb.AddReviewR
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+func (r *ReviewService) GetCardsProgress(
+	ctx context.Context,
+	req *pb.GetCardsProgressRequest,
+) (*pb.GetCardsProgressResponse, error) {
+	userId, err := r.AuthVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	groupId := entity.GroupId(req.GroupId)
+
+	cardsMarks, err := r.ReviewUseCase.GetCardsMarks(ctx, userId, groupId)
+	if err != nil {
+		return nil, err
+	}
+	cardsResp := make([]*pb.CardProgress, len(cardsMarks))
+	for i, cardMark := range cardsMarks {
+		cardsResp[i] = &pb.CardProgress{
+			CardId: int64(cardMark.Id),
+			Mark:   markToResponse(cardMark.Mark),
+		}
+	}
+	return &pb.GetCardsProgressResponse{Cards: cardsResp}, nil
 }

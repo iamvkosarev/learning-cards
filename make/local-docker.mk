@@ -1,5 +1,3 @@
-local-docker-restart: local-docker-down local-docker-build local-docker-up
-
 .PHONY: ensure-network up-cards up-reviews down-cards down-reviews
 
 ensure-network:
@@ -12,16 +10,16 @@ ensure-network:
 .PHONY: up-cards up-reviews
 
 
-up-cards: ensure-network
+local-up-cards: ensure-network
 	cd cmd/cards && docker compose -f docker-compose.yml --env-file .env up -d --build
 
-up-reviews: ensure-network
+local-up-reviews: ensure-network
 	cd cmd/reviews && docker compose -f docker-compose.yml --env-file .env up -d --build
 
-down-cards:
+local-down-cards:
 	cd cmd/cards && docker compose -f docker-compose.yml --env-file .env down
 
-down-reviews:
+local-down-reviews:
 	cd cmd/reviews && docker compose -f docker-compose.yml --env-file .env down
 
 logs-cards:
