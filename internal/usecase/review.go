@@ -175,9 +175,13 @@ func getSortedCardsByScores(
 		cards = append(cards, id)
 	}
 	marks := getMarks(progress)
+	marksMap := make(map[entity.CardId]entity.CardMark)
+	for _, mark := range marks {
+		marksMap[mark.Id] = mark
+	}
 	sort.Slice(
 		cards, func(i, j int) bool {
-			return marks[cards[i]].Mark < marks[cards[j]].Mark
+			return marksMap[cards[i]].Mark < marksMap[cards[j]].Mark
 		},
 	)
 	return cards
