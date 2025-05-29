@@ -78,6 +78,7 @@ func prepareReviewService(ctx context.Context, cfg *config.ReviewsConfig, logger
 			ProgressReader: progressRepo,
 			CardReader:     cardsClient,
 			GroupReader:    cardsClient,
+			Config:         cfg.ReviewsUseCase,
 		},
 	)
 

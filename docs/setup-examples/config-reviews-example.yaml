@@ -19,3 +19,6 @@ database:
   connection_string_key: "DB_DNS"
 cards_server:
   address: "cards-server:50051"
+use_case:
+  answer_influence_percent: 0.8
+  select_duration_influence_percent: 0.2
