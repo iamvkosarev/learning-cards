@@ -1,4 +1,4 @@
-package grpc
+package server
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-type ReviewUseCase interface {
+type ReviewService interface {
 	GetReviewCards(
 		ctx context.Context,
 		userId entity.UserId,
@@ -22,22 +22,22 @@ type ReviewUseCase interface {
 	GetCardsMarks(ctx context.Context, userId entity.UserId, groupId entity.GroupId) ([]entity.CardMark, error)
 }
 
-type ReviewServiceDeps struct {
-	ReviewUseCase ReviewUseCase
+type ReviewServerDeps struct {
+	ReviewService ReviewService
 	AuthVerifier  AuthVerifier
 	Logger        *slog.Logger
 }
 
-type ReviewService struct {
-	ReviewServiceDeps
+type ReviewServer struct {
+	ReviewServerDeps
 	pb.UnimplementedReviewServiceServer
 }
 
-func NewReviewService(deps ReviewServiceDeps) *ReviewService {
-	return &ReviewService{ReviewServiceDeps: deps}
+func NewReviewServer(deps ReviewServerDeps) *ReviewServer {
+	return &ReviewServer{ReviewServerDeps: deps}
 }
 
-func (r *ReviewService) GetReviewCards(ctx context.Context, req *pb.GetReviewCardsRequest) (
+func (r *ReviewServer) GetReviewCards(ctx context.Context, req *pb.GetReviewCardsRequest) (
 	*pb.GetReviewCardsResponse,
 	error,
 ) {
@@ -52,7 +52,7 @@ func (r *ReviewService) GetReviewCards(ctx context.Context, req *pb.GetReviewCar
 		CardsCount: int(req.CardsCount),
 	}
 
-	cards, err := r.ReviewUseCase.GetReviewCards(ctx, userId, groupId, settings)
+	cards, err := r.ReviewService.GetReviewCards(ctx, userId, groupId, settings)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (r *ReviewService) GetReviewCards(ctx context.Context, req *pb.GetReviewCar
 
 	return &pb.GetReviewCardsResponse{Cards: cardsResp}, nil
 }
-func (r *ReviewService) AddReviewResults(ctx context.Context, req *pb.AddReviewResultsRequest) (
+func (r *ReviewServer) AddReviewResults(ctx context.Context, req *pb.AddReviewResultsRequest) (
 	*emptypb.Empty,
 	error,
 ) {
@@ -84,7 +84,7 @@ func (r *ReviewService) AddReviewResults(ctx context.Context, req *pb.AddReviewR
 		}
 	}
 
-	err = r.ReviewUseCase.AddReviewResults(ctx, userId, groupId, answers)
+	err = r.ReviewService.AddReviewResults(ctx, userId, groupId, answers)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (r *ReviewService) AddReviewResults(ctx context.Context, req *pb.AddReviewR
 	return &emptypb.Empty{}, nil
 }
 
-func (r *ReviewService) GetCardsProgress(
+func (r *ReviewServer) GetCardsProgress(
 	ctx context.Context,
 	req *pb.GetCardsProgressRequest,
 ) (*pb.GetCardsProgressResponse, error) {
@@ -102,7 +102,7 @@ func (r *ReviewService) GetCardsProgress(
 	}
 	groupId := entity.GroupId(req.GroupId)
 
-	cardsMarks, err := r.ReviewUseCase.GetCardsMarks(ctx, userId, groupId)
+	cardsMarks, err := r.ReviewService.GetCardsMarks(ctx, userId, groupId)
 	if err != nil {
 		return nil, err
 	}

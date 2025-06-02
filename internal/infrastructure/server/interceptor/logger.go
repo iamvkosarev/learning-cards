@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
-	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor/verification"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

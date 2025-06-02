@@ -1,4 +1,4 @@
-package server
+package app
 
 import (
 	"context"
@@ -6,29 +6,36 @@ import (
 	"fmt"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
-	"github.com/iamvkosarev/learning-cards/internal/app"
 	"github.com/iamvkosarev/learning-cards/internal/config"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/database/postgres"
-	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor"
-	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor/verification"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/http/middleware"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"log"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 )
 
-type NewServiceFunc[TService any, TServiceDeps any] func(context.Context, *slog.Logger) (TService, TServiceDeps, error)
-type RegisterServiceFunc[TService any] func(grpc.ServiceRegistrar, TService)
-type RegisterEndpoint func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error
-type NewServerFunc[TServer any, TServiceDeps any] func(TServiceDeps) TServer
+type app interface {
+	start() error
+	shutdown(context.Context)
+}
 
-type Wrapper struct {
-	Server       app.Server
+type newServerFunc[TServer any, TAppDeps any] func(context.Context, *slog.Logger) (TServer, TAppDeps, error)
+type registerServerFunc[TServer any] func(grpc.ServiceRegistrar, TServer)
+type registerEndpoint func(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) error
+type newAppFunc[TApp any, TAppDeps any] func(TAppDeps) TApp
+
+type grpcAppWrapper struct {
+	app          app
 	serverConfig config.Server
 	logger       *slog.Logger
 	httpServer   *http.Server
@@ -36,14 +43,34 @@ type Wrapper struct {
 	verifier     verification.Verifier
 }
 
-func BuildServer[TService any, TServer app.Server, TServiceDeps any](
+func (w *grpcAppWrapper) Run(
+	ctx context.Context,
+) {
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		if err := w.start(); err != nil {
+			log.Printf("Failed to initialize server: %v", err)
+			shutdown <- syscall.SIGTERM
+		}
+	}()
+
+	<-shutdown
+	log.Println("Shutting down gracefully")
+
+	w.shutdown(ctx)
+	log.Println("app stopped")
+}
+
+func buildApp[TServer any, TApp app, TAppDeps any](
 	ctx context.Context, cfg config.Config,
-	newService NewServiceFunc[TService, TServiceDeps],
-	registerService RegisterServiceFunc[TService],
-	registerEndPoint RegisterEndpoint,
-	newServer NewServerFunc[TServer, TServiceDeps],
+	newServerFunc newServerFunc[TServer, TAppDeps],
+	registerServerFunc registerServerFunc[TServer],
+	registerEndPointFunc registerEndpoint,
+	newAppFunc newAppFunc[TApp, TAppDeps],
 ) (
-	*Wrapper,
+	*grpcAppWrapper,
 	error,
 ) {
 	logger, err := sl.SetupLogger(cfg.Env)
@@ -51,7 +78,7 @@ func BuildServer[TService any, TServer app.Server, TServiceDeps any](
 		return nil, fmt.Errorf("error setting up logger: %v", err)
 	}
 
-	service, serviceDeps, err := newService(ctx, logger)
+	service, serviceDeps, err := newServerFunc(ctx, logger)
 	if err != nil {
 		return nil, err
 	}
@@ -71,11 +98,11 @@ func BuildServer[TService any, TServer app.Server, TServiceDeps any](
 		),
 	)
 
-	registerService(grpcServer, service)
+	registerServerFunc(grpcServer, service)
 
 	gwMux := runtime.NewServeMux()
 
-	err = registerEndPoint(
+	err = registerEndPointFunc(
 		ctx, gwMux, cfg.Server.GRPCPort,
 		[]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())},
 	)
@@ -95,8 +122,8 @@ func BuildServer[TService any, TServer app.Server, TServiceDeps any](
 		Handler: corsHandler,
 	}
 
-	server := &Wrapper{
-		Server:       newServer(serviceDeps),
+	server := &grpcAppWrapper{
+		app:          newAppFunc(serviceDeps),
 		logger:       logger,
 		serverConfig: cfg.Server,
 		httpServer:   httpServer,
@@ -106,9 +133,9 @@ func BuildServer[TService any, TServer app.Server, TServiceDeps any](
 	return server, nil
 }
 
-func (w *Wrapper) Start() error {
+func (w *grpcAppWrapper) start() error {
 	go func() {
-		w.Server.Start()
+		w.app.start()
 	}()
 
 	lis, err := net.Listen("tcp", w.serverConfig.GRPCPort)
@@ -136,7 +163,7 @@ func (w *Wrapper) Start() error {
 	return nil
 }
 
-func (w *Wrapper) Shutdown(ctx context.Context) {
+func (w *grpcAppWrapper) shutdown(ctx context.Context) {
 	shutdownCtx, cancel := context.WithTimeout(ctx, w.serverConfig.ShutdownTimeout)
 	defer cancel()
 
@@ -147,7 +174,7 @@ func (w *Wrapper) Shutdown(ctx context.Context) {
 		w.logger.Error("HTTP server shutdown error", sl.Err(err))
 	}
 
-	w.Server.Shutdown(shutdownCtx)
+	w.app.shutdown(shutdownCtx)
 }
 
 func selectVerifier(ssoConfig config.SSO) (verification.Verifier, error) {
@@ -157,7 +184,7 @@ func selectVerifier(ssoConfig config.SSO) (verification.Verifier, error) {
 	return verification.NewGRPCVerifier(ssoConfig.HostAddress)
 }
 
-func ConnectToDbPool(ctx context.Context, database config.Database) (*pgxpool.Pool, error) {
+func connectToDbPool(ctx context.Context, database config.Database) (*pgxpool.Pool, error) {
 	dns := os.Getenv(database.ConnectionStringKey)
 	dbPool, err := postgres.NewPostgresPool(ctx, dns)
 	if err != nil {

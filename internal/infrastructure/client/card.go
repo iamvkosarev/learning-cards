@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
-	"github.com/iamvkosarev/learning-cards/internal/infrastructure/grpc/interceptor/verification"
+	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"

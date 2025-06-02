@@ -1,4 +1,4 @@
-package usecase
+package service
 
 import (
 	"context"
@@ -36,30 +36,30 @@ type ProgressWriter interface {
 	) error
 }
 
-type ReviewUseCaseDeps struct {
+type ReviewServiceDeps struct {
 	ProgressReader ProgressReader
 	ProgressWriter ProgressWriter
 	CardReader     CardReader
 	GroupReader    GroupReader
-	Config         config.ReviewsUseCase
+	Config         config.ReviewsService
 }
 
-type ReviewUseCase struct {
-	ReviewUseCaseDeps
+type ReviewService struct {
+	ReviewServiceDeps
 }
 
-func NewReviewUseCase(deps ReviewUseCaseDeps) *ReviewUseCase {
-	return &ReviewUseCase{deps}
+func NewReviewService(deps ReviewServiceDeps) *ReviewService {
+	return &ReviewService{deps}
 }
 
-func (r *ReviewUseCase) GetReviewCards(
+func (r *ReviewService) GetReviewCards(
 	ctx context.Context, userId entity.UserId,
 	groupId entity.GroupId, settings entity.ReviewSettings,
 ) (
 	[]entity.Card,
 	error,
 ) {
-	op := "usecase.ReviewUseCase.GetReviewCards"
+	op := "service.ReviewService.GetReviewCards"
 
 	group, err := getGroupAndCheckAccess(ctx, userId, groupId, op, r.GroupReader)
 	if err != nil {
@@ -114,12 +114,12 @@ func (r *ReviewUseCase) GetReviewCards(
 	return reviewCards, nil
 }
 
-func (r *ReviewUseCase) GetCardsMarks(
+func (r *ReviewService) GetCardsMarks(
 	ctx context.Context,
 	userId entity.UserId,
 	groupId entity.GroupId,
 ) ([]entity.CardMark, error) {
-	op := "usecase.ReviewUseCase.GetCardsMarks"
+	op := "service.ReviewService.GetCardsMarks"
 
 	group, err := getGroupAndCheckAccess(ctx, userId, groupId, op, r.GroupReader)
 	if err != nil {
@@ -134,7 +134,7 @@ func (r *ReviewUseCase) GetCardsMarks(
 	return r.getMarks(progress), nil
 }
 
-func (r *ReviewUseCase) getCardsAndProgress(
+func (r *ReviewService) getCardsAndProgress(
 	ctx context.Context,
 	userId entity.UserId, group entity.Group,
 ) (
@@ -181,7 +181,7 @@ func removeUniqueCards[TCards any](
 	return cards
 }
 
-func (r *ReviewUseCase) getSortedCardsByScores(
+func (r *ReviewService) getSortedCardsByScores(
 	progress map[entity.CardId]entity.CardProgress,
 ) []entity.CardId {
 	cards := make([]entity.CardId, 0, len(progress))
@@ -201,7 +201,7 @@ func (r *ReviewUseCase) getSortedCardsByScores(
 	return cards
 }
 
-func (r *ReviewUseCase) getMarks(progress map[entity.CardId]entity.CardProgress) []entity.CardMark {
+func (r *ReviewService) getMarks(progress map[entity.CardId]entity.CardProgress) []entity.CardMark {
 	marks := make([]entity.CardMark, 0, len(progress))
 	minAnswerDuration, maxAnswerDuration := getMinMaxAnswerDuration(progress)
 	for id, pr := range progress {
@@ -281,11 +281,11 @@ func getCardReviewsCount(progress entity.CardProgress) int {
 	return progress.HardCount + progress.GoodCount + progress.FailsCount + progress.EasyCount
 }
 
-func (r *ReviewUseCase) AddReviewResults(
+func (r *ReviewService) AddReviewResults(
 	ctx context.Context, userId entity.UserId,
 	groupId entity.GroupId, answers []entity.ReviewCardResult,
 ) error {
-	op := "usecase.ReviewUseCase.GetReviewCards"
+	op := "service.ReviewService.GetReviewCards"
 
 	_, err := getGroupAndCheckAccess(ctx, userId, groupId, op, r.GroupReader)
 	if err != nil {

@@ -1,6 +1,6 @@
 package config
 
-type ReviewsUseCase struct {
+type ReviewsService struct {
 	AnswerInfluencePercent         float32 `yaml:"answer_influence_percent"`
 	SelectDurationInfluencePercent float32 `yaml:"select_duration_influence_percent"`
 }
@@ -13,5 +13,5 @@ type ReviewsConfig struct {
 	Common         Config `json:"common"`
 	Database       `yaml:"database"`
 	CardsServer    `yaml:"cards_server"`
-	ReviewsUseCase `yaml:"use_case"`
+	ReviewsService `yaml:"review_service"`
 }

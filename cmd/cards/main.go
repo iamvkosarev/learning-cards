@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/iamvkosarev/learning-cards/internal/app"
 	"github.com/iamvkosarev/learning-cards/internal/config"
-	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server"
 	"github.com/joho/godotenv"
 	"log"
 )
@@ -24,10 +23,9 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	server, err := server.BuildCardsServer(ctx, cfg)
+	cardsApp, err := app.NewCardsApp(ctx, cfg)
 	if err != nil {
 		log.Fatalf("Failed to build server: %v", err)
 	}
-
-	app.RunServer(ctx, server)
+	cardsApp.Run(ctx)
 }

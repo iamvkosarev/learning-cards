@@ -1,4 +1,4 @@
-package grpc
+package server
 
 import (
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"

@@ -1,4 +1,4 @@
-package usecase
+package service
 
 import (
 	"context"
@@ -20,24 +20,24 @@ type GroupWriter interface {
 	DeleteGroup(ctx context.Context, groupId entity.GroupId) error
 }
 
-type GroupUseCaseDeps struct {
+type GroupServiceDeps struct {
 	GroupReader GroupReader
 	GroupWriter GroupWriter
 	UserReader  UserReader
 	UserWriter  UserWriter
 }
 
-type GroupUseCase struct {
-	GroupUseCaseDeps
+type GroupService struct {
+	GroupServiceDeps
 }
 
-func NewGroupUseCase(deps GroupUseCaseDeps) *GroupUseCase {
-	return &GroupUseCase{
-		GroupUseCaseDeps: deps,
+func NewGroupService(deps GroupServiceDeps) *GroupService {
+	return &GroupService{
+		GroupServiceDeps: deps,
 	}
 }
 
-func (g *GroupUseCase) CreateGroup(
+func (g *GroupService) CreateGroup(
 	ctx context.Context, userId entity.UserId,
 	name, description string,
 	visibility entity.GroupVisibility,
@@ -77,11 +77,11 @@ func (g *GroupUseCase) CreateGroup(
 	return groupId, nil
 }
 
-func (g *GroupUseCase) GetGroup(ctx context.Context, userId entity.UserId, groupId entity.GroupId) (
+func (g *GroupService) GetGroup(ctx context.Context, userId entity.UserId, groupId entity.GroupId) (
 	entity.Group,
 	error,
 ) {
-	op := "usecase.GroupUseCase.GetGroup"
+	op := "service.GroupService.GetGroup"
 	group, err := getGroupAndCheckAccess(ctx, userId, groupId, op, g.GroupReader)
 	if err != nil {
 		return entity.Group{}, err
@@ -104,7 +104,7 @@ func getGroupAndCheckAccess(
 	return group, nil
 }
 
-func (g *GroupUseCase) List(ctx context.Context, userId entity.UserId) ([]entity.Group, error) {
+func (g *GroupService) List(ctx context.Context, userId entity.UserId) ([]entity.Group, error) {
 
 	groups, err := g.GroupReader.ListGroups(ctx, userId)
 	if err != nil {
@@ -114,8 +114,8 @@ func (g *GroupUseCase) List(ctx context.Context, userId entity.UserId) ([]entity
 	return groups, nil
 }
 
-func (g *GroupUseCase) UpdateGroup(ctx context.Context, userId entity.UserId, updateGroup entity.UpdateGroup) error {
-	op := "usecase.GroupUseCase.UpdateGroup"
+func (g *GroupService) UpdateGroup(ctx context.Context, userId entity.UserId, updateGroup entity.UpdateGroup) error {
+	op := "service.GroupService.UpdateGroup"
 
 	group, err := g.GroupReader.GetGroup(ctx, updateGroup.Id)
 
@@ -145,8 +145,8 @@ func (g *GroupUseCase) UpdateGroup(ctx context.Context, userId entity.UserId, up
 	return nil
 }
 
-func (g *GroupUseCase) DeleteGroup(ctx context.Context, userId entity.UserId, groupId entity.GroupId) error {
-	op := "usecase.GroupUseCase.DeleteGroup"
+func (g *GroupService) DeleteGroup(ctx context.Context, userId entity.UserId, groupId entity.GroupId) error {
+	op := "service.GroupService.DeleteGroup"
 
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 

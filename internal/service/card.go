@@ -1,4 +1,4 @@
-package usecase
+package service
 
 import (
 	"context"
@@ -19,24 +19,24 @@ type CardWriter interface {
 	DeleteCard(ctx context.Context, cardId entity.CardId) error
 }
 
-type CardsUseCaseDeps struct {
+type CardsServiceDeps struct {
 	CardReader  CardReader
 	CardWriter  CardWriter
 	GroupReader GroupReader
 }
 
-type CardsUseCase struct {
-	CardsUseCaseDeps
+type CardsService struct {
+	CardsServiceDeps
 }
 
-func NewCardsUseCase(deps CardsUseCaseDeps) *CardsUseCase {
-	return &CardsUseCase{
-		CardsUseCaseDeps: deps,
+func NewCardsService(deps CardsServiceDeps) *CardsService {
+	return &CardsService{
+		CardsServiceDeps: deps,
 	}
 }
 
-func (c *CardsUseCase) GetCard(ctx context.Context, userId entity.UserId, cardId entity.CardId) (entity.Card, error) {
-	op := "usecase.CardsUseCase.GetCard"
+func (c *CardsService) GetCard(ctx context.Context, userId entity.UserId, cardId entity.CardId) (entity.Card, error) {
+	op := "service.CardsService.GetCard"
 
 	card, err := c.CardReader.GetCard(ctx, cardId)
 	if err != nil {
@@ -56,11 +56,11 @@ func (c *CardsUseCase) GetCard(ctx context.Context, userId entity.UserId, cardId
 
 }
 
-func (c *CardsUseCase) ListCards(ctx context.Context, userId entity.UserId, groupId entity.GroupId) (
+func (c *CardsService) ListCards(ctx context.Context, userId entity.UserId, groupId entity.GroupId) (
 	[]entity.Card,
 	error,
 ) {
-	op := "usecase.CardsUseCase.ListCards"
+	op := "service.CardsService.ListCards"
 
 	group, err := c.GroupReader.GetGroup(ctx, groupId)
 	if err != nil {
@@ -77,14 +77,14 @@ func (c *CardsUseCase) ListCards(ctx context.Context, userId entity.UserId, grou
 	return cards, nil
 }
 
-func (c *CardsUseCase) Create(
+func (c *CardsService) Create(
 	ctx context.Context, userId entity.UserId, groupId entity.GroupId, frontText,
 	backText string,
 ) (
 	entity.CardId,
 	error,
 ) {
-	op := "usecase.CardsUseCase.CreateGroup"
+	op := "service.CardsService.CreateGroup"
 
 	group, err := c.GroupReader.GetGroup(ctx, groupId)
 	if err != nil {
@@ -108,8 +108,8 @@ func (c *CardsUseCase) Create(
 	return cardId, nil
 }
 
-func (c *CardsUseCase) UpdateCard(ctx context.Context, userId entity.UserId, updateCard entity.UpdateCard) error {
-	op := "usecase.GroupUseCase.UpdateCard"
+func (c *CardsService) UpdateCard(ctx context.Context, userId entity.UserId, updateCard entity.UpdateCard) error {
+	op := "service.GroupService.UpdateCard"
 
 	card, err := c.CardReader.GetCard(ctx, updateCard.Id)
 	if err != nil {
@@ -137,8 +137,8 @@ func (c *CardsUseCase) UpdateCard(ctx context.Context, userId entity.UserId, upd
 	return nil
 }
 
-func (c *CardsUseCase) DeleteCard(ctx context.Context, userId entity.UserId, id entity.CardId) error {
-	op := "usecase.GroupUseCase.DeleteCard"
+func (c *CardsService) DeleteCard(ctx context.Context, userId entity.UserId, id entity.CardId) error {
+	op := "service.GroupService.DeleteCard"
 
 	card, err := c.CardReader.GetCard(ctx, id)
 	if err != nil {
