@@ -4,9 +4,9 @@ import (
 	"context"
 	"github.com/iamvkosarev/learning-cards/internal/config"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/client"
-	sqlRepository "github.com/iamvkosarev/learning-cards/internal/infrastructure/repository/postgres"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
+	"github.com/iamvkosarev/learning-cards/internal/repository/postgres"
 	"github.com/iamvkosarev/learning-cards/internal/service"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -59,7 +59,7 @@ func prepareReviewServer(ctx context.Context, cfg *config.ReviewsConfig, logger 
 		return nil, reviewsAppDeps{}, err
 	}
 
-	progressRepo := sqlRepository.NewProgressRepository(dbPool)
+	progressRepo := postgres.NewProgressRepository(dbPool)
 
 	cardsClient, err := client.NewCardsClient(ctx, cfg.CardsServer.Address)
 	if err != nil {

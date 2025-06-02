@@ -3,9 +3,9 @@ package app
 import (
 	"context"
 	"github.com/iamvkosarev/learning-cards/internal/config"
-	sqlRepository "github.com/iamvkosarev/learning-cards/internal/infrastructure/repository/postgres"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
+	"github.com/iamvkosarev/learning-cards/internal/repository/postgres"
 	"github.com/iamvkosarev/learning-cards/internal/service"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -53,9 +53,9 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 		return nil, cardsAppDeps{}, err
 	}
 
-	groupRepo := sqlRepository.NewGroupRepository(dbPool)
-	userRepo := sqlRepository.NewUserRepository(dbPool)
-	cardRepo := sqlRepository.NewCardRepository(dbPool)
+	groupRepo := postgres.NewGroupRepository(dbPool)
+	userRepo := postgres.NewUserRepository(dbPool)
+	cardRepo := postgres.NewCardRepository(dbPool)
 
 	verifier := server.VerifyFunc(verification.GetUserId)
 
