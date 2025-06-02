@@ -4,18 +4,27 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
+type GroupReader interface {
+	GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error)
+	ListGroups(ctx context.Context, id entity.UserId) ([]entity.Group, error)
+}
+
+type GroupWriter interface {
+	AddGroup(ctx context.Context, group entity.Group) (entity.GroupId, error)
+	UpdateGroup(ctx context.Context, group entity.Group) error
+	DeleteGroup(ctx context.Context, groupId entity.GroupId) error
+}
+
 type GroupUseCaseDeps struct {
-	GroupReader  contracts.GroupReader
-	GroupWriter  contracts.GroupWriter
-	UserReader   contracts.UserReader
-	UserWriter   contracts.UserWriter
-	AuthVerifier contracts.AuthVerifier
+	GroupReader GroupReader
+	GroupWriter GroupWriter
+	UserReader  UserReader
+	UserWriter  UserWriter
 }
 
 type GroupUseCase struct {
@@ -29,15 +38,11 @@ func NewGroupUseCase(deps GroupUseCaseDeps) *GroupUseCase {
 }
 
 func (g *GroupUseCase) CreateGroup(
-	ctx context.Context,
+	ctx context.Context, userId entity.UserId,
 	name, description string,
 	visibility entity.GroupVisibility,
 ) (entity.GroupId, error) {
-	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return 0, err
-	}
-	_, err = g.UserReader.GetUser(ctx, userId)
+	_, err := g.UserReader.GetUser(ctx, userId)
 	if err != nil {
 		if errors.Is(err, entity.ErrUserNotFound) {
 			err = g.UserWriter.AddUser(
@@ -72,14 +77,11 @@ func (g *GroupUseCase) CreateGroup(
 	return groupId, nil
 }
 
-func (g *GroupUseCase) GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
+func (g *GroupUseCase) GetGroup(ctx context.Context, userId entity.UserId, groupId entity.GroupId) (
+	entity.Group,
+	error,
+) {
 	op := "usecase.GroupUseCase.GetGroup"
-
-	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return entity.Group{}, err
-	}
-
 	group, err := getGroupAndCheckAccess(ctx, userId, groupId, op, g.GroupReader)
 	if err != nil {
 		return entity.Group{}, err
@@ -89,7 +91,7 @@ func (g *GroupUseCase) GetGroup(ctx context.Context, groupId entity.GroupId) (en
 
 func getGroupAndCheckAccess(
 	ctx context.Context, userId entity.UserId, groupId entity.GroupId, op string,
-	r contracts.GroupReader,
+	r GroupReader,
 ) (entity.Group, error) {
 	group, err := r.GetGroup(ctx, groupId)
 	if err != nil {
@@ -102,12 +104,7 @@ func getGroupAndCheckAccess(
 	return group, nil
 }
 
-func (g *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
-
-	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (g *GroupUseCase) List(ctx context.Context, userId entity.UserId) ([]entity.Group, error) {
 
 	groups, err := g.GroupReader.ListGroups(ctx, userId)
 	if err != nil {
@@ -117,13 +114,8 @@ func (g *GroupUseCase) List(ctx context.Context) ([]entity.Group, error) {
 	return groups, nil
 }
 
-func (g *GroupUseCase) UpdateGroup(ctx context.Context, updateGroup entity.UpdateGroup) error {
+func (g *GroupUseCase) UpdateGroup(ctx context.Context, userId entity.UserId, updateGroup entity.UpdateGroup) error {
 	op := "usecase.GroupUseCase.UpdateGroup"
-
-	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return err
-	}
 
 	group, err := g.GroupReader.GetGroup(ctx, updateGroup.Id)
 
@@ -153,13 +145,8 @@ func (g *GroupUseCase) UpdateGroup(ctx context.Context, updateGroup entity.Updat
 	return nil
 }
 
-func (g *GroupUseCase) DeleteGroup(ctx context.Context, groupId entity.GroupId) error {
+func (g *GroupUseCase) DeleteGroup(ctx context.Context, userId entity.UserId, groupId entity.GroupId) error {
 	op := "usecase.GroupUseCase.DeleteGroup"
-
-	userId, err := g.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return err
-	}
 
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 

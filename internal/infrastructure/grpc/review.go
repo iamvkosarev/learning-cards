@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -22,9 +21,10 @@ type ReviewUseCase interface {
 	) error
 	GetCardsMarks(ctx context.Context, userId entity.UserId, groupId entity.GroupId) ([]entity.CardMark, error)
 }
+
 type ReviewServiceDeps struct {
 	ReviewUseCase ReviewUseCase
-	AuthVerifier  contracts.AuthVerifier
+	AuthVerifier  AuthVerifier
 	Logger        *slog.Logger
 }
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/config"
-	"github.com/iamvkosarev/learning-cards/internal/domain/contracts"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	"sort"
 	"time"
@@ -24,11 +23,24 @@ const (
 	MARK_D_START
 )
 
+type ProgressReader interface {
+	GetCardsProgress(ctx context.Context, user entity.UserId, group entity.GroupId) ([]entity.CardProgress, error)
+}
+
+type ProgressWriter interface {
+	UpdateCardsProgress(
+		ctx context.Context,
+		user entity.UserId,
+		group entity.GroupId,
+		cardsProgress []entity.CardProgress,
+	) error
+}
+
 type ReviewUseCaseDeps struct {
-	ProgressReader contracts.ProgressReader
-	ProgressWriter contracts.ProgressWriter
-	CardReader     contracts.CardReader
-	GroupReader    contracts.GroupReader
+	ProgressReader ProgressReader
+	ProgressWriter ProgressWriter
+	CardReader     CardReader
+	GroupReader    GroupReader
 	Config         config.ReviewsUseCase
 }
 

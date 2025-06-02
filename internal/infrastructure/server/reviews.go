@@ -15,15 +15,13 @@ import (
 	"log/slog"
 )
 
-type CardsClient interface {
-	contracts.CardReader
-	contracts.GroupReader
+type Connection interface {
 	Close()
 }
 
 type ReviewsServiceDeps struct {
 	dbPool      *pgxpool.Pool
-	cardsClient CardsClient
+	cardsClient Connection
 }
 type ReviewsServer struct {
 	ReviewsServiceDeps

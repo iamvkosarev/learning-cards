@@ -51,27 +51,6 @@ func markToResponse(mark entity.Mark) pb.Mark {
 	}
 }
 
-func marksToEntry(marksFilterResp []pb.Mark) []entity.Mark {
-	marksFilter := make([]entity.Mark, len(marksFilterResp))
-	for i, m := range marksFilterResp {
-		var mark entity.Mark
-		switch m {
-		case pb.Mark_MARK_A:
-			mark = entity.MARK_A
-		case pb.Mark_MARK_B:
-			mark = entity.MARK_B
-		case pb.Mark_MARK_C:
-			mark = entity.MARK_C
-		case pb.Mark_MARK_D:
-			mark = entity.MARK_D
-		default:
-			mark = entity.MARK_NULL
-		}
-		marksFilter[i] = mark
-	}
-	return marksFilter
-}
-
 func answerToEntity(answer pb.CardAnswer) entity.Answer {
 	switch answer {
 	case pb.CardAnswer_EASY:

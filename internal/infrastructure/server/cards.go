@@ -62,19 +62,17 @@ func prepareCardService(ctx context.Context, cfg *config.CardsConfig, logger *sl
 
 	var groupUseCase server.GroupUseCase = usecase.NewGroupUseCase(
 		usecase.GroupUseCaseDeps{
-			GroupReader:  groupRepo,
-			GroupWriter:  groupRepo,
-			UserReader:   userRepo,
-			UserWriter:   userRepo,
-			AuthVerifier: verifier,
+			GroupReader: groupRepo,
+			GroupWriter: groupRepo,
+			UserReader:  userRepo,
+			UserWriter:  userRepo,
 		},
 	)
 	var cardsUseCase server.CardsUseCase = usecase.NewCardsUseCase(
 		usecase.CardsUseCaseDeps{
-			GroupReader:  groupRepo,
-			CardWriter:   cardRepo,
-			CardReader:   cardRepo,
-			AuthVerifier: verifier,
+			GroupReader: groupRepo,
+			CardWriter:  cardRepo,
+			CardReader:  cardRepo,
 		},
 	)
 
@@ -82,6 +80,7 @@ func prepareCardService(ctx context.Context, cfg *config.CardsConfig, logger *sl
 		server.CardServiceDeps{
 			GroupUseCase: groupUseCase,
 			CardsUseCase: cardsUseCase,
+			AuthVerifier: verifier,
 			Logger:       logger,
 		},
 	)
