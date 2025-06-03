@@ -59,14 +59,7 @@ func (r *ReviewService) GetReviewCards(
 	[]entity.Card,
 	error,
 ) {
-	op := "service.ReviewService.GetReviewCards"
-
-	group, err := getGroupAndCheckAccess(ctx, userId, groupId, op, r.GroupReader)
-	if err != nil {
-		return nil, err
-	}
-
-	cards, progress, err := r.getCardsAndProgress(ctx, userId, group)
+	cards, progress, err := r.getCardsAndProgress(ctx, userId, groupId)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +68,7 @@ func (r *ReviewService) GetReviewCards(
 	usedCards := make(map[entity.CardId]struct{})
 	// AddCard new cards
 	for cardId, pr := range progress {
-		if group.CreateTime.Equal(pr.LastReviewTime) {
+		if getCardReviewsCount(pr) == 0 {
 			reviewCards = append(reviewCards, cards[cardId])
 			usedCards[cardId] = struct{}{}
 
@@ -119,14 +112,7 @@ func (r *ReviewService) GetCardsMarks(
 	userId entity.UserId,
 	groupId entity.GroupId,
 ) ([]entity.CardMark, error) {
-	op := "service.ReviewService.GetCardsMarks"
-
-	group, err := getGroupAndCheckAccess(ctx, userId, groupId, op, r.GroupReader)
-	if err != nil {
-		return nil, err
-	}
-
-	_, progress, err := r.getCardsAndProgress(ctx, userId, group)
+	_, progress, err := r.getCardsAndProgress(ctx, userId, groupId)
 	if err != nil {
 		return nil, err
 	}
@@ -136,13 +122,12 @@ func (r *ReviewService) GetCardsMarks(
 
 func (r *ReviewService) getCardsAndProgress(
 	ctx context.Context,
-	userId entity.UserId, group entity.Group,
+	userId entity.UserId, groupId entity.GroupId,
 ) (
 	map[entity.CardId]entity.
 		Card, map[entity.CardId]entity.CardProgress, error,
 ) {
-
-	cardsProgressRow, err := r.ProgressReader.GetCardsProgress(ctx, userId, group.Id)
+	cardsProgressRow, err := r.ProgressReader.GetCardsProgress(ctx, userId, groupId)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error getting card progress: %w", err)
 	}
@@ -150,7 +135,7 @@ func (r *ReviewService) getCardsAndProgress(
 	for _, card := range cardsProgressRow {
 		cardsProgress[card.Id] = card
 	}
-	cardsRow, err := r.CardReader.ListCards(ctx, group.Id)
+	cardsRow, err := r.CardReader.ListCards(ctx, groupId)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error getting list of cards: %w", err)
 	}
@@ -163,7 +148,7 @@ func (r *ReviewService) getCardsAndProgress(
 			if _, ok := cardsProgress[card.Id]; !ok {
 				cardsProgress[card.Id] = entity.CardProgress{
 					Id:             card.Id,
-					LastReviewTime: group.CreateTime,
+					LastReviewTime: time.Now(),
 				}
 			}
 		}
@@ -285,13 +270,6 @@ func (r *ReviewService) AddReviewResults(
 	ctx context.Context, userId entity.UserId,
 	groupId entity.GroupId, answers []entity.ReviewCardResult,
 ) error {
-	op := "service.ReviewService.GetReviewCards"
-
-	_, err := getGroupAndCheckAccess(ctx, userId, groupId, op, r.GroupReader)
-	if err != nil {
-		return err
-	}
-
 	cardsProgressRow, err := r.ProgressReader.GetCardsProgress(ctx, userId, groupId)
 	if err != nil {
 		return err

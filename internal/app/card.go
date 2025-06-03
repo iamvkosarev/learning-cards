@@ -59,19 +59,21 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 
 	verifier := server.VerifyFunc(verification.GetUserId)
 
-	var groupService server.GroupService = service.NewGroupService(
+	groupService := service.NewGroupService(
 		service.GroupServiceDeps{
-			GroupReader: groupRepo,
-			GroupWriter: groupRepo,
-			UserReader:  userRepo,
-			UserWriter:  userRepo,
+			GroupReader:  groupRepo,
+			GroupWriter:  groupRepo,
+			UserReader:   userRepo,
+			UserWriter:   userRepo,
+			UserVerifier: verifier,
 		},
 	)
-	var cardsService server.CardsService = service.NewCardsService(
+	cardsService := service.NewCardsService(
 		service.CardsServiceDeps{
-			GroupReader: groupRepo,
-			CardWriter:  cardRepo,
-			CardReader:  cardRepo,
+			GroupReader:        groupRepo,
+			CardWriter:         cardRepo,
+			CardReader:         cardRepo,
+			GroupAccessChecker: groupService,
 		},
 	)
 

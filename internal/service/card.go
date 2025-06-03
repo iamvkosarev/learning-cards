@@ -2,10 +2,7 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type CardReader interface {
@@ -19,10 +16,16 @@ type CardWriter interface {
 	DeleteCard(ctx context.Context, cardId entity.CardId) error
 }
 
+type GroupAccessChecker interface {
+	CheckReadGroupAccess(ctx context.Context, groupId entity.GroupId) error
+	CheckWriteGroupAccess(ctx context.Context, groupId entity.GroupId) error
+}
+
 type CardsServiceDeps struct {
-	CardReader  CardReader
-	CardWriter  CardWriter
-	GroupReader GroupReader
+	CardReader         CardReader
+	CardWriter         CardWriter
+	GroupReader        GroupReader
+	GroupAccessChecker GroupAccessChecker
 }
 
 type CardsService struct {
@@ -35,65 +38,15 @@ func NewCardsService(deps CardsServiceDeps) *CardsService {
 	}
 }
 
-func (c *CardsService) GetCard(ctx context.Context, userId entity.UserId, cardId entity.CardId) (entity.Card, error) {
-	op := "service.CardsService.GetCard"
-
-	card, err := c.CardReader.GetCard(ctx, cardId)
-	if err != nil {
-		return entity.Card{}, err
-	}
-
-	group, err := c.GroupReader.GetGroup(ctx, card.GroupId)
-	if err != nil {
-		return entity.Card{}, err
-	}
-
-	if err := checkViewGroupAccess(userId, group, op); err != nil {
-		return entity.Card{}, err
-	}
-
-	return card, nil
-
-}
-
-func (c *CardsService) ListCards(ctx context.Context, userId entity.UserId, groupId entity.GroupId) (
-	[]entity.Card,
-	error,
-) {
-	op := "service.CardsService.ListCards"
-
-	group, err := c.GroupReader.GetGroup(ctx, groupId)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := checkViewGroupAccess(userId, group, op); err != nil {
-		return nil, err
-	}
-	cards, err := c.CardReader.ListCards(ctx, groupId)
-	if err != nil {
-		return nil, err
-	}
-	return cards, nil
-}
-
-func (c *CardsService) Create(
-	ctx context.Context, userId entity.UserId, groupId entity.GroupId, frontText,
+func (c *CardsService) AddCard(
+	ctx context.Context, groupId entity.GroupId, frontText,
 	backText string,
 ) (
 	entity.CardId,
 	error,
 ) {
-	op := "service.CardsService.CreateGroup"
-
-	group, err := c.GroupReader.GetGroup(ctx, groupId)
-	if err != nil {
+	if err := c.GroupAccessChecker.CheckWriteGroupAccess(ctx, groupId); err != nil {
 		return 0, err
-	}
-
-	if userId != group.OwnerId {
-		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
-		return 0, entity.NewVerificationError(status.Error(codes.PermissionDenied, message))
 	}
 
 	card := entity.Card{
@@ -108,21 +61,42 @@ func (c *CardsService) Create(
 	return cardId, nil
 }
 
-func (c *CardsService) UpdateCard(ctx context.Context, userId entity.UserId, updateCard entity.UpdateCard) error {
-	op := "service.GroupService.UpdateCard"
+func (c *CardsService) GetCard(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
+	card, err := c.CardReader.GetCard(ctx, cardId)
+	if err != nil {
+		return entity.Card{}, err
+	}
 
+	if err = c.GroupAccessChecker.CheckReadGroupAccess(ctx, card.GroupId); err != nil {
+		return entity.Card{}, err
+	}
+
+	return card, nil
+
+}
+
+func (c *CardsService) ListCards(ctx context.Context, groupId entity.GroupId) (
+	[]entity.Card,
+	error,
+) {
+	if err := c.GroupAccessChecker.CheckReadGroupAccess(ctx, groupId); err != nil {
+		return nil, err
+	}
+
+	cards, err := c.CardReader.ListCards(ctx, groupId)
+	if err != nil {
+		return nil, err
+	}
+	return cards, nil
+}
+
+func (c *CardsService) UpdateCard(ctx context.Context, updateCard entity.UpdateCard) error {
 	card, err := c.CardReader.GetCard(ctx, updateCard.Id)
 	if err != nil {
 		return err
 	}
 
-	group, err := c.GroupReader.GetGroup(ctx, card.GroupId)
-
-	if err != nil {
-		return err
-	}
-
-	if err := checkEditGroupAccess(userId, group, op); err != nil {
+	if err = c.GroupAccessChecker.CheckWriteGroupAccess(ctx, card.GroupId); err != nil {
 		return err
 	}
 
@@ -137,21 +111,13 @@ func (c *CardsService) UpdateCard(ctx context.Context, userId entity.UserId, upd
 	return nil
 }
 
-func (c *CardsService) DeleteCard(ctx context.Context, userId entity.UserId, id entity.CardId) error {
-	op := "service.GroupService.DeleteCard"
-
+func (c *CardsService) DeleteCard(ctx context.Context, id entity.CardId) error {
 	card, err := c.CardReader.GetCard(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	group, err := c.GroupReader.GetGroup(ctx, card.GroupId)
-
-	if err != nil {
-		return err
-	}
-
-	if err := checkEditGroupAccess(userId, group, op); err != nil {
+	if err = c.GroupAccessChecker.CheckWriteGroupAccess(ctx, card.GroupId); err != nil {
 		return err
 	}
 

@@ -11,28 +11,27 @@ import (
 type GroupService interface {
 	CreateGroup(
 		ctx context.Context,
-		userId entity.UserId,
 		name, description string,
 		visibility entity.GroupVisibility,
 	) (
 		entity.GroupId,
 		error,
 	)
-	List(ctx context.Context, userId entity.UserId) ([]entity.Group, error)
-	GetGroup(ctx context.Context, userId entity.UserId, id entity.GroupId) (entity.Group, error)
-	UpdateGroup(ctx context.Context, userId entity.UserId, updateGroup entity.UpdateGroup) error
-	DeleteGroup(ctx context.Context, userId entity.UserId, id entity.GroupId) error
+	List(ctx context.Context) ([]entity.Group, error)
+	GetGroup(ctx context.Context, id entity.GroupId) (entity.Group, error)
+	UpdateGroup(ctx context.Context, updateGroup entity.UpdateGroup) error
+	DeleteGroup(ctx context.Context, id entity.GroupId) error
 }
 
 type CardsService interface {
-	Create(
-		ctx context.Context, userId entity.UserId, groupId entity.GroupId, frontText,
+	AddCard(
+		ctx context.Context, groupId entity.GroupId, frontText,
 		backText string,
 	) (entity.CardId, error)
-	ListCards(ctx context.Context, userId entity.UserId, groupId entity.GroupId) ([]entity.Card, error)
-	GetCard(ctx context.Context, userId entity.UserId, id entity.CardId) (entity.Card, error)
-	UpdateCard(ctx context.Context, userId entity.UserId, card entity.UpdateCard) error
-	DeleteCard(ctx context.Context, userId entity.UserId, id entity.CardId) error
+	ListCards(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error)
+	GetCard(ctx context.Context, id entity.CardId) (entity.Card, error)
+	UpdateCard(ctx context.Context, card entity.UpdateCard) error
+	DeleteCard(ctx context.Context, id entity.CardId) error
 }
 
 type CardServerDeps struct {
@@ -57,13 +56,8 @@ func (s *CardServer) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest
 	*pb.CreateGroupResponse,
 	error,
 ) {
-	userId, err := s.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	visibility := entity.GroupVisibility(req.Visibility)
-	groupId, err := s.GroupService.CreateGroup(ctx, userId, req.GroupName, req.Description, visibility)
+	groupId, err := s.GroupService.CreateGroup(ctx, req.GroupName, req.Description, visibility)
 
 	if err != nil {
 		return nil, err
@@ -75,12 +69,7 @@ func (s *CardServer) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest
 }
 
 func (s *CardServer) ListGroups(ctx context.Context, _ *pb.ListGroupsRequest) (*pb.ListGroupsResponse, error) {
-	userId, err := s.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	groups, err := s.GroupService.List(ctx, userId)
+	groups, err := s.GroupService.List(ctx)
 
 	if err != nil {
 		return nil, err
@@ -99,12 +88,7 @@ func (s *CardServer) ListGroups(ctx context.Context, _ *pb.ListGroupsRequest) (*
 func (s *CardServer) GetGroup(ctx context.Context, req *pb.GetGroupRequest) (*pb.GetGroupResponse, error) {
 	groupId := entity.GroupId(req.GroupId)
 
-	userId, err := s.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	group, err := s.GroupService.GetGroup(ctx, userId, groupId)
+	group, err := s.GroupService.GetGroup(ctx, groupId)
 
 	if err != nil {
 		return nil, err
@@ -124,11 +108,7 @@ func (s *CardServer) UpdateGroup(ctx context.Context, req *pb.UpdateGroupRequest
 		Visibility:  visibility,
 	}
 
-	userId, err := s.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if err = s.GroupService.UpdateGroup(ctx, userId, group); err != nil {
+	if err := s.GroupService.UpdateGroup(ctx, group); err != nil {
 		return nil, err
 	}
 
@@ -139,11 +119,7 @@ func (s *CardServer) UpdateGroup(ctx context.Context, req *pb.UpdateGroupRequest
 func (s *CardServer) DeleteGroup(ctx context.Context, req *pb.DeleteGroupRequest) (*emptypb.Empty, error) {
 	groupId := entity.GroupId(req.GroupId)
 
-	userId, err := s.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if err = s.GroupService.DeleteGroup(ctx, userId, groupId); err != nil {
+	if err := s.GroupService.DeleteGroup(ctx, groupId); err != nil {
 		return nil, err
 	}
 
@@ -152,13 +128,8 @@ func (s *CardServer) DeleteGroup(ctx context.Context, req *pb.DeleteGroupRequest
 }
 
 func (s *CardServer) AddCard(ctx context.Context, req *pb.AddCardRequest) (*pb.AddCardResponse, error) {
-	userId, err := s.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	groupId := entity.GroupId(req.GroupId)
-	cardId, err := s.CardsService.Create(ctx, userId, groupId, req.FrontText, req.BackText)
+	cardId, err := s.CardsService.AddCard(ctx, groupId, req.FrontText, req.BackText)
 
 	if err != nil {
 		return nil, err
@@ -176,13 +147,8 @@ func (s *CardServer) ListCards(ctx context.Context, req *pb.ListCardsRequest) (
 	*pb.ListCardsResponse,
 	error,
 ) {
-	userId, err := s.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	groupId := entity.GroupId(req.GroupId)
-	cards, err := s.CardsService.ListCards(ctx, userId, groupId)
+	cards, err := s.CardsService.ListCards(ctx, groupId)
 
 	if err != nil {
 		return nil, err
@@ -199,12 +165,8 @@ func (s *CardServer) ListCards(ctx context.Context, req *pb.ListCardsRequest) (
 }
 
 func (s *CardServer) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.GetCardResponse, error) {
-	userId, err := s.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
 	cardId := entity.CardId(req.CardId)
-	card, err := s.CardsService.GetCard(ctx, userId, cardId)
+	card, err := s.CardsService.GetCard(ctx, cardId)
 
 	if err != nil {
 		return nil, err
@@ -215,14 +177,10 @@ func (s *CardServer) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.G
 }
 
 func (s *CardServer) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest) (*emptypb.Empty, error) {
-	userId, err := s.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
 	cardId := entity.CardId(req.CardId)
 	card := entity.UpdateCard{Id: cardId, FrontText: req.FrontText, BackText: req.BackText}
 
-	if err = s.CardsService.UpdateCard(ctx, userId, card); err != nil {
+	if err := s.CardsService.UpdateCard(ctx, card); err != nil {
 		return nil, err
 	}
 
@@ -231,13 +189,9 @@ func (s *CardServer) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest) 
 }
 
 func (s *CardServer) DeleteCard(ctx context.Context, req *pb.DeleteCardRequest) (*emptypb.Empty, error) {
-	userId, err := s.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
 	cardId := entity.CardId(req.CardId)
 
-	if err = s.CardsService.DeleteCard(ctx, userId, cardId); err != nil {
+	if err := s.CardsService.DeleteCard(ctx, cardId); err != nil {
 		return nil, err
 	}
 

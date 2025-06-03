@@ -9,6 +9,18 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type UserVerifier interface {
+	VerifyUserByContext(ctx context.Context) (userID entity.UserId, err error)
+}
+
+type UserReader interface {
+	GetUser(ctx context.Context, id entity.UserId) (entity.User, error)
+}
+
+type UserWriter interface {
+	AddUser(ctx context.Context, user entity.User) error
+}
+
 type GroupReader interface {
 	GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error)
 	ListGroups(ctx context.Context, id entity.UserId) ([]entity.Group, error)
@@ -21,10 +33,11 @@ type GroupWriter interface {
 }
 
 type GroupServiceDeps struct {
-	GroupReader GroupReader
-	GroupWriter GroupWriter
-	UserReader  UserReader
-	UserWriter  UserWriter
+	GroupReader  GroupReader
+	GroupWriter  GroupWriter
+	UserReader   UserReader
+	UserWriter   UserWriter
+	UserVerifier UserVerifier
 }
 
 type GroupService struct {
@@ -38,11 +51,15 @@ func NewGroupService(deps GroupServiceDeps) *GroupService {
 }
 
 func (g *GroupService) CreateGroup(
-	ctx context.Context, userId entity.UserId,
+	ctx context.Context,
 	name, description string,
 	visibility entity.GroupVisibility,
 ) (entity.GroupId, error) {
-	_, err := g.UserReader.GetUser(ctx, userId)
+	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return 0, err
+	}
+	_, err = g.UserReader.GetUser(ctx, userId)
 	if err != nil {
 		if errors.Is(err, entity.ErrUserNotFound) {
 			err = g.UserWriter.AddUser(
@@ -77,35 +94,22 @@ func (g *GroupService) CreateGroup(
 	return groupId, nil
 }
 
-func (g *GroupService) GetGroup(ctx context.Context, userId entity.UserId, groupId entity.GroupId) (
-	entity.Group,
-	error,
-) {
-	op := "service.GroupService.GetGroup"
-	group, err := getGroupAndCheckAccess(ctx, userId, groupId, op, g.GroupReader)
+func (g *GroupService) GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
+	group, err := g.GroupReader.GetGroup(ctx, groupId)
 	if err != nil {
+		return entity.Group{}, err
+	}
+	if err = g.getReadGroupAccessByGroup(ctx, group); err != nil {
 		return entity.Group{}, err
 	}
 	return group, nil
 }
 
-func getGroupAndCheckAccess(
-	ctx context.Context, userId entity.UserId, groupId entity.GroupId, op string,
-	r GroupReader,
-) (entity.Group, error) {
-	group, err := r.GetGroup(ctx, groupId)
+func (g *GroupService) List(ctx context.Context) ([]entity.Group, error) {
+	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
-		return entity.Group{}, err
+		return nil, err
 	}
-
-	if err = checkViewGroupAccess(userId, group, op); err != nil {
-		return entity.Group{}, err
-	}
-	return group, nil
-}
-
-func (g *GroupService) List(ctx context.Context, userId entity.UserId) ([]entity.Group, error) {
-
 	groups, err := g.GroupReader.ListGroups(ctx, userId)
 	if err != nil {
 		return nil, err
@@ -114,16 +118,14 @@ func (g *GroupService) List(ctx context.Context, userId entity.UserId) ([]entity
 	return groups, nil
 }
 
-func (g *GroupService) UpdateGroup(ctx context.Context, userId entity.UserId, updateGroup entity.UpdateGroup) error {
-	op := "service.GroupService.UpdateGroup"
-
+func (g *GroupService) UpdateGroup(ctx context.Context, updateGroup entity.UpdateGroup) error {
 	group, err := g.GroupReader.GetGroup(ctx, updateGroup.Id)
 
 	if err != nil {
 		return err
 	}
 
-	if err := checkEditGroupAccess(userId, group, op); err != nil {
+	if err = g.getWriteGroupAccessByGroup(ctx, group); err != nil {
 		return err
 	}
 
@@ -145,40 +147,55 @@ func (g *GroupService) UpdateGroup(ctx context.Context, userId entity.UserId, up
 	return nil
 }
 
-func (g *GroupService) DeleteGroup(ctx context.Context, userId entity.UserId, groupId entity.GroupId) error {
-	op := "service.GroupService.DeleteGroup"
+func (g *GroupService) DeleteGroup(ctx context.Context, groupId entity.GroupId) error {
+	if err := g.CheckWriteGroupAccess(ctx, groupId); err != nil {
+		return err
+	}
+	if err := g.GroupWriter.DeleteGroup(ctx, groupId); err != nil {
+		return err
+	}
+	return nil
+}
 
+func (g *GroupService) CheckReadGroupAccess(ctx context.Context, groupId entity.GroupId) error {
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 
 	if err != nil {
 		return err
 	}
+	return g.getReadGroupAccessByGroup(ctx, group)
+}
 
-	if err := checkEditGroupAccess(userId, group, op); err != nil {
-		return err
-	}
-
-	err = g.GroupWriter.DeleteGroup(ctx, groupId)
+func (g *GroupService) getReadGroupAccessByGroup(ctx context.Context, group entity.Group) error {
+	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
-
-	return nil
-}
-
-func checkViewGroupAccess(userId entity.UserId, group entity.Group, op string) error {
 	if userId != group.OwnerId &&
 		(group.Visibility == entity.GROUP_VISIBILITY_PRIVATE ||
 			group.Visibility == entity.GROUP_VISIBILITY_NULL) {
-		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
+		message := fmt.Sprintf("user (id:%v) not owner of card groups", userId)
 		return entity.NewVerificationError(status.Error(codes.PermissionDenied, message))
 	}
 	return nil
 }
 
-func checkEditGroupAccess(userId entity.UserId, group entity.Group, op string) error {
+func (g *GroupService) CheckWriteGroupAccess(ctx context.Context, groupId entity.GroupId) error {
+	group, err := g.GroupReader.GetGroup(ctx, groupId)
+
+	if err != nil {
+		return err
+	}
+	return g.getWriteGroupAccessByGroup(ctx, group)
+}
+
+func (g *GroupService) getWriteGroupAccessByGroup(ctx context.Context, group entity.Group) error {
+	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return err
+	}
 	if userId != group.OwnerId {
-		message := fmt.Sprintf("%v: user (id:%v) not owner of card groups", op, userId)
+		message := fmt.Sprintf("user (id:%v) not owner of card groups", userId)
 		return entity.NewVerificationError(status.Error(codes.PermissionDenied, message))
 	}
 	return nil

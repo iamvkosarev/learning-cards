@@ -61,7 +61,7 @@ func prepareReviewServer(ctx context.Context, cfg *config.ReviewsConfig, logger 
 
 	progressRepo := postgres.NewProgressRepository(dbPool)
 
-	cardsClient, err := client.NewCardsClient(ctx, cfg.CardsServer.Address)
+	cardsServerClient, err := client.NewCardsClient(ctx, cfg.CardsServer.Address)
 	if err != nil {
 		return nil, reviewsAppDeps{}, err
 	}
@@ -72,8 +72,8 @@ func prepareReviewServer(ctx context.Context, cfg *config.ReviewsConfig, logger 
 		service.ReviewServiceDeps{
 			ProgressWriter: progressRepo,
 			ProgressReader: progressRepo,
-			CardReader:     cardsClient,
-			GroupReader:    cardsClient,
+			CardReader:     cardsServerClient,
+			GroupReader:    cardsServerClient,
 			Config:         cfg.ReviewsService,
 		},
 	)
@@ -85,6 +85,6 @@ func prepareReviewServer(ctx context.Context, cfg *config.ReviewsConfig, logger 
 			Logger:        logger,
 		},
 	)
-	appDeps := reviewsAppDeps{dbPool: dbPool, cardsClient: cardsClient}
+	appDeps := reviewsAppDeps{dbPool: dbPool, cardsClient: cardsServerClient}
 	return server, appDeps, nil
 }
