@@ -18,7 +18,7 @@ type CardWriter interface {
 	DeleteCard(ctx context.Context, cardId entity.CardId) error
 }
 
-//go:generate minimock -i GroupAccessProvider -o ./mocks/group_access_provider_mock.go -n GroupAccessProvider -p mocks
+//go:generate minimock -i GroupAccessChecker -o ./mocks/group_access_checker_mock.go -n GroupAccessChecker -p mocks
 type GroupAccessChecker interface {
 	CheckReadGroupAccess(ctx context.Context, groupId entity.GroupId) error
 	CheckWriteGroupAccess(ctx context.Context, groupId entity.GroupId) error
