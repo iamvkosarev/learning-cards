@@ -23,10 +23,12 @@ const (
 	MARK_D_START
 )
 
+//go:generate minimock -i ProgressReader -o ./mocks/progress_reader_mock.go -n ProgressReaderMock -p mocks
 type ProgressReader interface {
 	GetCardsProgress(ctx context.Context, user entity.UserId, group entity.GroupId) ([]entity.CardProgress, error)
 }
 
+//go:generate minimock -i ProgressWriter -o ./mocks/progress_writer_mock.go -n ProgressWriterMock -p mocks
 type ProgressWriter interface {
 	UpdateCardsProgress(
 		ctx context.Context,

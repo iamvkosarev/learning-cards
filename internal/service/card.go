@@ -5,17 +5,20 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 )
 
+//go:generate minimock -i CardReader -o ./mocks/card_reader_mock.go -n CardReaderMock -p mocks
 type CardReader interface {
 	GetCard(ctx context.Context, cardId entity.CardId) (entity.Card, error)
 	ListCards(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error)
 }
 
+//go:generate minimock -i CardWriter -o ./mocks/card_writer_mock.go -n CardWriterMock -p mocks
 type CardWriter interface {
 	AddCard(ctx context.Context, card entity.Card) (entity.CardId, error)
 	UpdateCard(ctx context.Context, card entity.Card) error
 	DeleteCard(ctx context.Context, cardId entity.CardId) error
 }
 
+//go:generate minimock -i GroupAccessProvider -o ./mocks/group_access_provider_mock.go -n GroupAccessProvider -p mocks
 type GroupAccessChecker interface {
 	CheckReadGroupAccess(ctx context.Context, groupId entity.GroupId) error
 	CheckWriteGroupAccess(ctx context.Context, groupId entity.GroupId) error

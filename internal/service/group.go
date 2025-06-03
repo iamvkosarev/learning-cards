@@ -9,23 +9,28 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+//go:generate minimock -i UserVerifier -o ./mocks/user_verifier_mock.go -n UserVerifier -p mocks
 type UserVerifier interface {
 	VerifyUserByContext(ctx context.Context) (userID entity.UserId, err error)
 }
 
+//go:generate minimock -i UserReader -o ./mocks/user_reader_mock.go -n UserReader -p mocks
 type UserReader interface {
 	GetUser(ctx context.Context, id entity.UserId) (entity.User, error)
 }
 
+//go:generate minimock -i UserWriter -o ./mocks/user_reader_mock.go -n UserWriter -p mocks
 type UserWriter interface {
 	AddUser(ctx context.Context, user entity.User) error
 }
 
+//go:generate minimock -i GroupReader -o ./mocks/group_reader_mock.go -n GroupReaderMock -p mocks
 type GroupReader interface {
 	GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error)
 	ListGroups(ctx context.Context, id entity.UserId) ([]entity.Group, error)
 }
 
+//go:generate minimock -i GroupWriter -o ./mocks/group_writer_mock.go -n GroupWriterMock -p mocks
 type GroupWriter interface {
 	AddGroup(ctx context.Context, group entity.Group) (entity.GroupId, error)
 	UpdateGroup(ctx context.Context, group entity.Group) error
