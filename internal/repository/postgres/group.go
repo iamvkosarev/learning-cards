@@ -131,7 +131,7 @@ func (gr *GroupRepository) GetGroup(ctx context.Context, groupId entity.GroupId)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return group, fmt.Errorf("%s: group not found: %w", op, entity.ErrGroupNotFound)
+			return group, fmt.Errorf("%s: error no rows: %w", op, entity.ErrGroupNotFound)
 		}
 		return group, fmt.Errorf("%s: query error: %w", op, err)
 	}

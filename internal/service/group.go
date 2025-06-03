@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 //go:generate minimock -i UserVerifier -o ./mocks/user_verifier_mock.go -n UserVerifier -p mocks
@@ -179,8 +177,7 @@ func (g *GroupService) getReadGroupAccessByGroup(ctx context.Context, group enti
 	if userId != group.OwnerId &&
 		(group.Visibility == entity.GROUP_VISIBILITY_PRIVATE ||
 			group.Visibility == entity.GROUP_VISIBILITY_NULL) {
-		message := fmt.Sprintf("user (id:%v) not owner of card groups", userId)
-		return entity.NewVerificationError(status.Error(codes.PermissionDenied, message))
+		return entity.ErrGroupReadAccessDenied
 	}
 	return nil
 }
@@ -200,8 +197,7 @@ func (g *GroupService) getWriteGroupAccessByGroup(ctx context.Context, group ent
 		return err
 	}
 	if userId != group.OwnerId {
-		message := fmt.Sprintf("user (id:%v) not owner of card groups", userId)
-		return entity.NewVerificationError(status.Error(codes.PermissionDenied, message))
+		return entity.ErrGroupWriteAccessDenied
 	}
 	return nil
 }

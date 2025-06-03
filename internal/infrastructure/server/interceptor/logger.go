@@ -15,12 +15,6 @@ import (
 )
 
 const internalErrMessage = "internal server error"
-const VerificationErrMessage = "verification error"
-const validationErrMessage = "not correct input"
-const metadataEmptyErrMessage = "metadata is empty"
-const cardNotFoundMessage = "card not found"
-const groupNotFoundMessage = "group not found"
-
 const userIdLogArg = "user_id"
 
 func LoggerUnaryServerInterceptor(logger *slog.Logger) grpc.UnaryServerInterceptor {
@@ -86,31 +80,14 @@ func getUserId(ctx context.Context) string {
 }
 
 func mapDomainErrorToGRPC(err error) error {
-	var verificationErr *entity.VerificationError
-	if errors.As(err, &verificationErr) {
-		return status.Error(codes.PermissionDenied, VerificationErrMessage)
-	}
-
 	var validationErr *entity.ValidationError
 	if errors.As(err, &validationErr) {
-		return status.Error(codes.InvalidArgument, validationErrMessage)
+		return status.Error(codes.InvalidArgument, validationErr.Error())
 	}
 
-	switch {
-	case errors.Is(err, entity.ErrMetadataIsEmpty):
-		return status.Error(codes.InvalidArgument, metadataEmptyErrMessage)
-	case errors.Is(err, entity.ErrNoAuthHeader):
-		return status.Error(codes.InvalidArgument, VerificationErrMessage)
-	case errors.Is(err, entity.ErrIncorrectAuthHeader):
-		return status.Error(codes.Unauthenticated, VerificationErrMessage)
-	case errors.Is(err, entity.ErrVerificationFailed):
-		return status.Error(codes.Unauthenticated, VerificationErrMessage)
-
-	case errors.Is(err, entity.ErrGroupNotFound):
-		return status.Error(codes.NotFound, cardNotFoundMessage)
-	case errors.Is(err, entity.ErrCardNotFound):
-		return status.Error(codes.NotFound, groupNotFoundMessage)
-	default:
-		return status.Error(codes.Internal, internalErrMessage)
+	var serverErr *entity.ServerError
+	if errors.As(err, &serverErr) {
+		return status.Error(serverErr.Code, serverErr.Message)
 	}
+	return status.Error(codes.Internal, internalErrMessage)
 }

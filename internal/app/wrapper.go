@@ -92,8 +92,8 @@ func buildApp[TServer any, TApp app, TAppDeps any](
 		grpc.ChainUnaryInterceptor(
 			interceptor.SetupInterceptor(),
 			interceptor.RecoveryInterceptor(logger),
-			verification.Interceptor(logger, verifier),
 			interceptor.LoggerUnaryServerInterceptor(logger),
+			verification.Interceptor(logger, verifier),
 			interceptor.ValidationInterceptor(logger),
 		),
 	)
