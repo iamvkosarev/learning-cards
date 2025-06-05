@@ -11,20 +11,18 @@ import (
 type ReviewService interface {
 	GetReviewCards(
 		ctx context.Context,
-		userId entity.UserId,
 		groupId entity.GroupId,
 		settings entity.ReviewSettings,
 	) ([]entity.Card, error)
 	AddReviewResults(
-		ctx context.Context, userId entity.UserId, groupId entity.GroupId,
+		ctx context.Context, groupId entity.GroupId,
 		answers []entity.ReviewCardResult,
 	) error
-	GetCardsMarks(ctx context.Context, userId entity.UserId, groupId entity.GroupId) ([]entity.CardMark, error)
+	GetCardsMarks(ctx context.Context, groupId entity.GroupId) ([]entity.CardMark, error)
 }
 
 type ReviewServerDeps struct {
 	ReviewService ReviewService
-	AuthVerifier  AuthVerifier
 	Logger        *slog.Logger
 }
 
@@ -41,18 +39,13 @@ func (r *ReviewServer) GetReviewCards(ctx context.Context, req *pb.GetReviewCard
 	*pb.GetReviewCardsResponse,
 	error,
 ) {
-	userId, err := r.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	groupId := entity.GroupId(req.GroupId)
 
 	settings := entity.ReviewSettings{
 		CardsCount: int(req.CardsCount),
 	}
 
-	cards, err := r.ReviewService.GetReviewCards(ctx, userId, groupId, settings)
+	cards, err := r.ReviewService.GetReviewCards(ctx, groupId, settings)
 	if err != nil {
 		return nil, err
 	}
@@ -68,11 +61,6 @@ func (r *ReviewServer) AddReviewResults(ctx context.Context, req *pb.AddReviewRe
 	*emptypb.Empty,
 	error,
 ) {
-	userId, err := r.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	groupId := entity.GroupId(req.GroupId)
 
 	answers := make([]entity.ReviewCardResult, len(req.GetCardResults()))
@@ -84,7 +72,7 @@ func (r *ReviewServer) AddReviewResults(ctx context.Context, req *pb.AddReviewRe
 		}
 	}
 
-	err = r.ReviewService.AddReviewResults(ctx, userId, groupId, answers)
+	err := r.ReviewService.AddReviewResults(ctx, groupId, answers)
 	if err != nil {
 		return nil, err
 	}
@@ -96,13 +84,8 @@ func (r *ReviewServer) GetCardsProgress(
 	ctx context.Context,
 	req *pb.GetCardsProgressRequest,
 ) (*pb.GetCardsProgressResponse, error) {
-	userId, err := r.AuthVerifier.VerifyUserByContext(ctx)
-	if err != nil {
-		return nil, err
-	}
 	groupId := entity.GroupId(req.GroupId)
-
-	cardsMarks, err := r.ReviewService.GetCardsMarks(ctx, userId, groupId)
+	cardsMarks, err := r.ReviewService.GetCardsMarks(ctx, groupId)
 	if err != nil {
 		return nil, err
 	}

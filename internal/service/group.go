@@ -7,17 +7,17 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 )
 
-//go:generate minimock -i UserVerifier -o ./mocks/user_verifier_mock.go -n UserVerifier -p mocks
+//go:generate minimock -i UserVerifier -o ./mocks/user_verifier_mock.go -n NewUserVerifierMock -p mocks
 type UserVerifier interface {
 	VerifyUserByContext(ctx context.Context) (userID entity.UserId, err error)
 }
 
-//go:generate minimock -i UserReader -o ./mocks/user_reader_mock.go -n UserReader -p mocks
+//go:generate minimock -i UserReader -o ./mocks/user_reader_mock.go -n UserReaderMock -p mocks
 type UserReader interface {
 	GetUser(ctx context.Context, id entity.UserId) (entity.User, error)
 }
 
-//go:generate minimock -i UserWriter -o ./mocks/user_reader_mock.go -n UserWriter -p mocks
+//go:generate minimock -i UserWriter -o ./mocks/user_reader_mock.go -n UserWriterMock -p mocks
 type UserWriter interface {
 	AddUser(ctx context.Context, user entity.User) error
 }

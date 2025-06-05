@@ -24,12 +24,12 @@ const (
 	MARK_D_START
 )
 
-//go:generate minimock -i ReviewsReader -o ./mocks/reviews_reader_mock.go -n ReviewsReaderMock -p mocks
+//go:generate minimock -i ReviewReader -o ./mocks/review_reader_mock.go -n ReviewReaderMock -p mocks
 type ReviewReader interface {
 	GetCardsReviews(ctx context.Context, user entity.UserId, group entity.GroupId) ([]entity.CardReview, error)
 }
 
-//go:generate minimock -i ReviewsWriter -o ./mocks/reviews_writer_mock.go -n ReviewsWriterMock -p mocks
+//go:generate minimock -i ReviewWriter -o ./mocks/review_writer_mock.go -n ReviewWriterMock -p mocks
 type ReviewWriter interface {
 	AddCardsReviews(
 		ctx context.Context,
@@ -45,6 +45,7 @@ type ReviewWriter interface {
 type ReviewServiceDeps struct {
 	ReviewReader ReviewReader
 	ReviewWriter ReviewWriter
+	UserVerifier UserVerifier
 	CardReader   CardReader
 	GroupReader  GroupReader
 	Config       config.ReviewsService
@@ -59,12 +60,17 @@ func NewReviewService(deps ReviewServiceDeps) *ReviewService {
 }
 
 func (r *ReviewService) GetReviewCards(
-	ctx context.Context, userId entity.UserId,
+	ctx context.Context,
 	groupId entity.GroupId, settings entity.ReviewSettings,
 ) (
 	[]entity.Card,
 	error,
 ) {
+	userId, err := r.UserVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	cards, cardsReviews, err := r.getCardsAndReviews(ctx, userId, groupId)
 	if err != nil {
 		return nil, err
@@ -121,9 +127,13 @@ func (r *ReviewService) GetReviewCards(
 
 func (r *ReviewService) GetCardsMarks(
 	ctx context.Context,
-	userId entity.UserId,
 	groupId entity.GroupId,
 ) ([]entity.CardMark, error) {
+	userId, err := r.UserVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	_, progress, err := r.getCardsAndReviews(ctx, userId, groupId)
 	if err != nil {
 		return nil, err
@@ -238,6 +248,10 @@ func getCardsDurationScores(cardReviews map[entity.CardId][]entity.CardReview) m
 	maxArg := time.Duration(int64(1<<63 - 1))
 	argDurations := make(map[entity.CardId]time.Duration)
 	for id, reviews := range cardReviews {
+		if len(reviews) == 0 {
+			argDurations[id] = 0
+			continue
+		}
 		sumDuration := time.Duration(0)
 		for _, review := range reviews {
 			sumDuration += review.Duration
@@ -252,7 +266,11 @@ func getCardsDurationScores(cardReviews map[entity.CardId][]entity.CardReview) m
 		argDurations[id] = argDuration
 	}
 	scores := make(map[entity.CardId]float64)
-	for id := range cardReviews {
+	for id, reviews := range cardReviews {
+		if len(reviews) == 0 {
+			scores[id] = 0
+			continue
+		}
 		argDuration := argDurations[id]
 		score := (argDuration-minArg)/(maxArg-minArg)*(ANSWER_EASY_SCORE-ANSWER_FAIL_SCORE) + ANSWER_FAIL_SCORE
 		scores[id] = float64(score)
@@ -291,9 +309,14 @@ func getAnswerScore(answer entity.Answer) int {
 }
 
 func (r *ReviewService) AddReviewResults(
-	ctx context.Context, userId entity.UserId,
+	ctx context.Context,
 	groupId entity.GroupId, answers []entity.ReviewCardResult,
 ) error {
+	userId, err := r.UserVerifier.VerifyUserByContext(ctx)
+	if err != nil {
+		return err
+	}
+
 	reviews := make([]entity.CardReview, 0, len(answers))
 	reviewedCards := make([]entity.CardId, 0, len(answers))
 	for _, answer := range answers {

@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.UserVerifier -o user_verifier_mock.go -n UserVerifier -p mocks
+//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.UserVerifier -o user_verifier_mock.go -n NewUserVerifierMock -p mocks
 
 import (
 	"context"
@@ -14,8 +14,8 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 )
 
-// UserVerifier implements mm_service.UserVerifier
-type UserVerifier struct {
+// NewUserVerifierMock implements mm_service.UserVerifier
+type NewUserVerifierMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
@@ -24,67 +24,67 @@ type UserVerifier struct {
 	inspectFuncVerifyUserByContext   func(ctx context.Context)
 	afterVerifyUserByContextCounter  uint64
 	beforeVerifyUserByContextCounter uint64
-	VerifyUserByContextMock          mUserVerifierVerifyUserByContext
+	VerifyUserByContextMock          mNewUserVerifierMockVerifyUserByContext
 }
 
-// NewUserVerifier returns a mock for mm_service.UserVerifier
-func NewUserVerifier(t minimock.Tester) *UserVerifier {
-	m := &UserVerifier{t: t}
+// NewNewUserVerifierMock returns a mock for mm_service.UserVerifier
+func NewNewUserVerifierMock(t minimock.Tester) *NewUserVerifierMock {
+	m := &NewUserVerifierMock{t: t}
 
 	if controller, ok := t.(minimock.MockController); ok {
 		controller.RegisterMocker(m)
 	}
 
-	m.VerifyUserByContextMock = mUserVerifierVerifyUserByContext{mock: m}
-	m.VerifyUserByContextMock.callArgs = []*UserVerifierVerifyUserByContextParams{}
+	m.VerifyUserByContextMock = mNewUserVerifierMockVerifyUserByContext{mock: m}
+	m.VerifyUserByContextMock.callArgs = []*NewUserVerifierMockVerifyUserByContextParams{}
 
 	t.Cleanup(m.MinimockFinish)
 
 	return m
 }
 
-type mUserVerifierVerifyUserByContext struct {
+type mNewUserVerifierMockVerifyUserByContext struct {
 	optional           bool
-	mock               *UserVerifier
-	defaultExpectation *UserVerifierVerifyUserByContextExpectation
-	expectations       []*UserVerifierVerifyUserByContextExpectation
+	mock               *NewUserVerifierMock
+	defaultExpectation *NewUserVerifierMockVerifyUserByContextExpectation
+	expectations       []*NewUserVerifierMockVerifyUserByContextExpectation
 
-	callArgs []*UserVerifierVerifyUserByContextParams
+	callArgs []*NewUserVerifierMockVerifyUserByContextParams
 	mutex    sync.RWMutex
 
 	expectedInvocations       uint64
 	expectedInvocationsOrigin string
 }
 
-// UserVerifierVerifyUserByContextExpectation specifies expectation struct of the UserVerifier.VerifyUserByContext
-type UserVerifierVerifyUserByContextExpectation struct {
-	mock               *UserVerifier
-	params             *UserVerifierVerifyUserByContextParams
-	paramPtrs          *UserVerifierVerifyUserByContextParamPtrs
-	expectationOrigins UserVerifierVerifyUserByContextExpectationOrigins
-	results            *UserVerifierVerifyUserByContextResults
+// NewUserVerifierMockVerifyUserByContextExpectation specifies expectation struct of the UserVerifier.VerifyUserByContext
+type NewUserVerifierMockVerifyUserByContextExpectation struct {
+	mock               *NewUserVerifierMock
+	params             *NewUserVerifierMockVerifyUserByContextParams
+	paramPtrs          *NewUserVerifierMockVerifyUserByContextParamPtrs
+	expectationOrigins NewUserVerifierMockVerifyUserByContextExpectationOrigins
+	results            *NewUserVerifierMockVerifyUserByContextResults
 	returnOrigin       string
 	Counter            uint64
 }
 
-// UserVerifierVerifyUserByContextParams contains parameters of the UserVerifier.VerifyUserByContext
-type UserVerifierVerifyUserByContextParams struct {
+// NewUserVerifierMockVerifyUserByContextParams contains parameters of the UserVerifier.VerifyUserByContext
+type NewUserVerifierMockVerifyUserByContextParams struct {
 	ctx context.Context
 }
 
-// UserVerifierVerifyUserByContextParamPtrs contains pointers to parameters of the UserVerifier.VerifyUserByContext
-type UserVerifierVerifyUserByContextParamPtrs struct {
+// NewUserVerifierMockVerifyUserByContextParamPtrs contains pointers to parameters of the UserVerifier.VerifyUserByContext
+type NewUserVerifierMockVerifyUserByContextParamPtrs struct {
 	ctx *context.Context
 }
 
-// UserVerifierVerifyUserByContextResults contains results of the UserVerifier.VerifyUserByContext
-type UserVerifierVerifyUserByContextResults struct {
+// NewUserVerifierMockVerifyUserByContextResults contains results of the UserVerifier.VerifyUserByContext
+type NewUserVerifierMockVerifyUserByContextResults struct {
 	userID entity.UserId
 	err    error
 }
 
-// UserVerifierVerifyUserByContextOrigins contains origins of expectations of the UserVerifier.VerifyUserByContext
-type UserVerifierVerifyUserByContextExpectationOrigins struct {
+// NewUserVerifierMockVerifyUserByContextOrigins contains origins of expectations of the UserVerifier.VerifyUserByContext
+type NewUserVerifierMockVerifyUserByContextExpectationOrigins struct {
 	origin    string
 	originCtx string
 }
@@ -94,26 +94,26 @@ type UserVerifierVerifyUserByContextExpectationOrigins struct {
 // Optional() makes method check to work in '0 or more' mode.
 // It is NOT RECOMMENDED to use this option unless you really need it, as default behaviour helps to
 // catch the problems when the expected method call is totally skipped during test run.
-func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Optional() *mUserVerifierVerifyUserByContext {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Optional() *mNewUserVerifierMockVerifyUserByContext {
 	mmVerifyUserByContext.optional = true
 	return mmVerifyUserByContext
 }
 
 // Expect sets up expected params for UserVerifier.VerifyUserByContext
-func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Expect(ctx context.Context) *mUserVerifierVerifyUserByContext {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Expect(ctx context.Context) *mNewUserVerifierMockVerifyUserByContext {
 	if mmVerifyUserByContext.mock.funcVerifyUserByContext != nil {
-		mmVerifyUserByContext.mock.t.Fatalf("UserVerifier.VerifyUserByContext mock is already set by Set")
+		mmVerifyUserByContext.mock.t.Fatalf("NewUserVerifierMock.VerifyUserByContext mock is already set by Set")
 	}
 
 	if mmVerifyUserByContext.defaultExpectation == nil {
-		mmVerifyUserByContext.defaultExpectation = &UserVerifierVerifyUserByContextExpectation{}
+		mmVerifyUserByContext.defaultExpectation = &NewUserVerifierMockVerifyUserByContextExpectation{}
 	}
 
 	if mmVerifyUserByContext.defaultExpectation.paramPtrs != nil {
-		mmVerifyUserByContext.mock.t.Fatalf("UserVerifier.VerifyUserByContext mock is already set by ExpectParams functions")
+		mmVerifyUserByContext.mock.t.Fatalf("NewUserVerifierMock.VerifyUserByContext mock is already set by ExpectParams functions")
 	}
 
-	mmVerifyUserByContext.defaultExpectation.params = &UserVerifierVerifyUserByContextParams{ctx}
+	mmVerifyUserByContext.defaultExpectation.params = &NewUserVerifierMockVerifyUserByContextParams{ctx}
 	mmVerifyUserByContext.defaultExpectation.expectationOrigins.origin = minimock.CallerInfo(1)
 	for _, e := range mmVerifyUserByContext.expectations {
 		if minimock.Equal(e.params, mmVerifyUserByContext.defaultExpectation.params) {
@@ -125,21 +125,21 @@ func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Expect(ctx contex
 }
 
 // ExpectCtxParam1 sets up expected param ctx for UserVerifier.VerifyUserByContext
-func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) ExpectCtxParam1(ctx context.Context) *mUserVerifierVerifyUserByContext {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) ExpectCtxParam1(ctx context.Context) *mNewUserVerifierMockVerifyUserByContext {
 	if mmVerifyUserByContext.mock.funcVerifyUserByContext != nil {
-		mmVerifyUserByContext.mock.t.Fatalf("UserVerifier.VerifyUserByContext mock is already set by Set")
+		mmVerifyUserByContext.mock.t.Fatalf("NewUserVerifierMock.VerifyUserByContext mock is already set by Set")
 	}
 
 	if mmVerifyUserByContext.defaultExpectation == nil {
-		mmVerifyUserByContext.defaultExpectation = &UserVerifierVerifyUserByContextExpectation{}
+		mmVerifyUserByContext.defaultExpectation = &NewUserVerifierMockVerifyUserByContextExpectation{}
 	}
 
 	if mmVerifyUserByContext.defaultExpectation.params != nil {
-		mmVerifyUserByContext.mock.t.Fatalf("UserVerifier.VerifyUserByContext mock is already set by Expect")
+		mmVerifyUserByContext.mock.t.Fatalf("NewUserVerifierMock.VerifyUserByContext mock is already set by Expect")
 	}
 
 	if mmVerifyUserByContext.defaultExpectation.paramPtrs == nil {
-		mmVerifyUserByContext.defaultExpectation.paramPtrs = &UserVerifierVerifyUserByContextParamPtrs{}
+		mmVerifyUserByContext.defaultExpectation.paramPtrs = &NewUserVerifierMockVerifyUserByContextParamPtrs{}
 	}
 	mmVerifyUserByContext.defaultExpectation.paramPtrs.ctx = &ctx
 	mmVerifyUserByContext.defaultExpectation.expectationOrigins.originCtx = minimock.CallerInfo(1)
@@ -148,9 +148,9 @@ func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) ExpectCtxParam1(c
 }
 
 // Inspect accepts an inspector function that has same arguments as the UserVerifier.VerifyUserByContext
-func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Inspect(f func(ctx context.Context)) *mUserVerifierVerifyUserByContext {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Inspect(f func(ctx context.Context)) *mNewUserVerifierMockVerifyUserByContext {
 	if mmVerifyUserByContext.mock.inspectFuncVerifyUserByContext != nil {
-		mmVerifyUserByContext.mock.t.Fatalf("Inspect function is already set for UserVerifier.VerifyUserByContext")
+		mmVerifyUserByContext.mock.t.Fatalf("Inspect function is already set for NewUserVerifierMock.VerifyUserByContext")
 	}
 
 	mmVerifyUserByContext.mock.inspectFuncVerifyUserByContext = f
@@ -159,21 +159,21 @@ func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Inspect(f func(ct
 }
 
 // Return sets up results that will be returned by UserVerifier.VerifyUserByContext
-func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Return(userID entity.UserId, err error) *UserVerifier {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Return(userID entity.UserId, err error) *NewUserVerifierMock {
 	if mmVerifyUserByContext.mock.funcVerifyUserByContext != nil {
-		mmVerifyUserByContext.mock.t.Fatalf("UserVerifier.VerifyUserByContext mock is already set by Set")
+		mmVerifyUserByContext.mock.t.Fatalf("NewUserVerifierMock.VerifyUserByContext mock is already set by Set")
 	}
 
 	if mmVerifyUserByContext.defaultExpectation == nil {
-		mmVerifyUserByContext.defaultExpectation = &UserVerifierVerifyUserByContextExpectation{mock: mmVerifyUserByContext.mock}
+		mmVerifyUserByContext.defaultExpectation = &NewUserVerifierMockVerifyUserByContextExpectation{mock: mmVerifyUserByContext.mock}
 	}
-	mmVerifyUserByContext.defaultExpectation.results = &UserVerifierVerifyUserByContextResults{userID, err}
+	mmVerifyUserByContext.defaultExpectation.results = &NewUserVerifierMockVerifyUserByContextResults{userID, err}
 	mmVerifyUserByContext.defaultExpectation.returnOrigin = minimock.CallerInfo(1)
 	return mmVerifyUserByContext.mock
 }
 
 // Set uses given function f to mock the UserVerifier.VerifyUserByContext method
-func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Set(f func(ctx context.Context) (userID entity.UserId, err error)) *UserVerifier {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Set(f func(ctx context.Context) (userID entity.UserId, err error)) *NewUserVerifierMock {
 	if mmVerifyUserByContext.defaultExpectation != nil {
 		mmVerifyUserByContext.mock.t.Fatalf("Default expectation is already set for the UserVerifier.VerifyUserByContext method")
 	}
@@ -189,37 +189,37 @@ func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Set(f func(ctx co
 
 // When sets expectation for the UserVerifier.VerifyUserByContext which will trigger the result defined by the following
 // Then helper
-func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) When(ctx context.Context) *UserVerifierVerifyUserByContextExpectation {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) When(ctx context.Context) *NewUserVerifierMockVerifyUserByContextExpectation {
 	if mmVerifyUserByContext.mock.funcVerifyUserByContext != nil {
-		mmVerifyUserByContext.mock.t.Fatalf("UserVerifier.VerifyUserByContext mock is already set by Set")
+		mmVerifyUserByContext.mock.t.Fatalf("NewUserVerifierMock.VerifyUserByContext mock is already set by Set")
 	}
 
-	expectation := &UserVerifierVerifyUserByContextExpectation{
+	expectation := &NewUserVerifierMockVerifyUserByContextExpectation{
 		mock:               mmVerifyUserByContext.mock,
-		params:             &UserVerifierVerifyUserByContextParams{ctx},
-		expectationOrigins: UserVerifierVerifyUserByContextExpectationOrigins{origin: minimock.CallerInfo(1)},
+		params:             &NewUserVerifierMockVerifyUserByContextParams{ctx},
+		expectationOrigins: NewUserVerifierMockVerifyUserByContextExpectationOrigins{origin: minimock.CallerInfo(1)},
 	}
 	mmVerifyUserByContext.expectations = append(mmVerifyUserByContext.expectations, expectation)
 	return expectation
 }
 
 // Then sets up UserVerifier.VerifyUserByContext return parameters for the expectation previously defined by the When method
-func (e *UserVerifierVerifyUserByContextExpectation) Then(userID entity.UserId, err error) *UserVerifier {
-	e.results = &UserVerifierVerifyUserByContextResults{userID, err}
+func (e *NewUserVerifierMockVerifyUserByContextExpectation) Then(userID entity.UserId, err error) *NewUserVerifierMock {
+	e.results = &NewUserVerifierMockVerifyUserByContextResults{userID, err}
 	return e.mock
 }
 
 // Times sets number of times UserVerifier.VerifyUserByContext should be invoked
-func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Times(n uint64) *mUserVerifierVerifyUserByContext {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Times(n uint64) *mNewUserVerifierMockVerifyUserByContext {
 	if n == 0 {
-		mmVerifyUserByContext.mock.t.Fatalf("Times of UserVerifier.VerifyUserByContext mock can not be zero")
+		mmVerifyUserByContext.mock.t.Fatalf("Times of NewUserVerifierMock.VerifyUserByContext mock can not be zero")
 	}
 	mm_atomic.StoreUint64(&mmVerifyUserByContext.expectedInvocations, n)
 	mmVerifyUserByContext.expectedInvocationsOrigin = minimock.CallerInfo(1)
 	return mmVerifyUserByContext
 }
 
-func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) invocationsDone() bool {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) invocationsDone() bool {
 	if len(mmVerifyUserByContext.expectations) == 0 && mmVerifyUserByContext.defaultExpectation == nil && mmVerifyUserByContext.mock.funcVerifyUserByContext == nil {
 		return true
 	}
@@ -231,7 +231,7 @@ func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) invocationsDone()
 }
 
 // VerifyUserByContext implements mm_service.UserVerifier
-func (mmVerifyUserByContext *UserVerifier) VerifyUserByContext(ctx context.Context) (userID entity.UserId, err error) {
+func (mmVerifyUserByContext *NewUserVerifierMock) VerifyUserByContext(ctx context.Context) (userID entity.UserId, err error) {
 	mm_atomic.AddUint64(&mmVerifyUserByContext.beforeVerifyUserByContextCounter, 1)
 	defer mm_atomic.AddUint64(&mmVerifyUserByContext.afterVerifyUserByContextCounter, 1)
 
@@ -241,7 +241,7 @@ func (mmVerifyUserByContext *UserVerifier) VerifyUserByContext(ctx context.Conte
 		mmVerifyUserByContext.inspectFuncVerifyUserByContext(ctx)
 	}
 
-	mm_params := UserVerifierVerifyUserByContextParams{ctx}
+	mm_params := NewUserVerifierMockVerifyUserByContextParams{ctx}
 
 	// Record call args
 	mmVerifyUserByContext.VerifyUserByContextMock.mutex.Lock()
@@ -260,49 +260,49 @@ func (mmVerifyUserByContext *UserVerifier) VerifyUserByContext(ctx context.Conte
 		mm_want := mmVerifyUserByContext.VerifyUserByContextMock.defaultExpectation.params
 		mm_want_ptrs := mmVerifyUserByContext.VerifyUserByContextMock.defaultExpectation.paramPtrs
 
-		mm_got := UserVerifierVerifyUserByContextParams{ctx}
+		mm_got := NewUserVerifierMockVerifyUserByContextParams{ctx}
 
 		if mm_want_ptrs != nil {
 
 			if mm_want_ptrs.ctx != nil && !minimock.Equal(*mm_want_ptrs.ctx, mm_got.ctx) {
-				mmVerifyUserByContext.t.Errorf("UserVerifier.VerifyUserByContext got unexpected parameter ctx, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
+				mmVerifyUserByContext.t.Errorf("NewUserVerifierMock.VerifyUserByContext got unexpected parameter ctx, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
 					mmVerifyUserByContext.VerifyUserByContextMock.defaultExpectation.expectationOrigins.originCtx, *mm_want_ptrs.ctx, mm_got.ctx, minimock.Diff(*mm_want_ptrs.ctx, mm_got.ctx))
 			}
 
 		} else if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
-			mmVerifyUserByContext.t.Errorf("UserVerifier.VerifyUserByContext got unexpected parameters, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
+			mmVerifyUserByContext.t.Errorf("NewUserVerifierMock.VerifyUserByContext got unexpected parameters, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
 				mmVerifyUserByContext.VerifyUserByContextMock.defaultExpectation.expectationOrigins.origin, *mm_want, mm_got, minimock.Diff(*mm_want, mm_got))
 		}
 
 		mm_results := mmVerifyUserByContext.VerifyUserByContextMock.defaultExpectation.results
 		if mm_results == nil {
-			mmVerifyUserByContext.t.Fatal("No results are set for the UserVerifier.VerifyUserByContext")
+			mmVerifyUserByContext.t.Fatal("No results are set for the NewUserVerifierMock.VerifyUserByContext")
 		}
 		return (*mm_results).userID, (*mm_results).err
 	}
 	if mmVerifyUserByContext.funcVerifyUserByContext != nil {
 		return mmVerifyUserByContext.funcVerifyUserByContext(ctx)
 	}
-	mmVerifyUserByContext.t.Fatalf("Unexpected call to UserVerifier.VerifyUserByContext. %v", ctx)
+	mmVerifyUserByContext.t.Fatalf("Unexpected call to NewUserVerifierMock.VerifyUserByContext. %v", ctx)
 	return
 }
 
-// VerifyUserByContextAfterCounter returns a count of finished UserVerifier.VerifyUserByContext invocations
-func (mmVerifyUserByContext *UserVerifier) VerifyUserByContextAfterCounter() uint64 {
+// VerifyUserByContextAfterCounter returns a count of finished NewUserVerifierMock.VerifyUserByContext invocations
+func (mmVerifyUserByContext *NewUserVerifierMock) VerifyUserByContextAfterCounter() uint64 {
 	return mm_atomic.LoadUint64(&mmVerifyUserByContext.afterVerifyUserByContextCounter)
 }
 
-// VerifyUserByContextBeforeCounter returns a count of UserVerifier.VerifyUserByContext invocations
-func (mmVerifyUserByContext *UserVerifier) VerifyUserByContextBeforeCounter() uint64 {
+// VerifyUserByContextBeforeCounter returns a count of NewUserVerifierMock.VerifyUserByContext invocations
+func (mmVerifyUserByContext *NewUserVerifierMock) VerifyUserByContextBeforeCounter() uint64 {
 	return mm_atomic.LoadUint64(&mmVerifyUserByContext.beforeVerifyUserByContextCounter)
 }
 
-// Calls returns a list of arguments used in each call to UserVerifier.VerifyUserByContext.
+// Calls returns a list of arguments used in each call to NewUserVerifierMock.VerifyUserByContext.
 // The list is in the same order as the calls were made (i.e. recent calls have a higher index)
-func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Calls() []*UserVerifierVerifyUserByContextParams {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Calls() []*NewUserVerifierMockVerifyUserByContextParams {
 	mmVerifyUserByContext.mutex.RLock()
 
-	argCopy := make([]*UserVerifierVerifyUserByContextParams, len(mmVerifyUserByContext.callArgs))
+	argCopy := make([]*NewUserVerifierMockVerifyUserByContextParams, len(mmVerifyUserByContext.callArgs))
 	copy(argCopy, mmVerifyUserByContext.callArgs)
 
 	mmVerifyUserByContext.mutex.RUnlock()
@@ -312,7 +312,7 @@ func (mmVerifyUserByContext *mUserVerifierVerifyUserByContext) Calls() []*UserVe
 
 // MinimockVerifyUserByContextDone returns true if the count of the VerifyUserByContext invocations corresponds
 // the number of defined expectations
-func (m *UserVerifier) MinimockVerifyUserByContextDone() bool {
+func (m *NewUserVerifierMock) MinimockVerifyUserByContextDone() bool {
 	if m.VerifyUserByContextMock.optional {
 		// Optional methods provide '0 or more' call count restriction.
 		return true
@@ -328,10 +328,10 @@ func (m *UserVerifier) MinimockVerifyUserByContextDone() bool {
 }
 
 // MinimockVerifyUserByContextInspect logs each unmet expectation
-func (m *UserVerifier) MinimockVerifyUserByContextInspect() {
+func (m *NewUserVerifierMock) MinimockVerifyUserByContextInspect() {
 	for _, e := range m.VerifyUserByContextMock.expectations {
 		if mm_atomic.LoadUint64(&e.Counter) < 1 {
-			m.t.Errorf("Expected call to UserVerifier.VerifyUserByContext at\n%s with params: %#v", e.expectationOrigins.origin, *e.params)
+			m.t.Errorf("Expected call to NewUserVerifierMock.VerifyUserByContext at\n%s with params: %#v", e.expectationOrigins.origin, *e.params)
 		}
 	}
 
@@ -339,24 +339,24 @@ func (m *UserVerifier) MinimockVerifyUserByContextInspect() {
 	// if default expectation was set then invocations count should be greater than zero
 	if m.VerifyUserByContextMock.defaultExpectation != nil && afterVerifyUserByContextCounter < 1 {
 		if m.VerifyUserByContextMock.defaultExpectation.params == nil {
-			m.t.Errorf("Expected call to UserVerifier.VerifyUserByContext at\n%s", m.VerifyUserByContextMock.defaultExpectation.returnOrigin)
+			m.t.Errorf("Expected call to NewUserVerifierMock.VerifyUserByContext at\n%s", m.VerifyUserByContextMock.defaultExpectation.returnOrigin)
 		} else {
-			m.t.Errorf("Expected call to UserVerifier.VerifyUserByContext at\n%s with params: %#v", m.VerifyUserByContextMock.defaultExpectation.expectationOrigins.origin, *m.VerifyUserByContextMock.defaultExpectation.params)
+			m.t.Errorf("Expected call to NewUserVerifierMock.VerifyUserByContext at\n%s with params: %#v", m.VerifyUserByContextMock.defaultExpectation.expectationOrigins.origin, *m.VerifyUserByContextMock.defaultExpectation.params)
 		}
 	}
 	// if func was set then invocations count should be greater than zero
 	if m.funcVerifyUserByContext != nil && afterVerifyUserByContextCounter < 1 {
-		m.t.Errorf("Expected call to UserVerifier.VerifyUserByContext at\n%s", m.funcVerifyUserByContextOrigin)
+		m.t.Errorf("Expected call to NewUserVerifierMock.VerifyUserByContext at\n%s", m.funcVerifyUserByContextOrigin)
 	}
 
 	if !m.VerifyUserByContextMock.invocationsDone() && afterVerifyUserByContextCounter > 0 {
-		m.t.Errorf("Expected %d calls to UserVerifier.VerifyUserByContext at\n%s but found %d calls",
+		m.t.Errorf("Expected %d calls to NewUserVerifierMock.VerifyUserByContext at\n%s but found %d calls",
 			mm_atomic.LoadUint64(&m.VerifyUserByContextMock.expectedInvocations), m.VerifyUserByContextMock.expectedInvocationsOrigin, afterVerifyUserByContextCounter)
 	}
 }
 
 // MinimockFinish checks that all mocked methods have been called the expected number of times
-func (m *UserVerifier) MinimockFinish() {
+func (m *NewUserVerifierMock) MinimockFinish() {
 	m.finishOnce.Do(func() {
 		if !m.minimockDone() {
 			m.MinimockVerifyUserByContextInspect()
@@ -365,7 +365,7 @@ func (m *UserVerifier) MinimockFinish() {
 }
 
 // MinimockWait waits for all mocked methods to be called the expected number of times
-func (m *UserVerifier) MinimockWait(timeout mm_time.Duration) {
+func (m *NewUserVerifierMock) MinimockWait(timeout mm_time.Duration) {
 	timeoutCh := mm_time.After(timeout)
 	for {
 		if m.minimockDone() {
@@ -380,7 +380,7 @@ func (m *UserVerifier) MinimockWait(timeout mm_time.Duration) {
 	}
 }
 
-func (m *UserVerifier) minimockDone() bool {
+func (m *NewUserVerifierMock) minimockDone() bool {
 	done := true
 	return done &&
 		m.MinimockVerifyUserByContextDone()

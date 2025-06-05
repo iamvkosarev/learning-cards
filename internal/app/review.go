@@ -68,10 +68,11 @@ func prepareReviewServer(ctx context.Context, cfg *config.ReviewsConfig, logger 
 
 	verifier := server.VerifyFunc(verification.GetUserId)
 
-	var reviewService server.ReviewService = service.NewReviewService(
+	var reviewService = service.NewReviewService(
 		service.ReviewServiceDeps{
 			ReviewWriter: reviewRepo,
 			ReviewReader: reviewRepo,
+			UserVerifier: verifier,
 			CardReader:   cardsServerClient,
 			GroupReader:  cardsServerClient,
 			Config:       cfg.ReviewsService,
@@ -81,7 +82,6 @@ func prepareReviewServer(ctx context.Context, cfg *config.ReviewsConfig, logger 
 	server := server.NewReviewServer(
 		server.ReviewServerDeps{
 			ReviewService: reviewService,
-			AuthVerifier:  verifier,
 			Logger:        logger,
 		},
 	)
