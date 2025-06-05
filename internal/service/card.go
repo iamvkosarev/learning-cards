@@ -27,7 +27,6 @@ type GroupAccessChecker interface {
 type CardsServiceDeps struct {
 	CardReader         CardReader
 	CardWriter         CardWriter
-	GroupReader        GroupReader
 	GroupAccessChecker GroupAccessChecker
 }
 

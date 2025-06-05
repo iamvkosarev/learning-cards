@@ -70,7 +70,6 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 	)
 	cardsService := service.NewCardsService(
 		service.CardsServiceDeps{
-			GroupReader:        groupRepo,
 			CardWriter:         cardRepo,
 			CardReader:         cardRepo,
 			GroupAccessChecker: groupService,

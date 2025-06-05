@@ -45,7 +45,7 @@ func (gr *GroupRepository) ListGroups(ctx context.Context, userId entity.UserId)
 		var visibility uint8
 		var description sql.NullString
 
-		err := rows.Scan(
+		err = rows.Scan(
 			&group.Id,
 			&group.OwnerId,
 			&group.Name,
