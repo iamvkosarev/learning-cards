@@ -35,6 +35,253 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on ReadingPair with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ReadingPair) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ReadingPair with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ReadingPairMultiError, or
+// nil if none found.
+func (m *ReadingPair) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ReadingPair) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Text
+
+	// no validation rules for Reading
+
+	if len(errors) > 0 {
+		return ReadingPairMultiError(errors)
+	}
+
+	return nil
+}
+
+// ReadingPairMultiError is an error wrapping multiple validation errors
+// returned by ReadingPair.ValidateAll() if the designated constraints aren't met.
+type ReadingPairMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ReadingPairMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ReadingPairMultiError) AllErrors() []error { return m }
+
+// ReadingPairValidationError is the validation error returned by
+// ReadingPair.Validate if the designated constraints aren't met.
+type ReadingPairValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ReadingPairValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ReadingPairValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ReadingPairValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ReadingPairValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ReadingPairValidationError) ErrorName() string { return "ReadingPairValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ReadingPairValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sReadingPair.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ReadingPairValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ReadingPairValidationError{}
+
+// Validate checks the field values on CardSide with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CardSide) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CardSide with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CardSideMultiError, or nil
+// if none found.
+func (m *CardSide) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CardSide) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetText()) < 1 {
+		err := CardSideValidationError{
+			field:  "Text",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetReadingPairs() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CardSideValidationError{
+						field:  fmt.Sprintf("ReadingPairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CardSideValidationError{
+						field:  fmt.Sprintf("ReadingPairs[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CardSideValidationError{
+					field:  fmt.Sprintf("ReadingPairs[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return CardSideMultiError(errors)
+	}
+
+	return nil
+}
+
+// CardSideMultiError is an error wrapping multiple validation errors returned
+// by CardSide.ValidateAll() if the designated constraints aren't met.
+type CardSideMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CardSideMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CardSideMultiError) AllErrors() []error { return m }
+
+// CardSideValidationError is the validation error returned by
+// CardSide.Validate if the designated constraints aren't met.
+type CardSideValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CardSideValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CardSideValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CardSideValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CardSideValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CardSideValidationError) ErrorName() string { return "CardSideValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CardSideValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCardSide.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CardSideValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CardSideValidationError{}
+
 // Validate checks the field values on Card with the rules defined in the proto
 // definition for this message. If any rules are violated, the first error
 // encountered is returned, or nil if there are no violations.
@@ -65,6 +312,40 @@ func (m *Card) validate(all bool) error {
 	// no validation rules for BackText
 
 	// no validation rules for CreatedAt
+
+	for idx, item := range m.GetSides() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CardValidationError{
+						field:  fmt.Sprintf("Sides[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CardValidationError{
+						field:  fmt.Sprintf("Sides[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CardValidationError{
+					field:  fmt.Sprintf("Sides[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return CardMultiError(errors)
@@ -187,6 +468,33 @@ func (m *AddCardRequest) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if len(m.GetSidesText()) != 2 {
+		err := AddCardRequestValidationError{
+			field:  "SidesText",
+			reason: "value must contain exactly 2 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetSidesText() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) < 1 {
+			err := AddCardRequestValidationError{
+				field:  fmt.Sprintf("SidesText[%v]", idx),
+				reason: "value length must be at least 1 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -877,6 +1185,17 @@ func (m *UpdateCardRequest) validate(all bool) error {
 		err := UpdateCardRequestValidationError{
 			field:  "BackText",
 			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetSidesText()) > 2 {
+		err := UpdateCardRequestValidationError{
+			field:  "SidesText",
+			reason: "value must contain no more than 2 item(s)",
 		}
 		if !all {
 			return err

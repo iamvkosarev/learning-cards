@@ -53,8 +53,8 @@ func (gr *GroupRepository) ListGroups(ctx context.Context, userId model.UserId) 
 			&group.Visibility,
 			&group.CreateTime,
 			&group.UpdateTime,
-			&group.CardSideTypes[model.CARD_SIDE_FIRST],
-			&group.CardSideTypes[model.CARD_SIDE_SECOND],
+			&group.CardSideTypes[model.SIDE_FIRST],
+			&group.CardSideTypes[model.SIDE_SECOND],
 		)
 		if err != nil {
 			return nil, fmt.Errorf("%s: scan error: %w", op, err)
@@ -88,8 +88,8 @@ func (gr *GroupRepository) AddGroup(ctx context.Context, group *model.Group) (mo
 		group.Description,
 		group.Visibility,
 		time.Now(),
-		group.CardSideTypes[model.CARD_SIDE_FIRST],
-		group.CardSideTypes[model.CARD_SIDE_SECOND],
+		group.CardSideTypes[model.SIDE_FIRST],
+		group.CardSideTypes[model.SIDE_SECOND],
 	).Scan(&id)
 
 	if err != nil {
@@ -130,8 +130,8 @@ func (gr *GroupRepository) GetGroup(ctx context.Context, groupId model.GroupId) 
 		&group.Visibility,
 		&group.CreateTime,
 		&group.UpdateTime,
-		&group.CardSideTypes[model.CARD_SIDE_FIRST],
-		&group.CardSideTypes[model.CARD_SIDE_SECOND],
+		&group.CardSideTypes[model.SIDE_FIRST],
+		&group.CardSideTypes[model.SIDE_SECOND],
 	)
 
 	if err != nil {
@@ -167,8 +167,8 @@ func (gr *GroupRepository) UpdateGroup(ctx context.Context, group *model.Group) 
 		group.Description,
 		int8(group.Visibility),
 		time.Now(),
-		group.CardSideTypes[model.CARD_SIDE_FIRST],
-		group.CardSideTypes[model.CARD_SIDE_SECOND],
+		group.CardSideTypes[model.SIDE_FIRST],
+		group.CardSideTypes[model.SIDE_SECOND],
 		group.Id,
 	)
 

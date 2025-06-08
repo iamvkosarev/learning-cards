@@ -138,8 +138,8 @@ func (c *CardsClient) GetGroup(ctx context.Context, groupId model.GroupId) (*mod
 		CreateTime:  createAt,
 		Visibility:  model.GroupVisibility(resp.Group.Visibility),
 		CardSideTypes: []model.CardSideType{
-			model.CardSideType(resp.Group.CardSideTypes[model.CARD_SIDE_FIRST]),
-			model.CardSideType(resp.Group.CardSideTypes[model.CARD_SIDE_SECOND]),
+			model.CardSideType(resp.Group.CardSideTypes[0]),
+			model.CardSideType(resp.Group.CardSideTypes[1]),
 		},
 	}, nil
 }

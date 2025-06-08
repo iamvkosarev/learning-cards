@@ -15,8 +15,8 @@ func groupToResponse(group *model.Group) *pb.CardsGroup {
 		CreatedAt:   group.CreateTime.Format(time.RFC3339),
 		Visibility:  pb.GroupVisibility(group.Visibility),
 		CardSideTypes: []pb.CardSideType{
-			pb.CardSideType(group.CardSideTypes[model.CARD_SIDE_FIRST]),
-			pb.CardSideType(group.CardSideTypes[model.CARD_SIDE_SECOND]),
+			pb.CardSideType(group.CardSideTypes[model.SIDE_FIRST]),
+			pb.CardSideType(group.CardSideTypes[model.SIDE_SECOND]),
 		},
 	}
 }
@@ -26,8 +26,8 @@ func cardToResponse(card *model.Card) *pb.Card {
 		Id:      int64(card.Id),
 		GroupId: int64(card.GroupId),
 		Sides: []*pb.CardSide{
-			cardSideToResponse(card.GetFirst()),
-			cardSideToResponse(card.GetSecond()),
+			cardSideToResponse(card.Sides[model.SIDE_FIRST]),
+			cardSideToResponse(card.Sides[model.SIDE_SECOND]),
 		},
 		CreatedAt: card.CreateTime.Format(time.RFC3339),
 	}

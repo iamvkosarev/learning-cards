@@ -30,6 +30,7 @@ type CardsGroup struct {
 	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	Visibility    GroupVisibility        `protobuf:"varint,6,opt,name=visibility,proto3,enum=learning_cards.v1.GroupVisibility" json:"visibility,omitempty"`
+	CardSideTypes []CardSideType         `protobuf:"varint,7,rep,packed,name=card_side_types,json=cardSideTypes,proto3,enum=learning_cards.v1.CardSideType" json:"card_side_types,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -106,11 +107,19 @@ func (x *CardsGroup) GetVisibility() GroupVisibility {
 	return GroupVisibility_NULL
 }
 
+func (x *CardsGroup) GetCardSideTypes() []CardSideType {
+	if x != nil {
+		return x.CardSideTypes
+	}
+	return nil
+}
+
 type CreateGroupRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	GroupName     string                 `protobuf:"bytes,1,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
 	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	Visibility    GroupVisibility        `protobuf:"varint,3,opt,name=visibility,proto3,enum=learning_cards.v1.GroupVisibility" json:"visibility,omitempty"`
+	CardSideTypes []CardSideType         `protobuf:"varint,4,rep,packed,name=card_side_types,json=cardSideTypes,proto3,enum=learning_cards.v1.CardSideType" json:"card_side_types,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -164,6 +173,13 @@ func (x *CreateGroupRequest) GetVisibility() GroupVisibility {
 		return x.Visibility
 	}
 	return GroupVisibility_NULL
+}
+
+func (x *CreateGroupRequest) GetCardSideTypes() []CardSideType {
+	if x != nil {
+		return x.CardSideTypes
+	}
+	return nil
 }
 
 type CreateGroupResponse struct {
@@ -384,6 +400,7 @@ type UpdateGroupRequest struct {
 	GroupName     string                 `protobuf:"bytes,2,opt,name=group_name,json=groupName,proto3" json:"group_name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Visibility    GroupVisibility        `protobuf:"varint,4,opt,name=visibility,proto3,enum=learning_cards.v1.GroupVisibility" json:"visibility,omitempty"`
+	CardSideTypes []CardSideType         `protobuf:"varint,5,rep,packed,name=card_side_types,json=cardSideTypes,proto3,enum=learning_cards.v1.CardSideType" json:"card_side_types,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -446,6 +463,13 @@ func (x *UpdateGroupRequest) GetVisibility() GroupVisibility {
 	return GroupVisibility_NULL
 }
 
+func (x *UpdateGroupRequest) GetCardSideTypes() []CardSideType {
+	if x != nil {
+		return x.CardSideTypes
+	}
+	return nil
+}
+
 type DeleteGroupRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
@@ -494,7 +518,7 @@ var File_learning_cards_v1_group_proto protoreflect.FileDescriptor
 
 const file_learning_cards_v1_group_proto_rawDesc = "" +
 	"\n" +
-	"\x1dlearning_cards/v1/group.proto\x12\x11learning_cards.v1\x1a\x1clearning_cards/v1/enum.proto\x1a\x17validate/validate.proto\"\xd0\x01\n" +
+	"\x1dlearning_cards/v1/group.proto\x12\x11learning_cards.v1\x1a\x1clearning_cards/v1/enum.proto\x1a\x17validate/validate.proto\"\x99\x02\n" +
 	"\n" +
 	"CardsGroup\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
@@ -505,14 +529,16 @@ const file_learning_cards_v1_group_proto_rawDesc = "" +
 	"created_at\x18\x05 \x01(\tR\tcreatedAt\x12B\n" +
 	"\n" +
 	"visibility\x18\x06 \x01(\x0e2\".learning_cards.v1.GroupVisibilityR\n" +
-	"visibility\"\xa2\x01\n" +
+	"visibility\x12G\n" +
+	"\x0fcard_side_types\x18\a \x03(\x0e2\x1f.learning_cards.v1.CardSideTypeR\rcardSideTypes\"\xeb\x01\n" +
 	"\x12CreateGroupRequest\x12&\n" +
 	"\n" +
 	"group_name\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\tgroupName\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12B\n" +
 	"\n" +
 	"visibility\x18\x03 \x01(\x0e2\".learning_cards.v1.GroupVisibilityR\n" +
-	"visibility\"0\n" +
+	"visibility\x12G\n" +
+	"\x0fcard_side_types\x18\x04 \x03(\x0e2\x1f.learning_cards.v1.CardSideTypeR\rcardSideTypes\"0\n" +
 	"\x13CreateGroupResponse\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\",\n" +
 	"\x0fGetGroupRequest\x12\x19\n" +
@@ -521,7 +547,7 @@ const file_learning_cards_v1_group_proto_rawDesc = "" +
 	"\x05group\x18\x01 \x01(\v2\x1d.learning_cards.v1.CardsGroupR\x05group\"\x13\n" +
 	"\x11ListGroupsRequest\"K\n" +
 	"\x12ListGroupsResponse\x125\n" +
-	"\x06groups\x18\x01 \x03(\v2\x1d.learning_cards.v1.CardsGroupR\x06groups\"\xb4\x01\n" +
+	"\x06groups\x18\x01 \x03(\v2\x1d.learning_cards.v1.CardsGroupR\x06groups\"\xfd\x01\n" +
 	"\x12UpdateGroupRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12\x1d\n" +
 	"\n" +
@@ -529,7 +555,8 @@ const file_learning_cards_v1_group_proto_rawDesc = "" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12B\n" +
 	"\n" +
 	"visibility\x18\x04 \x01(\x0e2\".learning_cards.v1.GroupVisibilityR\n" +
-	"visibility\"/\n" +
+	"visibility\x12G\n" +
+	"\x0fcard_side_types\x18\x05 \x03(\x0e2\x1f.learning_cards.v1.CardSideTypeR\rcardSideTypes\"/\n" +
 	"\x12DeleteGroupRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupIdBRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
 
@@ -557,18 +584,22 @@ var file_learning_cards_v1_group_proto_goTypes = []any{
 	(*UpdateGroupRequest)(nil),  // 7: learning_cards.v1.UpdateGroupRequest
 	(*DeleteGroupRequest)(nil),  // 8: learning_cards.v1.DeleteGroupRequest
 	(GroupVisibility)(0),        // 9: learning_cards.v1.GroupVisibility
+	(CardSideType)(0),           // 10: learning_cards.v1.CardSideType
 }
 var file_learning_cards_v1_group_proto_depIdxs = []int32{
-	9, // 0: learning_cards.v1.CardsGroup.visibility:type_name -> learning_cards.v1.GroupVisibility
-	9, // 1: learning_cards.v1.CreateGroupRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
-	0, // 2: learning_cards.v1.GetGroupResponse.group:type_name -> learning_cards.v1.CardsGroup
-	0, // 3: learning_cards.v1.ListGroupsResponse.groups:type_name -> learning_cards.v1.CardsGroup
-	9, // 4: learning_cards.v1.UpdateGroupRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	9,  // 0: learning_cards.v1.CardsGroup.visibility:type_name -> learning_cards.v1.GroupVisibility
+	10, // 1: learning_cards.v1.CardsGroup.card_side_types:type_name -> learning_cards.v1.CardSideType
+	9,  // 2: learning_cards.v1.CreateGroupRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
+	10, // 3: learning_cards.v1.CreateGroupRequest.card_side_types:type_name -> learning_cards.v1.CardSideType
+	0,  // 4: learning_cards.v1.GetGroupResponse.group:type_name -> learning_cards.v1.CardsGroup
+	0,  // 5: learning_cards.v1.ListGroupsResponse.groups:type_name -> learning_cards.v1.CardsGroup
+	9,  // 6: learning_cards.v1.UpdateGroupRequest.visibility:type_name -> learning_cards.v1.GroupVisibility
+	10, // 7: learning_cards.v1.UpdateGroupRequest.card_side_types:type_name -> learning_cards.v1.CardSideType
+	8,  // [8:8] is the sub-list for method output_type
+	8,  // [8:8] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_learning_cards_v1_group_proto_init() }

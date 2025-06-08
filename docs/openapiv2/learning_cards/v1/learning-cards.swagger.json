@@ -452,6 +452,12 @@
         },
         "backText": {
           "type": "string"
+        },
+        "sidesText": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -466,6 +472,12 @@
         },
         "visibility": {
           "$ref": "#/definitions/v1GroupVisibility"
+        },
+        "cardSideTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1CardSideType"
+          }
         }
       }
     },
@@ -533,6 +545,12 @@
         },
         "backText": {
           "type": "string"
+        },
+        "sidesText": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -564,6 +582,14 @@
         },
         "createdAt": {
           "type": "string"
+        },
+        "sides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1CardSide"
+          },
+          "description": "Two values list of card's sides.\nSide's type is based on CardSideType in CardsGroup.card_side_types."
         }
       }
     },
@@ -589,6 +615,29 @@
         }
       }
     },
+    "v1CardSide": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "readingPairs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1ReadingPair"
+          }
+        }
+      }
+    },
+    "v1CardSideType": {
+      "type": "string",
+      "enum": [
+        "CARD_SIDE_NULL",
+        "CARD_SIDE_JAPANESE"
+      ],
+      "default": "CARD_SIDE_NULL"
+    },
     "v1CardsGroup": {
       "type": "object",
       "properties": {
@@ -611,6 +660,12 @@
         },
         "visibility": {
           "$ref": "#/definitions/v1GroupVisibility"
+        },
+        "cardSideTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1CardSideType"
+          }
         }
       }
     },
@@ -625,6 +680,12 @@
         },
         "visibility": {
           "$ref": "#/definitions/v1GroupVisibility"
+        },
+        "cardSideTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/v1CardSideType"
+          }
         }
       }
     },
@@ -674,6 +735,13 @@
             "type": "object",
             "$ref": "#/definitions/v1ReviewCard"
           }
+        },
+        "fullCards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Card"
+          }
         }
       }
     },
@@ -722,6 +790,17 @@
         "MARK_E"
       ],
       "default": "MARK_NULL"
+    },
+    "v1ReadingPair": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "reading": {
+          "type": "string"
+        }
+      }
     },
     "v1ReviewCard": {
       "type": "object",

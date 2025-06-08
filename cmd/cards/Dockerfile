@@ -1,9 +1,13 @@
-# ==== Build ====
-FROM golang:1.23 AS builder
+# ==== Build stage ====
+FROM golang:1.24-bullseye AS build
 
-ENV GOOS=linux
-ENV GOARCH=amd64
-ENV CGO_ENABLED=0
+RUN apt-get update && \
+    apt-get install -y mecab libmecab-dev mecab-ipadic pkg-config && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV CGO_ENABLED=1
+ENV CGO_CFLAGS="-I/usr/include"
+ENV CGO_LDFLAGS="-lmecab -lstdc++"
 
 WORKDIR /app
 
@@ -14,12 +18,19 @@ COPY . .
 
 RUN go build -o cards ./cmd/cards
 
-# ==== Runtime (cards) ====
-FROM scratch AS cards
+# ==== Runtime stage ====
+FROM debian:bullseye AS cards
 
-WORKDIR /
+RUN apt-get update && \
+    apt-get install -y mecab libmecab2 mecab-ipadic-utf8 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /app/cards /cards
+WORKDIR /app
+
+COPY --from=build /app/cards /cards
+
+ENV MECAB_DICDIR=/usr/lib/mecab/dic/ipadic-utf8
 
 EXPOSE ${GRPC_PORT} ${REST_PORT}
 ENTRYPOINT ["/cards"]

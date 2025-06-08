@@ -5,13 +5,11 @@ import (
 )
 
 const (
-	CARD_SIDE_FIRST = CardSideNumber(iota)
-	CARD_SIDE_SECOND
+	SIDE_FIRST = iota
+	SIDE_SECOND
 )
 
 type CardId int64
-
-type CardSideNumber int8
 
 type Decoration interface {
 	ToString() string
@@ -42,26 +40,7 @@ func NewCardSides(front, back string) []CardSide {
 	}
 }
 
-func (c *Card) SetText(first, second string) {
-	if len(c.Sides) < 2 {
-		c.Sides = make([]CardSide, 2)
-	}
-	c.Sides[CARD_SIDE_FIRST].Text = first
-	c.Sides[CARD_SIDE_SECOND].Text = second
-}
-
-func (c *Card) GetFirst() CardSide {
-	return c.GetText(CARD_SIDE_FIRST)
-}
-func (c *Card) GetSecond() CardSide {
-	return c.GetText(CARD_SIDE_SECOND)
-}
-func (c *Card) GetText(side CardSideNumber) CardSide {
-	return c.Sides[side]
-}
-
 type UpdateCard struct {
 	Id        CardId
-	FrontText string
-	BackText  string
+	SidesText []string
 }

@@ -21,6 +21,52 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type CardSideType int32
+
+const (
+	CardSideType_CARD_SIDE_NULL     CardSideType = 0
+	CardSideType_CARD_SIDE_JAPANESE CardSideType = 1
+)
+
+// Enum value maps for CardSideType.
+var (
+	CardSideType_name = map[int32]string{
+		0: "CARD_SIDE_NULL",
+		1: "CARD_SIDE_JAPANESE",
+	}
+	CardSideType_value = map[string]int32{
+		"CARD_SIDE_NULL":     0,
+		"CARD_SIDE_JAPANESE": 1,
+	}
+)
+
+func (x CardSideType) Enum() *CardSideType {
+	p := new(CardSideType)
+	*p = x
+	return p
+}
+
+func (x CardSideType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CardSideType) Descriptor() protoreflect.EnumDescriptor {
+	return file_learning_cards_v1_enum_proto_enumTypes[0].Descriptor()
+}
+
+func (CardSideType) Type() protoreflect.EnumType {
+	return &file_learning_cards_v1_enum_proto_enumTypes[0]
+}
+
+func (x CardSideType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CardSideType.Descriptor instead.
+func (CardSideType) EnumDescriptor() ([]byte, []int) {
+	return file_learning_cards_v1_enum_proto_rawDescGZIP(), []int{0}
+}
+
 type GroupVisibility int32
 
 const (
@@ -57,11 +103,11 @@ func (x GroupVisibility) String() string {
 }
 
 func (GroupVisibility) Descriptor() protoreflect.EnumDescriptor {
-	return file_learning_cards_v1_enum_proto_enumTypes[0].Descriptor()
+	return file_learning_cards_v1_enum_proto_enumTypes[1].Descriptor()
 }
 
 func (GroupVisibility) Type() protoreflect.EnumType {
-	return &file_learning_cards_v1_enum_proto_enumTypes[0]
+	return &file_learning_cards_v1_enum_proto_enumTypes[1]
 }
 
 func (x GroupVisibility) Number() protoreflect.EnumNumber {
@@ -70,7 +116,7 @@ func (x GroupVisibility) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use GroupVisibility.Descriptor instead.
 func (GroupVisibility) EnumDescriptor() ([]byte, []int) {
-	return file_learning_cards_v1_enum_proto_rawDescGZIP(), []int{0}
+	return file_learning_cards_v1_enum_proto_rawDescGZIP(), []int{1}
 }
 
 type Mark int32
@@ -115,11 +161,11 @@ func (x Mark) String() string {
 }
 
 func (Mark) Descriptor() protoreflect.EnumDescriptor {
-	return file_learning_cards_v1_enum_proto_enumTypes[1].Descriptor()
+	return file_learning_cards_v1_enum_proto_enumTypes[2].Descriptor()
 }
 
 func (Mark) Type() protoreflect.EnumType {
-	return &file_learning_cards_v1_enum_proto_enumTypes[1]
+	return &file_learning_cards_v1_enum_proto_enumTypes[2]
 }
 
 func (x Mark) Number() protoreflect.EnumNumber {
@@ -128,7 +174,7 @@ func (x Mark) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Mark.Descriptor instead.
 func (Mark) EnumDescriptor() ([]byte, []int) {
-	return file_learning_cards_v1_enum_proto_rawDescGZIP(), []int{1}
+	return file_learning_cards_v1_enum_proto_rawDescGZIP(), []int{2}
 }
 
 type CardAnswer int32
@@ -167,11 +213,11 @@ func (x CardAnswer) String() string {
 }
 
 func (CardAnswer) Descriptor() protoreflect.EnumDescriptor {
-	return file_learning_cards_v1_enum_proto_enumTypes[2].Descriptor()
+	return file_learning_cards_v1_enum_proto_enumTypes[3].Descriptor()
 }
 
 func (CardAnswer) Type() protoreflect.EnumType {
-	return &file_learning_cards_v1_enum_proto_enumTypes[2]
+	return &file_learning_cards_v1_enum_proto_enumTypes[3]
 }
 
 func (x CardAnswer) Number() protoreflect.EnumNumber {
@@ -180,14 +226,17 @@ func (x CardAnswer) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CardAnswer.Descriptor instead.
 func (CardAnswer) EnumDescriptor() ([]byte, []int) {
-	return file_learning_cards_v1_enum_proto_rawDescGZIP(), []int{2}
+	return file_learning_cards_v1_enum_proto_rawDescGZIP(), []int{3}
 }
 
 var File_learning_cards_v1_enum_proto protoreflect.FileDescriptor
 
 const file_learning_cards_v1_enum_proto_rawDesc = "" +
 	"\n" +
-	"\x1clearning_cards/v1/enum.proto\x12\x11learning_cards.v1*B\n" +
+	"\x1clearning_cards/v1/enum.proto\x12\x11learning_cards.v1*:\n" +
+	"\fCardSideType\x12\x12\n" +
+	"\x0eCARD_SIDE_NULL\x10\x00\x12\x16\n" +
+	"\x12CARD_SIDE_JAPANESE\x10\x01*B\n" +
 	"\x0fGroupVisibility\x12\b\n" +
 	"\x04NULL\x10\x00\x12\v\n" +
 	"\aPRIVATE\x10\x01\x12\n" +
@@ -225,11 +274,12 @@ func file_learning_cards_v1_enum_proto_rawDescGZIP() []byte {
 	return file_learning_cards_v1_enum_proto_rawDescData
 }
 
-var file_learning_cards_v1_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_learning_cards_v1_enum_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_learning_cards_v1_enum_proto_goTypes = []any{
-	(GroupVisibility)(0), // 0: learning_cards.v1.GroupVisibility
-	(Mark)(0),            // 1: learning_cards.v1.Mark
-	(CardAnswer)(0),      // 2: learning_cards.v1.CardAnswer
+	(CardSideType)(0),    // 0: learning_cards.v1.CardSideType
+	(GroupVisibility)(0), // 1: learning_cards.v1.GroupVisibility
+	(Mark)(0),            // 2: learning_cards.v1.Mark
+	(CardAnswer)(0),      // 3: learning_cards.v1.CardAnswer
 }
 var file_learning_cards_v1_enum_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
@@ -249,7 +299,7 @@ func file_learning_cards_v1_enum_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_learning_cards_v1_enum_proto_rawDesc), len(file_learning_cards_v1_enum_proto_rawDesc)),
-			NumEnums:      3,
+			NumEnums:      4,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,

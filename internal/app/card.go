@@ -59,6 +59,8 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 	userRepo := postgres.NewUserRepository(dbPool)
 	cardRepo := postgres.NewCardRepository(dbPool)
 
+	japaneseReader := service.NewJapaneseReader(cfg.JapaneseReading)
+
 	verifier := server.VerifyFunc(verification.GetUserId)
 
 	groupsService := module.NewGroups(
@@ -71,11 +73,21 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 		},
 	)
 
+	cardDecorator := module.NewDecorator(
+		module.DecoratorDeps{
+			GroupReader: groupRepo,
+			CardReadingProviders: map[model.CardSideType]module.CardReadingProvider{
+				model.CARD_SIDE_TYPE_JAPANESE: japaneseReader,
+			},
+		},
+	)
+
 	cardsService := module.NewCards(
 		module.CardsDeps{
 			CardWriter:         cardRepo,
 			CardReader:         cardRepo,
 			GroupAccessChecker: groupsService,
+			CardDecorator:      cardDecorator,
 		},
 	)
 

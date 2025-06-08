@@ -4,10 +4,15 @@ package learning_cards.v1;
 
 option go_package = "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cards";
 
+enum CardSideType {
+    CARD_SIDE_NULL = 0;
+    CARD_SIDE_JAPANESE = 1;
+}
+
 enum GroupVisibility {
-    NULL     = 0;
-    PRIVATE  = 1;
-    PUBLIC   = 2;
+    NULL = 0;
+    PRIVATE = 1;
+    PUBLIC = 2;
     UNLISTED = 3;
 }
 

@@ -136,8 +136,10 @@ func (x *ReviewCard) GetBackText() string {
 }
 
 type GetReviewCardsResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Cards         []*ReviewCard          `protobuf:"bytes,1,rep,name=cards,proto3" json:"cards,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Deprecated: Marked as deprecated in learning_cards/v1/review.proto.
+	Cards         []*ReviewCard `protobuf:"bytes,1,rep,name=cards,proto3" json:"cards,omitempty"`
+	FullCards     []*Card       `protobuf:"bytes,2,rep,name=full_cards,json=fullCards,proto3" json:"full_cards,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -172,9 +174,17 @@ func (*GetReviewCardsResponse) Descriptor() ([]byte, []int) {
 	return file_learning_cards_v1_review_proto_rawDescGZIP(), []int{2}
 }
 
+// Deprecated: Marked as deprecated in learning_cards/v1/review.proto.
 func (x *GetReviewCardsResponse) GetCards() []*ReviewCard {
 	if x != nil {
 		return x.Cards
+	}
+	return nil
+}
+
+func (x *GetReviewCardsResponse) GetFullCards() []*Card {
+	if x != nil {
+		return x.FullCards
 	}
 	return nil
 }
@@ -443,7 +453,7 @@ var File_learning_cards_v1_review_proto protoreflect.FileDescriptor
 
 const file_learning_cards_v1_review_proto_rawDesc = "" +
 	"\n" +
-	"\x1elearning_cards/v1/review.proto\x12\x11learning_cards.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1clearning_cards/v1/enum.proto\x1a\x17validate/validate.proto\"\\\n" +
+	"\x1elearning_cards/v1/review.proto\x12\x11learning_cards.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1clearning_cards/v1/card.proto\x1a\x1clearning_cards/v1/enum.proto\x1a\x17validate/validate.proto\"\\\n" +
 	"\x15GetReviewCardsRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12(\n" +
 	"\vcards_count\x18\x02 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\n" +
@@ -453,9 +463,11 @@ const file_learning_cards_v1_review_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x1d\n" +
 	"\n" +
 	"front_text\x18\x03 \x01(\tR\tfrontText\x12\x1b\n" +
-	"\tback_text\x18\x04 \x01(\tR\bbackText\"M\n" +
-	"\x16GetReviewCardsResponse\x123\n" +
-	"\x05cards\x18\x01 \x03(\v2\x1d.learning_cards.v1.ReviewCardR\x05cards\"\xa2\x01\n" +
+	"\tback_text\x18\x04 \x01(\tR\bbackText\"\x89\x01\n" +
+	"\x16GetReviewCardsResponse\x127\n" +
+	"\x05cards\x18\x01 \x03(\v2\x1d.learning_cards.v1.ReviewCardB\x02\x18\x01R\x05cards\x126\n" +
+	"\n" +
+	"full_cards\x18\x02 \x03(\v2\x17.learning_cards.v1.CardR\tfullCards\"\xa2\x01\n" +
 	"\x10ReviewCardResult\x12\x17\n" +
 	"\acard_id\x18\x01 \x01(\x03R\x06cardId\x12>\n" +
 	"\vcard_answer\x18\x02 \x01(\x0e2\x1d.learning_cards.v1.CardAnswerR\n" +
@@ -495,22 +507,24 @@ var file_learning_cards_v1_review_proto_goTypes = []any{
 	(*GetCardsProgressRequest)(nil),  // 5: learning_cards.v1.GetCardsProgressRequest
 	(*CardProgress)(nil),             // 6: learning_cards.v1.CardProgress
 	(*GetCardsProgressResponse)(nil), // 7: learning_cards.v1.GetCardsProgressResponse
-	(CardAnswer)(0),                  // 8: learning_cards.v1.CardAnswer
-	(*durationpb.Duration)(nil),      // 9: google.protobuf.Duration
-	(Mark)(0),                        // 10: learning_cards.v1.Mark
+	(*Card)(nil),                     // 8: learning_cards.v1.Card
+	(CardAnswer)(0),                  // 9: learning_cards.v1.CardAnswer
+	(*durationpb.Duration)(nil),      // 10: google.protobuf.Duration
+	(Mark)(0),                        // 11: learning_cards.v1.Mark
 }
 var file_learning_cards_v1_review_proto_depIdxs = []int32{
 	1,  // 0: learning_cards.v1.GetReviewCardsResponse.cards:type_name -> learning_cards.v1.ReviewCard
-	8,  // 1: learning_cards.v1.ReviewCardResult.card_answer:type_name -> learning_cards.v1.CardAnswer
-	9,  // 2: learning_cards.v1.ReviewCardResult.duration:type_name -> google.protobuf.Duration
-	3,  // 3: learning_cards.v1.AddReviewResultsRequest.card_results:type_name -> learning_cards.v1.ReviewCardResult
-	10, // 4: learning_cards.v1.CardProgress.mark:type_name -> learning_cards.v1.Mark
-	6,  // 5: learning_cards.v1.GetCardsProgressResponse.cards:type_name -> learning_cards.v1.CardProgress
-	6,  // [6:6] is the sub-list for method output_type
-	6,  // [6:6] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	8,  // 1: learning_cards.v1.GetReviewCardsResponse.full_cards:type_name -> learning_cards.v1.Card
+	9,  // 2: learning_cards.v1.ReviewCardResult.card_answer:type_name -> learning_cards.v1.CardAnswer
+	10, // 3: learning_cards.v1.ReviewCardResult.duration:type_name -> google.protobuf.Duration
+	3,  // 4: learning_cards.v1.AddReviewResultsRequest.card_results:type_name -> learning_cards.v1.ReviewCardResult
+	11, // 5: learning_cards.v1.CardProgress.mark:type_name -> learning_cards.v1.Mark
+	6,  // 6: learning_cards.v1.GetCardsProgressResponse.cards:type_name -> learning_cards.v1.CardProgress
+	7,  // [7:7] is the sub-list for method output_type
+	7,  // [7:7] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_learning_cards_v1_review_proto_init() }
@@ -518,6 +532,7 @@ func file_learning_cards_v1_review_proto_init() {
 	if File_learning_cards_v1_review_proto != nil {
 		return
 	}
+	file_learning_cards_v1_card_proto_init()
 	file_learning_cards_v1_enum_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{

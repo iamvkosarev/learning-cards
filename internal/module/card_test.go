@@ -20,19 +20,20 @@ func TestCardsService_AddCard(t *testing.T) {
 		name      string
 		ctx       context.Context
 		groupId   model.GroupId
-		frontText string
-		backText  string
+		sidesText []string
 		result    model.CardId
 		err       error
 	}{
 		{
-			name:      "success",
-			ctx:       ctxCorrectUser,
-			groupId:   groupId,
-			frontText: "Test Front Text",
-			backText:  "Test Back Text",
-			result:    cardId,
-			err:       nil,
+			name:    "success",
+			ctx:     ctxCorrectUser,
+			groupId: groupId,
+			sidesText: []string{
+				"Test Front Text",
+				"Test Back Text",
+			},
+			result: cardId,
+			err:    nil,
 		},
 		{
 			name:    "no access",
@@ -44,9 +45,6 @@ func TestCardsService_AddCard(t *testing.T) {
 
 	mc := minimock.NewController(t)
 
-	cardDecoratorMock := mocks.NewCardDecoratorMock(mc)
-	cardDecoratorMock.DecorateCardMock.Return(nil)
-
 	cardsWriterMock := mocks.NewCardWriterMock(mc)
 	cardsWriterMock.AddCardMock.Return(cardId, nil)
 
@@ -57,15 +55,13 @@ func TestCardsService_AddCard(t *testing.T) {
 		CardsDeps{
 			CardWriter:         cardsWriterMock,
 			GroupAccessChecker: groupAccessChecker,
-			CardDecorator:      cardDecoratorMock,
 		},
 	)
 	for _, test := range tests {
 		t.Run(
 			test.name, func(t *testing.T) {
 				newCardId, err := cardService.AddCard(
-					test.ctx, test.groupId, test.frontText,
-					test.backText,
+					test.ctx, test.groupId, test.sidesText,
 				)
 				if test.err == nil {
 					assert.Equal(t, test.result, newCardId)
@@ -183,6 +179,9 @@ func TestCardsService_GetCard(t *testing.T) {
 
 	mc := minimock.NewController(t)
 
+	cardDecorator := mocks.NewCardDecoratorMock(mc)
+	cardDecorator.DecorateCardMock.Return(nil)
+
 	cardsReaderMock := mocks.NewCardReaderMock(mc)
 	cardsReaderMock.GetCardMock.When(minimock.AnyContext, correctCardId).Then(correctCard, nil)
 	cardsReaderMock.GetCardMock.When(minimock.AnyContext, notExistCardId).Then(correctCard, model.ErrCardNotFound)
@@ -194,6 +193,7 @@ func TestCardsService_GetCard(t *testing.T) {
 		CardsDeps{
 			CardReader:         cardsReaderMock,
 			GroupAccessChecker: groupAccessChecker,
+			CardDecorator:      cardDecorator,
 		},
 	)
 	for _, test := range tests {
@@ -249,6 +249,9 @@ func TestCardsService_ListCards(t *testing.T) {
 
 	mc := minimock.NewController(t)
 
+	cardDecorator := mocks.NewCardDecoratorMock(mc)
+	cardDecorator.DecorateCardMock.Return(nil)
+
 	cardsReaderMock := mocks.NewCardReaderMock(mc)
 	cardsReaderMock.ListCardsMock.When(minimock.AnyContext, groupId).Then(correctCards, nil)
 	cardsReaderMock.ListCardsMock.When(minimock.AnyContext, notExistGroupId).Then(nil, model.ErrGroupNotFound)
@@ -263,6 +266,7 @@ func TestCardsService_ListCards(t *testing.T) {
 		CardsDeps{
 			CardReader:         cardsReaderMock,
 			GroupAccessChecker: groupAccessChecker,
+			CardDecorator:      cardDecorator,
 		},
 	)
 	for _, test := range tests {

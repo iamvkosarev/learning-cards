@@ -22,20 +22,129 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Card struct {
+type ReadingPair struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	GroupId       int64                  `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	FrontText     string                 `protobuf:"bytes,3,opt,name=front_text,json=frontText,proto3" json:"front_text,omitempty"`
-	BackText      string                 `protobuf:"bytes,4,opt,name=back_text,json=backText,proto3" json:"back_text,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
+	Reading       string                 `protobuf:"bytes,2,opt,name=reading,proto3" json:"reading,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ReadingPair) Reset() {
+	*x = ReadingPair{}
+	mi := &file_learning_cards_v1_card_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ReadingPair) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ReadingPair) ProtoMessage() {}
+
+func (x *ReadingPair) ProtoReflect() protoreflect.Message {
+	mi := &file_learning_cards_v1_card_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ReadingPair.ProtoReflect.Descriptor instead.
+func (*ReadingPair) Descriptor() ([]byte, []int) {
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ReadingPair) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
+func (x *ReadingPair) GetReading() string {
+	if x != nil {
+		return x.Reading
+	}
+	return ""
+}
+
+type CardSide struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Text          string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
+	ReadingPairs  []*ReadingPair         `protobuf:"bytes,2,rep,name=reading_pairs,json=readingPairs,proto3" json:"reading_pairs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CardSide) Reset() {
+	*x = CardSide{}
+	mi := &file_learning_cards_v1_card_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CardSide) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CardSide) ProtoMessage() {}
+
+func (x *CardSide) ProtoReflect() protoreflect.Message {
+	mi := &file_learning_cards_v1_card_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CardSide.ProtoReflect.Descriptor instead.
+func (*CardSide) Descriptor() ([]byte, []int) {
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *CardSide) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
+func (x *CardSide) GetReadingPairs() []*ReadingPair {
+	if x != nil {
+		return x.ReadingPairs
+	}
+	return nil
+}
+
+type Card struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Id      int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	GroupId int64                  `protobuf:"varint,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
+	FrontText string `protobuf:"bytes,3,opt,name=front_text,json=frontText,proto3" json:"front_text,omitempty"`
+	// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
+	BackText  string `protobuf:"bytes,4,opt,name=back_text,json=backText,proto3" json:"back_text,omitempty"`
+	CreatedAt string `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Two values list of card's sides.
+	// Side's type is based on CardSideType in CardsGroup.card_side_types.
+	Sides         []*CardSide `protobuf:"bytes,6,rep,name=sides,proto3" json:"sides,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Card) Reset() {
 	*x = Card{}
-	mi := &file_learning_cards_v1_card_proto_msgTypes[0]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -47,7 +156,7 @@ func (x *Card) String() string {
 func (*Card) ProtoMessage() {}
 
 func (x *Card) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_card_proto_msgTypes[0]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -60,7 +169,7 @@ func (x *Card) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Card.ProtoReflect.Descriptor instead.
 func (*Card) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{0}
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Card) GetId() int64 {
@@ -77,6 +186,7 @@ func (x *Card) GetGroupId() int64 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
 func (x *Card) GetFrontText() string {
 	if x != nil {
 		return x.FrontText
@@ -84,6 +194,7 @@ func (x *Card) GetFrontText() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
 func (x *Card) GetBackText() string {
 	if x != nil {
 		return x.BackText
@@ -98,18 +209,28 @@ func (x *Card) GetCreatedAt() string {
 	return ""
 }
 
+func (x *Card) GetSides() []*CardSide {
+	if x != nil {
+		return x.Sides
+	}
+	return nil
+}
+
 type AddCardRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	GroupId       int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
-	FrontText     string                 `protobuf:"bytes,2,opt,name=front_text,json=frontText,proto3" json:"front_text,omitempty"`
-	BackText      string                 `protobuf:"bytes,3,opt,name=back_text,json=backText,proto3" json:"back_text,omitempty"`
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	GroupId int64                  `protobuf:"varint,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
+	FrontText string `protobuf:"bytes,2,opt,name=front_text,json=frontText,proto3" json:"front_text,omitempty"`
+	// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
+	BackText      string   `protobuf:"bytes,3,opt,name=back_text,json=backText,proto3" json:"back_text,omitempty"`
+	SidesText     []string `protobuf:"bytes,4,rep,name=sides_text,json=sidesText,proto3" json:"sides_text,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AddCardRequest) Reset() {
 	*x = AddCardRequest{}
-	mi := &file_learning_cards_v1_card_proto_msgTypes[1]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -121,7 +242,7 @@ func (x *AddCardRequest) String() string {
 func (*AddCardRequest) ProtoMessage() {}
 
 func (x *AddCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_card_proto_msgTypes[1]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -134,7 +255,7 @@ func (x *AddCardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddCardRequest.ProtoReflect.Descriptor instead.
 func (*AddCardRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{1}
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *AddCardRequest) GetGroupId() int64 {
@@ -144,6 +265,7 @@ func (x *AddCardRequest) GetGroupId() int64 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
 func (x *AddCardRequest) GetFrontText() string {
 	if x != nil {
 		return x.FrontText
@@ -151,11 +273,19 @@ func (x *AddCardRequest) GetFrontText() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
 func (x *AddCardRequest) GetBackText() string {
 	if x != nil {
 		return x.BackText
 	}
 	return ""
+}
+
+func (x *AddCardRequest) GetSidesText() []string {
+	if x != nil {
+		return x.SidesText
+	}
+	return nil
 }
 
 type AddCardResponse struct {
@@ -167,7 +297,7 @@ type AddCardResponse struct {
 
 func (x *AddCardResponse) Reset() {
 	*x = AddCardResponse{}
-	mi := &file_learning_cards_v1_card_proto_msgTypes[2]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -179,7 +309,7 @@ func (x *AddCardResponse) String() string {
 func (*AddCardResponse) ProtoMessage() {}
 
 func (x *AddCardResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_card_proto_msgTypes[2]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -192,7 +322,7 @@ func (x *AddCardResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddCardResponse.ProtoReflect.Descriptor instead.
 func (*AddCardResponse) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{2}
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *AddCardResponse) GetCardId() int64 {
@@ -211,7 +341,7 @@ type GetCardRequest struct {
 
 func (x *GetCardRequest) Reset() {
 	*x = GetCardRequest{}
-	mi := &file_learning_cards_v1_card_proto_msgTypes[3]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -223,7 +353,7 @@ func (x *GetCardRequest) String() string {
 func (*GetCardRequest) ProtoMessage() {}
 
 func (x *GetCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_card_proto_msgTypes[3]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -236,7 +366,7 @@ func (x *GetCardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCardRequest.ProtoReflect.Descriptor instead.
 func (*GetCardRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{3}
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetCardRequest) GetCardId() int64 {
@@ -255,7 +385,7 @@ type GetCardResponse struct {
 
 func (x *GetCardResponse) Reset() {
 	*x = GetCardResponse{}
-	mi := &file_learning_cards_v1_card_proto_msgTypes[4]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -267,7 +397,7 @@ func (x *GetCardResponse) String() string {
 func (*GetCardResponse) ProtoMessage() {}
 
 func (x *GetCardResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_card_proto_msgTypes[4]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -280,7 +410,7 @@ func (x *GetCardResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCardResponse.ProtoReflect.Descriptor instead.
 func (*GetCardResponse) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{4}
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetCardResponse) GetCard() *Card {
@@ -299,7 +429,7 @@ type ListCardsRequest struct {
 
 func (x *ListCardsRequest) Reset() {
 	*x = ListCardsRequest{}
-	mi := &file_learning_cards_v1_card_proto_msgTypes[5]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -311,7 +441,7 @@ func (x *ListCardsRequest) String() string {
 func (*ListCardsRequest) ProtoMessage() {}
 
 func (x *ListCardsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_card_proto_msgTypes[5]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -324,7 +454,7 @@ func (x *ListCardsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCardsRequest.ProtoReflect.Descriptor instead.
 func (*ListCardsRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{5}
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListCardsRequest) GetGroupId() int64 {
@@ -343,7 +473,7 @@ type ListCardsResponse struct {
 
 func (x *ListCardsResponse) Reset() {
 	*x = ListCardsResponse{}
-	mi := &file_learning_cards_v1_card_proto_msgTypes[6]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -355,7 +485,7 @@ func (x *ListCardsResponse) String() string {
 func (*ListCardsResponse) ProtoMessage() {}
 
 func (x *ListCardsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_card_proto_msgTypes[6]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -368,7 +498,7 @@ func (x *ListCardsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCardsResponse.ProtoReflect.Descriptor instead.
 func (*ListCardsResponse) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{6}
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *ListCardsResponse) GetCards() []*Card {
@@ -379,17 +509,20 @@ func (x *ListCardsResponse) GetCards() []*Card {
 }
 
 type UpdateCardRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	CardId        int64                  `protobuf:"varint,1,opt,name=card_id,json=cardId,proto3" json:"card_id,omitempty"`
-	FrontText     string                 `protobuf:"bytes,2,opt,name=front_text,json=frontText,proto3" json:"front_text,omitempty"`
-	BackText      string                 `protobuf:"bytes,3,opt,name=back_text,json=backText,proto3" json:"back_text,omitempty"`
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	CardId int64                  `protobuf:"varint,1,opt,name=card_id,json=cardId,proto3" json:"card_id,omitempty"`
+	// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
+	FrontText string `protobuf:"bytes,2,opt,name=front_text,json=frontText,proto3" json:"front_text,omitempty"`
+	// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
+	BackText      string   `protobuf:"bytes,3,opt,name=back_text,json=backText,proto3" json:"back_text,omitempty"`
+	SidesText     []string `protobuf:"bytes,4,rep,name=sides_text,json=sidesText,proto3" json:"sides_text,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateCardRequest) Reset() {
 	*x = UpdateCardRequest{}
-	mi := &file_learning_cards_v1_card_proto_msgTypes[7]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -401,7 +534,7 @@ func (x *UpdateCardRequest) String() string {
 func (*UpdateCardRequest) ProtoMessage() {}
 
 func (x *UpdateCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_card_proto_msgTypes[7]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -414,7 +547,7 @@ func (x *UpdateCardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCardRequest.ProtoReflect.Descriptor instead.
 func (*UpdateCardRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{7}
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *UpdateCardRequest) GetCardId() int64 {
@@ -424,6 +557,7 @@ func (x *UpdateCardRequest) GetCardId() int64 {
 	return 0
 }
 
+// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
 func (x *UpdateCardRequest) GetFrontText() string {
 	if x != nil {
 		return x.FrontText
@@ -431,11 +565,19 @@ func (x *UpdateCardRequest) GetFrontText() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in learning_cards/v1/card.proto.
 func (x *UpdateCardRequest) GetBackText() string {
 	if x != nil {
 		return x.BackText
 	}
 	return ""
+}
+
+func (x *UpdateCardRequest) GetSidesText() []string {
+	if x != nil {
+		return x.SidesText
+	}
+	return nil
 }
 
 type DeleteCardRequest struct {
@@ -447,7 +589,7 @@ type DeleteCardRequest struct {
 
 func (x *DeleteCardRequest) Reset() {
 	*x = DeleteCardRequest{}
-	mi := &file_learning_cards_v1_card_proto_msgTypes[8]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -459,7 +601,7 @@ func (x *DeleteCardRequest) String() string {
 func (*DeleteCardRequest) ProtoMessage() {}
 
 func (x *DeleteCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_learning_cards_v1_card_proto_msgTypes[8]
+	mi := &file_learning_cards_v1_card_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -472,7 +614,7 @@ func (x *DeleteCardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCardRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCardRequest) Descriptor() ([]byte, []int) {
-	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{8}
+	return file_learning_cards_v1_card_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DeleteCardRequest) GetCardId() int64 {
@@ -486,20 +628,30 @@ var File_learning_cards_v1_card_proto protoreflect.FileDescriptor
 
 const file_learning_cards_v1_card_proto_rawDesc = "" +
 	"\n" +
-	"\x1clearning_cards/v1/card.proto\x12\x11learning_cards.v1\x1a\x17validate/validate.proto\"\x8c\x01\n" +
+	"\x1clearning_cards/v1/card.proto\x12\x11learning_cards.v1\x1a\x17validate/validate.proto\";\n" +
+	"\vReadingPair\x12\x12\n" +
+	"\x04text\x18\x01 \x01(\tR\x04text\x12\x18\n" +
+	"\areading\x18\x02 \x01(\tR\areading\"l\n" +
+	"\bCardSide\x12\x1b\n" +
+	"\x04text\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\x04text\x12C\n" +
+	"\rreading_pairs\x18\x02 \x03(\v2\x1e.learning_cards.v1.ReadingPairR\freadingPairs\"\xc7\x01\n" +
 	"\x04Card\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x19\n" +
-	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12\x1d\n" +
+	"\bgroup_id\x18\x02 \x01(\x03R\agroupId\x12!\n" +
 	"\n" +
-	"front_text\x18\x03 \x01(\tR\tfrontText\x12\x1b\n" +
-	"\tback_text\x18\x04 \x01(\tR\bbackText\x12\x1d\n" +
+	"front_text\x18\x03 \x01(\tB\x02\x18\x01R\tfrontText\x12\x1f\n" +
+	"\tback_text\x18\x04 \x01(\tB\x02\x18\x01R\bbackText\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\tR\tcreatedAt\"y\n" +
+	"created_at\x18\x05 \x01(\tR\tcreatedAt\x121\n" +
+	"\x05sides\x18\x06 \x03(\v2\x1b.learning_cards.v1.CardSideR\x05sides\"\xae\x01\n" +
 	"\x0eAddCardRequest\x12\x19\n" +
-	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12&\n" +
+	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\x12(\n" +
 	"\n" +
-	"front_text\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\tfrontText\x12$\n" +
-	"\tback_text\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\bbackText\"*\n" +
+	"front_text\x18\x02 \x01(\tB\t\xfaB\x04r\x02\x10\x01\x18\x01R\tfrontText\x12&\n" +
+	"\tback_text\x18\x03 \x01(\tB\t\xfaB\x04r\x02\x10\x01\x18\x01R\bbackText\x12/\n" +
+	"\n" +
+	"sides_text\x18\x04 \x03(\tB\x10\xfaB\r\x92\x01\n" +
+	"\b\x02\x10\x02\"\x04r\x02\x10\x01R\tsidesText\"*\n" +
 	"\x0fAddCardResponse\x12\x17\n" +
 	"\acard_id\x18\x01 \x01(\x03R\x06cardId\")\n" +
 	"\x0eGetCardRequest\x12\x17\n" +
@@ -509,12 +661,15 @@ const file_learning_cards_v1_card_proto_rawDesc = "" +
 	"\x10ListCardsRequest\x12\x19\n" +
 	"\bgroup_id\x18\x01 \x01(\x03R\agroupId\"B\n" +
 	"\x11ListCardsResponse\x12-\n" +
-	"\x05cards\x18\x02 \x03(\v2\x17.learning_cards.v1.CardR\x05cards\"z\n" +
+	"\x05cards\x18\x02 \x03(\v2\x17.learning_cards.v1.CardR\x05cards\"\xa9\x01\n" +
 	"\x11UpdateCardRequest\x12\x17\n" +
-	"\acard_id\x18\x01 \x01(\x03R\x06cardId\x12&\n" +
+	"\acard_id\x18\x01 \x01(\x03R\x06cardId\x12(\n" +
 	"\n" +
-	"front_text\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\tfrontText\x12$\n" +
-	"\tback_text\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\bbackText\",\n" +
+	"front_text\x18\x02 \x01(\tB\t\xfaB\x04r\x02\x10\x01\x18\x01R\tfrontText\x12&\n" +
+	"\tback_text\x18\x03 \x01(\tB\t\xfaB\x04r\x02\x10\x01\x18\x01R\bbackText\x12)\n" +
+	"\n" +
+	"sides_text\x18\x04 \x03(\tB\n" +
+	"\xfaB\a\x92\x01\x04\b\x00\x10\x02R\tsidesText\",\n" +
 	"\x11DeleteCardRequest\x12\x17\n" +
 	"\acard_id\x18\x01 \x01(\x03R\x06cardIdBRZPgithub.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1;learning_cardsb\x06proto3"
 
@@ -530,26 +685,30 @@ func file_learning_cards_v1_card_proto_rawDescGZIP() []byte {
 	return file_learning_cards_v1_card_proto_rawDescData
 }
 
-var file_learning_cards_v1_card_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_learning_cards_v1_card_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_learning_cards_v1_card_proto_goTypes = []any{
-	(*Card)(nil),              // 0: learning_cards.v1.Card
-	(*AddCardRequest)(nil),    // 1: learning_cards.v1.AddCardRequest
-	(*AddCardResponse)(nil),   // 2: learning_cards.v1.AddCardResponse
-	(*GetCardRequest)(nil),    // 3: learning_cards.v1.GetCardRequest
-	(*GetCardResponse)(nil),   // 4: learning_cards.v1.GetCardResponse
-	(*ListCardsRequest)(nil),  // 5: learning_cards.v1.ListCardsRequest
-	(*ListCardsResponse)(nil), // 6: learning_cards.v1.ListCardsResponse
-	(*UpdateCardRequest)(nil), // 7: learning_cards.v1.UpdateCardRequest
-	(*DeleteCardRequest)(nil), // 8: learning_cards.v1.DeleteCardRequest
+	(*ReadingPair)(nil),       // 0: learning_cards.v1.ReadingPair
+	(*CardSide)(nil),          // 1: learning_cards.v1.CardSide
+	(*Card)(nil),              // 2: learning_cards.v1.Card
+	(*AddCardRequest)(nil),    // 3: learning_cards.v1.AddCardRequest
+	(*AddCardResponse)(nil),   // 4: learning_cards.v1.AddCardResponse
+	(*GetCardRequest)(nil),    // 5: learning_cards.v1.GetCardRequest
+	(*GetCardResponse)(nil),   // 6: learning_cards.v1.GetCardResponse
+	(*ListCardsRequest)(nil),  // 7: learning_cards.v1.ListCardsRequest
+	(*ListCardsResponse)(nil), // 8: learning_cards.v1.ListCardsResponse
+	(*UpdateCardRequest)(nil), // 9: learning_cards.v1.UpdateCardRequest
+	(*DeleteCardRequest)(nil), // 10: learning_cards.v1.DeleteCardRequest
 }
 var file_learning_cards_v1_card_proto_depIdxs = []int32{
-	0, // 0: learning_cards.v1.GetCardResponse.card:type_name -> learning_cards.v1.Card
-	0, // 1: learning_cards.v1.ListCardsResponse.cards:type_name -> learning_cards.v1.Card
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 0: learning_cards.v1.CardSide.reading_pairs:type_name -> learning_cards.v1.ReadingPair
+	1, // 1: learning_cards.v1.Card.sides:type_name -> learning_cards.v1.CardSide
+	2, // 2: learning_cards.v1.GetCardResponse.card:type_name -> learning_cards.v1.Card
+	2, // 3: learning_cards.v1.ListCardsResponse.cards:type_name -> learning_cards.v1.Card
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_learning_cards_v1_card_proto_init() }
@@ -563,7 +722,7 @@ func file_learning_cards_v1_card_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_learning_cards_v1_card_proto_rawDesc), len(file_learning_cards_v1_card_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

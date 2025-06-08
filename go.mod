@@ -1,6 +1,6 @@
 module github.com/iamvkosarev/learning-cards
 
-go 1.23.6
+go 1.24.4
 
 require (
 	github.com/envoyproxy/protoc-gen-validate v1.2.1
@@ -13,6 +13,7 @@ require (
 	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438
 	github.com/jackc/pgx/v5 v5.7.4
 	github.com/joho/godotenv v1.5.1
+	github.com/shogo82148/go-mecab v0.0.8
 	github.com/stretchr/testify v1.9.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20250324211829-b45e905df463
 	google.golang.org/grpc v1.71.0

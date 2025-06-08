@@ -26,8 +26,7 @@ type GroupService interface {
 
 type CardsService interface {
 	AddCard(
-		ctx context.Context, groupId model.GroupId, frontText,
-		backText string,
+		ctx context.Context, groupId model.GroupId, sidesText []string,
 	) (model.CardId, error)
 	ListCards(ctx context.Context, groupId model.GroupId) ([]*model.Card, error)
 	GetCard(ctx context.Context, id model.CardId) (*model.Card, error)
@@ -134,7 +133,7 @@ func (s *CardServer) DeleteGroup(ctx context.Context, req *pb.DeleteGroupRequest
 
 func (s *CardServer) AddCard(ctx context.Context, req *pb.AddCardRequest) (*pb.AddCardResponse, error) {
 	groupId := model.GroupId(req.GroupId)
-	cardId, err := s.CardsService.AddCard(ctx, groupId, req.FrontText, req.BackText)
+	cardId, err := s.CardsService.AddCard(ctx, groupId, req.SidesText)
 
 	if err != nil {
 		return nil, err
@@ -183,7 +182,7 @@ func (s *CardServer) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.G
 
 func (s *CardServer) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest) (*emptypb.Empty, error) {
 	cardId := model.CardId(req.CardId)
-	card := model.UpdateCard{Id: cardId, FrontText: req.FrontText, BackText: req.BackText}
+	card := model.UpdateCard{Id: cardId, SidesText: req.SidesText}
 
 	if err := s.CardsService.UpdateCard(ctx, card); err != nil {
 		return nil, err

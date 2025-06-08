@@ -24,8 +24,8 @@ func (cr CardRepository) AddCard(ctx context.Context, card *model.Card) (model.C
 	var id int64
 	err := cr.db.QueryRow(
 		ctx,
-		`INSERT INTO cards (group_id, front_text, back_text) VALUES ($1, $2, $3) RETURNING id`,
-		card.GroupId, card.GetFirst().Text, card.GetSecond().Text,
+		`INSERT INTO cards (group_id, first_side, second_side) VALUES ($1, $2, $3) RETURNING id`,
+		card.GroupId, card.Sides[model.SIDE_FIRST].Text, card.Sides[model.SIDE_SECOND].Text,
 	).Scan(&id)
 
 	var pgErr *pgconn.PgError
@@ -43,24 +43,21 @@ func (cr CardRepository) AddCard(ctx context.Context, card *model.Card) (model.C
 func (cr CardRepository) GetCard(ctx context.Context, cardId model.CardId) (*model.Card, error) {
 	op := "postgres.CardRepository.GetCard"
 
-	card := &model.Card{}
-	var front, back string
-	var reading *string
-
+	card := &model.Card{
+		Sides: make([]model.CardSide, 2),
+	}
 	err := cr.db.QueryRow(
 		ctx,
-		`SELECT id, group_id, front_text, back_text, created_at, updated_at FROM cards WHERE id = $1`,
+		`SELECT id, group_id, first_side, second_side, created_at, updated_at FROM cards WHERE id = $1`,
 		cardId,
 	).Scan(
 		&card.Id,
 		&card.GroupId,
-		&front,
-		&back,
+		&card.Sides[model.SIDE_FIRST].Text,
+		&card.Sides[model.SIDE_SECOND].Text,
 		&card.CreateTime,
 		&card.UpdateTime,
-		&reading,
 	)
-	card.SetText(front, back)
 
 	if err != nil {
 		return nil, fmt.Errorf("%s: failed to parse reading pairs %w", op, err)
@@ -81,7 +78,7 @@ func (cr CardRepository) ListCards(ctx context.Context, groupId model.GroupId) (
 
 	rows, err := cr.db.Query(
 		ctx,
-		`SELECT id, group_id, front_text, back_text, created_at, updated_at
+		`SELECT id, group_id, first_side, second_side, created_at, updated_at
 		FROM cards WHERE group_id = $1`, groupId,
 	)
 
@@ -93,17 +90,17 @@ func (cr CardRepository) ListCards(ctx context.Context, groupId model.GroupId) (
 	cards := make([]*model.Card, 0)
 
 	for rows.Next() {
-		card := &model.Card{}
-		var front, back string
+		card := &model.Card{
+			Sides: make([]model.CardSide, 2),
+		}
 		err = rows.Scan(
 			&card.Id,
 			&card.GroupId,
-			&front,
-			&back,
+			&card.Sides[model.SIDE_FIRST].Text,
+			&card.Sides[model.SIDE_SECOND].Text,
 			&card.CreateTime,
 			&card.UpdateTime,
 		)
-		card.SetText(front, back)
 
 		if err != nil {
 			return nil, fmt.Errorf("%s: scan error %w", op, err)
@@ -123,12 +120,12 @@ func (cr CardRepository) UpdateCard(ctx context.Context, card *model.Card) error
 	cmdTag, err := cr.db.Exec(
 		ctx,
 		`UPDATE cards
-		 SET front_text = $1,
-		     back_text = $2,
+		 SET first_side = $1,
+		     second_side = $2,
 		     updated_at = $3
 		 WHERE id = $4`,
-		card.GetFirst().Text,
-		card.GetSecond().Text,
+		card.Sides[model.SIDE_FIRST].Text,
+		card.Sides[model.SIDE_SECOND].Text,
 		card.UpdateTime,
 		card.Id,
 	)

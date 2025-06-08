@@ -5,6 +5,12 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
+//go:generate minimock -i CardReader -o ./mocks/card_reader_mock.go -n CardReaderMock -p mocks
+type CardReader interface {
+	GetCard(ctx context.Context, cardId model.CardId) (*model.Card, error)
+	ListCards(ctx context.Context, groupId model.GroupId) ([]*model.Card, error)
+}
+
 //go:generate minimock -i CardWriter -o ./mocks/card_writer_mock.go -n CardWriterMock -p mocks
 type CardWriter interface {
 	AddCard(ctx context.Context, card *model.Card) (model.CardId, error)
@@ -18,10 +24,16 @@ type GroupAccessChecker interface {
 	CheckWriteGroupAccess(ctx context.Context, groupId model.GroupId) error
 }
 
+//go:generate minimock -i CardDecorator -o ./mocks/card_decorator_mock.go -n CardDecoratorMock -p mocks
+type CardDecorator interface {
+	DecorateCard(ctx context.Context, card *model.Card) error
+}
+
 type CardsDeps struct {
 	CardReader         CardReader
 	CardWriter         CardWriter
 	GroupAccessChecker GroupAccessChecker
+	CardDecorator      CardDecorator
 }
 
 type Cards struct {
@@ -35,8 +47,7 @@ func NewCards(deps CardsDeps) *Cards {
 }
 
 func (c *Cards) AddCard(
-	ctx context.Context, groupId model.GroupId, frontText,
-	backText string,
+	ctx context.Context, groupId model.GroupId, sidesText []string,
 ) (
 	model.CardId,
 	error,
@@ -47,8 +58,11 @@ func (c *Cards) AddCard(
 
 	card := &model.Card{
 		GroupId: groupId,
+		Sides:   make([]model.CardSide, len(sidesText)),
 	}
-	card.SetText(frontText, backText)
+	for i, text := range sidesText {
+		card.Sides[i].Text = text
+	}
 	cardId, err := c.CardWriter.AddCard(ctx, card)
 	if err != nil {
 		return 0, err
@@ -64,6 +78,10 @@ func (c *Cards) GetCard(ctx context.Context, cardId model.CardId) (*model.Card, 
 	}
 
 	if err = c.GroupAccessChecker.CheckReadGroupAccess(ctx, card.GroupId); err != nil {
+		return nil, err
+	}
+
+	if err = c.CardDecorator.DecorateCard(ctx, card); err != nil {
 		return nil, err
 	}
 
@@ -83,6 +101,11 @@ func (c *Cards) ListCards(ctx context.Context, groupId model.GroupId) (
 	if err != nil {
 		return nil, err
 	}
+	for _, card := range cards {
+		if err = c.CardDecorator.DecorateCard(ctx, card); err != nil {
+			return nil, err
+		}
+	}
 
 	return cards, nil
 }
@@ -97,7 +120,12 @@ func (c *Cards) UpdateCard(ctx context.Context, updateCard model.UpdateCard) err
 		return err
 	}
 
-	card.SetText(updateCard.FrontText, updateCard.BackText)
+	for i, text := range updateCard.SidesText {
+		if text == "" {
+			continue
+		}
+		card.Sides[i].Text = text
+	}
 
 	err = c.CardWriter.UpdateCard(ctx, card)
 	if err != nil {
