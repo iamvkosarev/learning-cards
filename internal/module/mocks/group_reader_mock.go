@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.GroupReader -o group_reader_mock.go -n GroupReaderMock -p mocks
+//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/module.GroupReader -o group_reader_mock.go -n GroupReaderMock -p mocks
 
 import (
 	"context"
@@ -11,30 +11,30 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
-// GroupReaderMock implements mm_service.GroupReader
+// GroupReaderMock implements mm_module.GroupReader
 type GroupReaderMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcGetGroup          func(ctx context.Context, groupId entity.GroupId) (g1 entity.Group, err error)
+	funcGetGroup          func(ctx context.Context, groupId model.GroupId) (gp1 *model.Group, err error)
 	funcGetGroupOrigin    string
-	inspectFuncGetGroup   func(ctx context.Context, groupId entity.GroupId)
+	inspectFuncGetGroup   func(ctx context.Context, groupId model.GroupId)
 	afterGetGroupCounter  uint64
 	beforeGetGroupCounter uint64
 	GetGroupMock          mGroupReaderMockGetGroup
 
-	funcListGroups          func(ctx context.Context, id entity.UserId) (ga1 []entity.Group, err error)
+	funcListGroups          func(ctx context.Context, id model.UserId) (gpa1 []*model.Group, err error)
 	funcListGroupsOrigin    string
-	inspectFuncListGroups   func(ctx context.Context, id entity.UserId)
+	inspectFuncListGroups   func(ctx context.Context, id model.UserId)
 	afterListGroupsCounter  uint64
 	beforeListGroupsCounter uint64
 	ListGroupsMock          mGroupReaderMockListGroups
 }
 
-// NewGroupReaderMock returns a mock for mm_service.GroupReader
+// NewGroupReaderMock returns a mock for mm_module.GroupReader
 func NewGroupReaderMock(t minimock.Tester) *GroupReaderMock {
 	m := &GroupReaderMock{t: t}
 
@@ -80,18 +80,18 @@ type GroupReaderMockGetGroupExpectation struct {
 // GroupReaderMockGetGroupParams contains parameters of the GroupReader.GetGroup
 type GroupReaderMockGetGroupParams struct {
 	ctx     context.Context
-	groupId entity.GroupId
+	groupId model.GroupId
 }
 
 // GroupReaderMockGetGroupParamPtrs contains pointers to parameters of the GroupReader.GetGroup
 type GroupReaderMockGetGroupParamPtrs struct {
 	ctx     *context.Context
-	groupId *entity.GroupId
+	groupId *model.GroupId
 }
 
 // GroupReaderMockGetGroupResults contains results of the GroupReader.GetGroup
 type GroupReaderMockGetGroupResults struct {
-	g1  entity.Group
+	gp1 *model.Group
 	err error
 }
 
@@ -113,7 +113,7 @@ func (mmGetGroup *mGroupReaderMockGetGroup) Optional() *mGroupReaderMockGetGroup
 }
 
 // Expect sets up expected params for GroupReader.GetGroup
-func (mmGetGroup *mGroupReaderMockGetGroup) Expect(ctx context.Context, groupId entity.GroupId) *mGroupReaderMockGetGroup {
+func (mmGetGroup *mGroupReaderMockGetGroup) Expect(ctx context.Context, groupId model.GroupId) *mGroupReaderMockGetGroup {
 	if mmGetGroup.mock.funcGetGroup != nil {
 		mmGetGroup.mock.t.Fatalf("GroupReaderMock.GetGroup mock is already set by Set")
 	}
@@ -161,7 +161,7 @@ func (mmGetGroup *mGroupReaderMockGetGroup) ExpectCtxParam1(ctx context.Context)
 }
 
 // ExpectGroupIdParam2 sets up expected param groupId for GroupReader.GetGroup
-func (mmGetGroup *mGroupReaderMockGetGroup) ExpectGroupIdParam2(groupId entity.GroupId) *mGroupReaderMockGetGroup {
+func (mmGetGroup *mGroupReaderMockGetGroup) ExpectGroupIdParam2(groupId model.GroupId) *mGroupReaderMockGetGroup {
 	if mmGetGroup.mock.funcGetGroup != nil {
 		mmGetGroup.mock.t.Fatalf("GroupReaderMock.GetGroup mock is already set by Set")
 	}
@@ -184,7 +184,7 @@ func (mmGetGroup *mGroupReaderMockGetGroup) ExpectGroupIdParam2(groupId entity.G
 }
 
 // Inspect accepts an inspector function that has same arguments as the GroupReader.GetGroup
-func (mmGetGroup *mGroupReaderMockGetGroup) Inspect(f func(ctx context.Context, groupId entity.GroupId)) *mGroupReaderMockGetGroup {
+func (mmGetGroup *mGroupReaderMockGetGroup) Inspect(f func(ctx context.Context, groupId model.GroupId)) *mGroupReaderMockGetGroup {
 	if mmGetGroup.mock.inspectFuncGetGroup != nil {
 		mmGetGroup.mock.t.Fatalf("Inspect function is already set for GroupReaderMock.GetGroup")
 	}
@@ -195,7 +195,7 @@ func (mmGetGroup *mGroupReaderMockGetGroup) Inspect(f func(ctx context.Context, 
 }
 
 // Return sets up results that will be returned by GroupReader.GetGroup
-func (mmGetGroup *mGroupReaderMockGetGroup) Return(g1 entity.Group, err error) *GroupReaderMock {
+func (mmGetGroup *mGroupReaderMockGetGroup) Return(gp1 *model.Group, err error) *GroupReaderMock {
 	if mmGetGroup.mock.funcGetGroup != nil {
 		mmGetGroup.mock.t.Fatalf("GroupReaderMock.GetGroup mock is already set by Set")
 	}
@@ -203,13 +203,13 @@ func (mmGetGroup *mGroupReaderMockGetGroup) Return(g1 entity.Group, err error) *
 	if mmGetGroup.defaultExpectation == nil {
 		mmGetGroup.defaultExpectation = &GroupReaderMockGetGroupExpectation{mock: mmGetGroup.mock}
 	}
-	mmGetGroup.defaultExpectation.results = &GroupReaderMockGetGroupResults{g1, err}
+	mmGetGroup.defaultExpectation.results = &GroupReaderMockGetGroupResults{gp1, err}
 	mmGetGroup.defaultExpectation.returnOrigin = minimock.CallerInfo(1)
 	return mmGetGroup.mock
 }
 
 // Set uses given function f to mock the GroupReader.GetGroup method
-func (mmGetGroup *mGroupReaderMockGetGroup) Set(f func(ctx context.Context, groupId entity.GroupId) (g1 entity.Group, err error)) *GroupReaderMock {
+func (mmGetGroup *mGroupReaderMockGetGroup) Set(f func(ctx context.Context, groupId model.GroupId) (gp1 *model.Group, err error)) *GroupReaderMock {
 	if mmGetGroup.defaultExpectation != nil {
 		mmGetGroup.mock.t.Fatalf("Default expectation is already set for the GroupReader.GetGroup method")
 	}
@@ -225,7 +225,7 @@ func (mmGetGroup *mGroupReaderMockGetGroup) Set(f func(ctx context.Context, grou
 
 // When sets expectation for the GroupReader.GetGroup which will trigger the result defined by the following
 // Then helper
-func (mmGetGroup *mGroupReaderMockGetGroup) When(ctx context.Context, groupId entity.GroupId) *GroupReaderMockGetGroupExpectation {
+func (mmGetGroup *mGroupReaderMockGetGroup) When(ctx context.Context, groupId model.GroupId) *GroupReaderMockGetGroupExpectation {
 	if mmGetGroup.mock.funcGetGroup != nil {
 		mmGetGroup.mock.t.Fatalf("GroupReaderMock.GetGroup mock is already set by Set")
 	}
@@ -240,8 +240,8 @@ func (mmGetGroup *mGroupReaderMockGetGroup) When(ctx context.Context, groupId en
 }
 
 // Then sets up GroupReader.GetGroup return parameters for the expectation previously defined by the When method
-func (e *GroupReaderMockGetGroupExpectation) Then(g1 entity.Group, err error) *GroupReaderMock {
-	e.results = &GroupReaderMockGetGroupResults{g1, err}
+func (e *GroupReaderMockGetGroupExpectation) Then(gp1 *model.Group, err error) *GroupReaderMock {
+	e.results = &GroupReaderMockGetGroupResults{gp1, err}
 	return e.mock
 }
 
@@ -266,8 +266,8 @@ func (mmGetGroup *mGroupReaderMockGetGroup) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// GetGroup implements mm_service.GroupReader
-func (mmGetGroup *GroupReaderMock) GetGroup(ctx context.Context, groupId entity.GroupId) (g1 entity.Group, err error) {
+// GetGroup implements mm_module.GroupReader
+func (mmGetGroup *GroupReaderMock) GetGroup(ctx context.Context, groupId model.GroupId) (gp1 *model.Group, err error) {
 	mm_atomic.AddUint64(&mmGetGroup.beforeGetGroupCounter, 1)
 	defer mm_atomic.AddUint64(&mmGetGroup.afterGetGroupCounter, 1)
 
@@ -287,7 +287,7 @@ func (mmGetGroup *GroupReaderMock) GetGroup(ctx context.Context, groupId entity.
 	for _, e := range mmGetGroup.GetGroupMock.expectations {
 		if minimock.Equal(*e.params, mm_params) {
 			mm_atomic.AddUint64(&e.Counter, 1)
-			return e.results.g1, e.results.err
+			return e.results.gp1, e.results.err
 		}
 	}
 
@@ -319,7 +319,7 @@ func (mmGetGroup *GroupReaderMock) GetGroup(ctx context.Context, groupId entity.
 		if mm_results == nil {
 			mmGetGroup.t.Fatal("No results are set for the GroupReaderMock.GetGroup")
 		}
-		return (*mm_results).g1, (*mm_results).err
+		return (*mm_results).gp1, (*mm_results).err
 	}
 	if mmGetGroup.funcGetGroup != nil {
 		return mmGetGroup.funcGetGroup(ctx, groupId)
@@ -423,19 +423,19 @@ type GroupReaderMockListGroupsExpectation struct {
 // GroupReaderMockListGroupsParams contains parameters of the GroupReader.ListGroups
 type GroupReaderMockListGroupsParams struct {
 	ctx context.Context
-	id  entity.UserId
+	id  model.UserId
 }
 
 // GroupReaderMockListGroupsParamPtrs contains pointers to parameters of the GroupReader.ListGroups
 type GroupReaderMockListGroupsParamPtrs struct {
 	ctx *context.Context
-	id  *entity.UserId
+	id  *model.UserId
 }
 
 // GroupReaderMockListGroupsResults contains results of the GroupReader.ListGroups
 type GroupReaderMockListGroupsResults struct {
-	ga1 []entity.Group
-	err error
+	gpa1 []*model.Group
+	err  error
 }
 
 // GroupReaderMockListGroupsOrigins contains origins of expectations of the GroupReader.ListGroups
@@ -456,7 +456,7 @@ func (mmListGroups *mGroupReaderMockListGroups) Optional() *mGroupReaderMockList
 }
 
 // Expect sets up expected params for GroupReader.ListGroups
-func (mmListGroups *mGroupReaderMockListGroups) Expect(ctx context.Context, id entity.UserId) *mGroupReaderMockListGroups {
+func (mmListGroups *mGroupReaderMockListGroups) Expect(ctx context.Context, id model.UserId) *mGroupReaderMockListGroups {
 	if mmListGroups.mock.funcListGroups != nil {
 		mmListGroups.mock.t.Fatalf("GroupReaderMock.ListGroups mock is already set by Set")
 	}
@@ -504,7 +504,7 @@ func (mmListGroups *mGroupReaderMockListGroups) ExpectCtxParam1(ctx context.Cont
 }
 
 // ExpectIdParam2 sets up expected param id for GroupReader.ListGroups
-func (mmListGroups *mGroupReaderMockListGroups) ExpectIdParam2(id entity.UserId) *mGroupReaderMockListGroups {
+func (mmListGroups *mGroupReaderMockListGroups) ExpectIdParam2(id model.UserId) *mGroupReaderMockListGroups {
 	if mmListGroups.mock.funcListGroups != nil {
 		mmListGroups.mock.t.Fatalf("GroupReaderMock.ListGroups mock is already set by Set")
 	}
@@ -527,7 +527,7 @@ func (mmListGroups *mGroupReaderMockListGroups) ExpectIdParam2(id entity.UserId)
 }
 
 // Inspect accepts an inspector function that has same arguments as the GroupReader.ListGroups
-func (mmListGroups *mGroupReaderMockListGroups) Inspect(f func(ctx context.Context, id entity.UserId)) *mGroupReaderMockListGroups {
+func (mmListGroups *mGroupReaderMockListGroups) Inspect(f func(ctx context.Context, id model.UserId)) *mGroupReaderMockListGroups {
 	if mmListGroups.mock.inspectFuncListGroups != nil {
 		mmListGroups.mock.t.Fatalf("Inspect function is already set for GroupReaderMock.ListGroups")
 	}
@@ -538,7 +538,7 @@ func (mmListGroups *mGroupReaderMockListGroups) Inspect(f func(ctx context.Conte
 }
 
 // Return sets up results that will be returned by GroupReader.ListGroups
-func (mmListGroups *mGroupReaderMockListGroups) Return(ga1 []entity.Group, err error) *GroupReaderMock {
+func (mmListGroups *mGroupReaderMockListGroups) Return(gpa1 []*model.Group, err error) *GroupReaderMock {
 	if mmListGroups.mock.funcListGroups != nil {
 		mmListGroups.mock.t.Fatalf("GroupReaderMock.ListGroups mock is already set by Set")
 	}
@@ -546,13 +546,13 @@ func (mmListGroups *mGroupReaderMockListGroups) Return(ga1 []entity.Group, err e
 	if mmListGroups.defaultExpectation == nil {
 		mmListGroups.defaultExpectation = &GroupReaderMockListGroupsExpectation{mock: mmListGroups.mock}
 	}
-	mmListGroups.defaultExpectation.results = &GroupReaderMockListGroupsResults{ga1, err}
+	mmListGroups.defaultExpectation.results = &GroupReaderMockListGroupsResults{gpa1, err}
 	mmListGroups.defaultExpectation.returnOrigin = minimock.CallerInfo(1)
 	return mmListGroups.mock
 }
 
 // Set uses given function f to mock the GroupReader.ListGroups method
-func (mmListGroups *mGroupReaderMockListGroups) Set(f func(ctx context.Context, id entity.UserId) (ga1 []entity.Group, err error)) *GroupReaderMock {
+func (mmListGroups *mGroupReaderMockListGroups) Set(f func(ctx context.Context, id model.UserId) (gpa1 []*model.Group, err error)) *GroupReaderMock {
 	if mmListGroups.defaultExpectation != nil {
 		mmListGroups.mock.t.Fatalf("Default expectation is already set for the GroupReader.ListGroups method")
 	}
@@ -568,7 +568,7 @@ func (mmListGroups *mGroupReaderMockListGroups) Set(f func(ctx context.Context, 
 
 // When sets expectation for the GroupReader.ListGroups which will trigger the result defined by the following
 // Then helper
-func (mmListGroups *mGroupReaderMockListGroups) When(ctx context.Context, id entity.UserId) *GroupReaderMockListGroupsExpectation {
+func (mmListGroups *mGroupReaderMockListGroups) When(ctx context.Context, id model.UserId) *GroupReaderMockListGroupsExpectation {
 	if mmListGroups.mock.funcListGroups != nil {
 		mmListGroups.mock.t.Fatalf("GroupReaderMock.ListGroups mock is already set by Set")
 	}
@@ -583,8 +583,8 @@ func (mmListGroups *mGroupReaderMockListGroups) When(ctx context.Context, id ent
 }
 
 // Then sets up GroupReader.ListGroups return parameters for the expectation previously defined by the When method
-func (e *GroupReaderMockListGroupsExpectation) Then(ga1 []entity.Group, err error) *GroupReaderMock {
-	e.results = &GroupReaderMockListGroupsResults{ga1, err}
+func (e *GroupReaderMockListGroupsExpectation) Then(gpa1 []*model.Group, err error) *GroupReaderMock {
+	e.results = &GroupReaderMockListGroupsResults{gpa1, err}
 	return e.mock
 }
 
@@ -609,8 +609,8 @@ func (mmListGroups *mGroupReaderMockListGroups) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// ListGroups implements mm_service.GroupReader
-func (mmListGroups *GroupReaderMock) ListGroups(ctx context.Context, id entity.UserId) (ga1 []entity.Group, err error) {
+// ListGroups implements mm_module.GroupReader
+func (mmListGroups *GroupReaderMock) ListGroups(ctx context.Context, id model.UserId) (gpa1 []*model.Group, err error) {
 	mm_atomic.AddUint64(&mmListGroups.beforeListGroupsCounter, 1)
 	defer mm_atomic.AddUint64(&mmListGroups.afterListGroupsCounter, 1)
 
@@ -630,7 +630,7 @@ func (mmListGroups *GroupReaderMock) ListGroups(ctx context.Context, id entity.U
 	for _, e := range mmListGroups.ListGroupsMock.expectations {
 		if minimock.Equal(*e.params, mm_params) {
 			mm_atomic.AddUint64(&e.Counter, 1)
-			return e.results.ga1, e.results.err
+			return e.results.gpa1, e.results.err
 		}
 	}
 
@@ -662,7 +662,7 @@ func (mmListGroups *GroupReaderMock) ListGroups(ctx context.Context, id entity.U
 		if mm_results == nil {
 			mmListGroups.t.Fatal("No results are set for the GroupReaderMock.ListGroups")
 		}
-		return (*mm_results).ga1, (*mm_results).err
+		return (*mm_results).gpa1, (*mm_results).err
 	}
 	if mmListGroups.funcListGroups != nil {
 		return mmListGroups.funcListGroups(ctx, id)

@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.UserWriter -o user_reader_mock.go -n UserWriterMock -p mocks
+//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/module.UserWriter -o user_reader_mock.go -n UserWriterMock -p mocks
 
 import (
 	"context"
@@ -11,23 +11,23 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
-// UserWriterMock implements mm_service.UserWriter
+// UserWriterMock implements mm_module.UserWriter
 type UserWriterMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcAddUser          func(ctx context.Context, user entity.User) (err error)
+	funcAddUser          func(ctx context.Context, user model.User) (err error)
 	funcAddUserOrigin    string
-	inspectFuncAddUser   func(ctx context.Context, user entity.User)
+	inspectFuncAddUser   func(ctx context.Context, user model.User)
 	afterAddUserCounter  uint64
 	beforeAddUserCounter uint64
 	AddUserMock          mUserWriterMockAddUser
 }
 
-// NewUserWriterMock returns a mock for mm_service.UserWriter
+// NewUserWriterMock returns a mock for mm_module.UserWriter
 func NewUserWriterMock(t minimock.Tester) *UserWriterMock {
 	m := &UserWriterMock{t: t}
 
@@ -70,13 +70,13 @@ type UserWriterMockAddUserExpectation struct {
 // UserWriterMockAddUserParams contains parameters of the UserWriter.AddUser
 type UserWriterMockAddUserParams struct {
 	ctx  context.Context
-	user entity.User
+	user model.User
 }
 
 // UserWriterMockAddUserParamPtrs contains pointers to parameters of the UserWriter.AddUser
 type UserWriterMockAddUserParamPtrs struct {
 	ctx  *context.Context
-	user *entity.User
+	user *model.User
 }
 
 // UserWriterMockAddUserResults contains results of the UserWriter.AddUser
@@ -102,7 +102,7 @@ func (mmAddUser *mUserWriterMockAddUser) Optional() *mUserWriterMockAddUser {
 }
 
 // Expect sets up expected params for UserWriter.AddUser
-func (mmAddUser *mUserWriterMockAddUser) Expect(ctx context.Context, user entity.User) *mUserWriterMockAddUser {
+func (mmAddUser *mUserWriterMockAddUser) Expect(ctx context.Context, user model.User) *mUserWriterMockAddUser {
 	if mmAddUser.mock.funcAddUser != nil {
 		mmAddUser.mock.t.Fatalf("UserWriterMock.AddUser mock is already set by Set")
 	}
@@ -150,7 +150,7 @@ func (mmAddUser *mUserWriterMockAddUser) ExpectCtxParam1(ctx context.Context) *m
 }
 
 // ExpectUserParam2 sets up expected param user for UserWriter.AddUser
-func (mmAddUser *mUserWriterMockAddUser) ExpectUserParam2(user entity.User) *mUserWriterMockAddUser {
+func (mmAddUser *mUserWriterMockAddUser) ExpectUserParam2(user model.User) *mUserWriterMockAddUser {
 	if mmAddUser.mock.funcAddUser != nil {
 		mmAddUser.mock.t.Fatalf("UserWriterMock.AddUser mock is already set by Set")
 	}
@@ -173,7 +173,7 @@ func (mmAddUser *mUserWriterMockAddUser) ExpectUserParam2(user entity.User) *mUs
 }
 
 // Inspect accepts an inspector function that has same arguments as the UserWriter.AddUser
-func (mmAddUser *mUserWriterMockAddUser) Inspect(f func(ctx context.Context, user entity.User)) *mUserWriterMockAddUser {
+func (mmAddUser *mUserWriterMockAddUser) Inspect(f func(ctx context.Context, user model.User)) *mUserWriterMockAddUser {
 	if mmAddUser.mock.inspectFuncAddUser != nil {
 		mmAddUser.mock.t.Fatalf("Inspect function is already set for UserWriterMock.AddUser")
 	}
@@ -198,7 +198,7 @@ func (mmAddUser *mUserWriterMockAddUser) Return(err error) *UserWriterMock {
 }
 
 // Set uses given function f to mock the UserWriter.AddUser method
-func (mmAddUser *mUserWriterMockAddUser) Set(f func(ctx context.Context, user entity.User) (err error)) *UserWriterMock {
+func (mmAddUser *mUserWriterMockAddUser) Set(f func(ctx context.Context, user model.User) (err error)) *UserWriterMock {
 	if mmAddUser.defaultExpectation != nil {
 		mmAddUser.mock.t.Fatalf("Default expectation is already set for the UserWriter.AddUser method")
 	}
@@ -214,7 +214,7 @@ func (mmAddUser *mUserWriterMockAddUser) Set(f func(ctx context.Context, user en
 
 // When sets expectation for the UserWriter.AddUser which will trigger the result defined by the following
 // Then helper
-func (mmAddUser *mUserWriterMockAddUser) When(ctx context.Context, user entity.User) *UserWriterMockAddUserExpectation {
+func (mmAddUser *mUserWriterMockAddUser) When(ctx context.Context, user model.User) *UserWriterMockAddUserExpectation {
 	if mmAddUser.mock.funcAddUser != nil {
 		mmAddUser.mock.t.Fatalf("UserWriterMock.AddUser mock is already set by Set")
 	}
@@ -255,8 +255,8 @@ func (mmAddUser *mUserWriterMockAddUser) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// AddUser implements mm_service.UserWriter
-func (mmAddUser *UserWriterMock) AddUser(ctx context.Context, user entity.User) (err error) {
+// AddUser implements mm_module.UserWriter
+func (mmAddUser *UserWriterMock) AddUser(ctx context.Context, user model.User) (err error) {
 	mm_atomic.AddUint64(&mmAddUser.beforeAddUserCounter, 1)
 	defer mm_atomic.AddUint64(&mmAddUser.afterAddUserCounter, 1)
 

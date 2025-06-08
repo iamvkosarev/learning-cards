@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.ReviewWriter -o review_writer_mock.go -n ReviewWriterMock -p mocks
+//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/module.ReviewWriter -o review_writer_mock.go -n ReviewWriterMock -p mocks
 
 import (
 	"context"
@@ -11,30 +11,30 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
-// ReviewWriterMock implements mm_service.ReviewWriter
+// ReviewWriterMock implements mm_module.ReviewWriter
 type ReviewWriterMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcAddCardsReviews          func(ctx context.Context, user entity.UserId, group entity.GroupId, cardsProgress []entity.CardReview) (err error)
+	funcAddCardsReviews          func(ctx context.Context, user model.UserId, group model.GroupId, cardsProgress []model.CardReview) (err error)
 	funcAddCardsReviewsOrigin    string
-	inspectFuncAddCardsReviews   func(ctx context.Context, user entity.UserId, group entity.GroupId, cardsProgress []entity.CardReview)
+	inspectFuncAddCardsReviews   func(ctx context.Context, user model.UserId, group model.GroupId, cardsProgress []model.CardReview)
 	afterAddCardsReviewsCounter  uint64
 	beforeAddCardsReviewsCounter uint64
 	AddCardsReviewsMock          mReviewWriterMockAddCardsReviews
 
-	funcDeleteNotUsedReviews          func(ctx context.Context, userId entity.UserId, groupId entity.GroupId) (err error)
+	funcDeleteNotUsedReviews          func(ctx context.Context, userId model.UserId, groupId model.GroupId) (err error)
 	funcDeleteNotUsedReviewsOrigin    string
-	inspectFuncDeleteNotUsedReviews   func(ctx context.Context, userId entity.UserId, groupId entity.GroupId)
+	inspectFuncDeleteNotUsedReviews   func(ctx context.Context, userId model.UserId, groupId model.GroupId)
 	afterDeleteNotUsedReviewsCounter  uint64
 	beforeDeleteNotUsedReviewsCounter uint64
 	DeleteNotUsedReviewsMock          mReviewWriterMockDeleteNotUsedReviews
 }
 
-// NewReviewWriterMock returns a mock for mm_service.ReviewWriter
+// NewReviewWriterMock returns a mock for mm_module.ReviewWriter
 func NewReviewWriterMock(t minimock.Tester) *ReviewWriterMock {
 	m := &ReviewWriterMock{t: t}
 
@@ -80,17 +80,17 @@ type ReviewWriterMockAddCardsReviewsExpectation struct {
 // ReviewWriterMockAddCardsReviewsParams contains parameters of the ReviewWriter.AddCardsReviews
 type ReviewWriterMockAddCardsReviewsParams struct {
 	ctx           context.Context
-	user          entity.UserId
-	group         entity.GroupId
-	cardsProgress []entity.CardReview
+	user          model.UserId
+	group         model.GroupId
+	cardsProgress []model.CardReview
 }
 
 // ReviewWriterMockAddCardsReviewsParamPtrs contains pointers to parameters of the ReviewWriter.AddCardsReviews
 type ReviewWriterMockAddCardsReviewsParamPtrs struct {
 	ctx           *context.Context
-	user          *entity.UserId
-	group         *entity.GroupId
-	cardsProgress *[]entity.CardReview
+	user          *model.UserId
+	group         *model.GroupId
+	cardsProgress *[]model.CardReview
 }
 
 // ReviewWriterMockAddCardsReviewsResults contains results of the ReviewWriter.AddCardsReviews
@@ -118,7 +118,7 @@ func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) Optional() *mReviewWr
 }
 
 // Expect sets up expected params for ReviewWriter.AddCardsReviews
-func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) Expect(ctx context.Context, user entity.UserId, group entity.GroupId, cardsProgress []entity.CardReview) *mReviewWriterMockAddCardsReviews {
+func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) Expect(ctx context.Context, user model.UserId, group model.GroupId, cardsProgress []model.CardReview) *mReviewWriterMockAddCardsReviews {
 	if mmAddCardsReviews.mock.funcAddCardsReviews != nil {
 		mmAddCardsReviews.mock.t.Fatalf("ReviewWriterMock.AddCardsReviews mock is already set by Set")
 	}
@@ -166,7 +166,7 @@ func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) ExpectCtxParam1(ctx c
 }
 
 // ExpectUserParam2 sets up expected param user for ReviewWriter.AddCardsReviews
-func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) ExpectUserParam2(user entity.UserId) *mReviewWriterMockAddCardsReviews {
+func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) ExpectUserParam2(user model.UserId) *mReviewWriterMockAddCardsReviews {
 	if mmAddCardsReviews.mock.funcAddCardsReviews != nil {
 		mmAddCardsReviews.mock.t.Fatalf("ReviewWriterMock.AddCardsReviews mock is already set by Set")
 	}
@@ -189,7 +189,7 @@ func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) ExpectUserParam2(user
 }
 
 // ExpectGroupParam3 sets up expected param group for ReviewWriter.AddCardsReviews
-func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) ExpectGroupParam3(group entity.GroupId) *mReviewWriterMockAddCardsReviews {
+func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) ExpectGroupParam3(group model.GroupId) *mReviewWriterMockAddCardsReviews {
 	if mmAddCardsReviews.mock.funcAddCardsReviews != nil {
 		mmAddCardsReviews.mock.t.Fatalf("ReviewWriterMock.AddCardsReviews mock is already set by Set")
 	}
@@ -212,7 +212,7 @@ func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) ExpectGroupParam3(gro
 }
 
 // ExpectCardsProgressParam4 sets up expected param cardsProgress for ReviewWriter.AddCardsReviews
-func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) ExpectCardsProgressParam4(cardsProgress []entity.CardReview) *mReviewWriterMockAddCardsReviews {
+func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) ExpectCardsProgressParam4(cardsProgress []model.CardReview) *mReviewWriterMockAddCardsReviews {
 	if mmAddCardsReviews.mock.funcAddCardsReviews != nil {
 		mmAddCardsReviews.mock.t.Fatalf("ReviewWriterMock.AddCardsReviews mock is already set by Set")
 	}
@@ -235,7 +235,7 @@ func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) ExpectCardsProgressPa
 }
 
 // Inspect accepts an inspector function that has same arguments as the ReviewWriter.AddCardsReviews
-func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) Inspect(f func(ctx context.Context, user entity.UserId, group entity.GroupId, cardsProgress []entity.CardReview)) *mReviewWriterMockAddCardsReviews {
+func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) Inspect(f func(ctx context.Context, user model.UserId, group model.GroupId, cardsProgress []model.CardReview)) *mReviewWriterMockAddCardsReviews {
 	if mmAddCardsReviews.mock.inspectFuncAddCardsReviews != nil {
 		mmAddCardsReviews.mock.t.Fatalf("Inspect function is already set for ReviewWriterMock.AddCardsReviews")
 	}
@@ -260,7 +260,7 @@ func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) Return(err error) *Re
 }
 
 // Set uses given function f to mock the ReviewWriter.AddCardsReviews method
-func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) Set(f func(ctx context.Context, user entity.UserId, group entity.GroupId, cardsProgress []entity.CardReview) (err error)) *ReviewWriterMock {
+func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) Set(f func(ctx context.Context, user model.UserId, group model.GroupId, cardsProgress []model.CardReview) (err error)) *ReviewWriterMock {
 	if mmAddCardsReviews.defaultExpectation != nil {
 		mmAddCardsReviews.mock.t.Fatalf("Default expectation is already set for the ReviewWriter.AddCardsReviews method")
 	}
@@ -276,7 +276,7 @@ func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) Set(f func(ctx contex
 
 // When sets expectation for the ReviewWriter.AddCardsReviews which will trigger the result defined by the following
 // Then helper
-func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) When(ctx context.Context, user entity.UserId, group entity.GroupId, cardsProgress []entity.CardReview) *ReviewWriterMockAddCardsReviewsExpectation {
+func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) When(ctx context.Context, user model.UserId, group model.GroupId, cardsProgress []model.CardReview) *ReviewWriterMockAddCardsReviewsExpectation {
 	if mmAddCardsReviews.mock.funcAddCardsReviews != nil {
 		mmAddCardsReviews.mock.t.Fatalf("ReviewWriterMock.AddCardsReviews mock is already set by Set")
 	}
@@ -317,8 +317,8 @@ func (mmAddCardsReviews *mReviewWriterMockAddCardsReviews) invocationsDone() boo
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// AddCardsReviews implements mm_service.ReviewWriter
-func (mmAddCardsReviews *ReviewWriterMock) AddCardsReviews(ctx context.Context, user entity.UserId, group entity.GroupId, cardsProgress []entity.CardReview) (err error) {
+// AddCardsReviews implements mm_module.ReviewWriter
+func (mmAddCardsReviews *ReviewWriterMock) AddCardsReviews(ctx context.Context, user model.UserId, group model.GroupId, cardsProgress []model.CardReview) (err error) {
 	mm_atomic.AddUint64(&mmAddCardsReviews.beforeAddCardsReviewsCounter, 1)
 	defer mm_atomic.AddUint64(&mmAddCardsReviews.afterAddCardsReviewsCounter, 1)
 
@@ -484,15 +484,15 @@ type ReviewWriterMockDeleteNotUsedReviewsExpectation struct {
 // ReviewWriterMockDeleteNotUsedReviewsParams contains parameters of the ReviewWriter.DeleteNotUsedReviews
 type ReviewWriterMockDeleteNotUsedReviewsParams struct {
 	ctx     context.Context
-	userId  entity.UserId
-	groupId entity.GroupId
+	userId  model.UserId
+	groupId model.GroupId
 }
 
 // ReviewWriterMockDeleteNotUsedReviewsParamPtrs contains pointers to parameters of the ReviewWriter.DeleteNotUsedReviews
 type ReviewWriterMockDeleteNotUsedReviewsParamPtrs struct {
 	ctx     *context.Context
-	userId  *entity.UserId
-	groupId *entity.GroupId
+	userId  *model.UserId
+	groupId *model.GroupId
 }
 
 // ReviewWriterMockDeleteNotUsedReviewsResults contains results of the ReviewWriter.DeleteNotUsedReviews
@@ -519,7 +519,7 @@ func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) Optional() 
 }
 
 // Expect sets up expected params for ReviewWriter.DeleteNotUsedReviews
-func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) Expect(ctx context.Context, userId entity.UserId, groupId entity.GroupId) *mReviewWriterMockDeleteNotUsedReviews {
+func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) Expect(ctx context.Context, userId model.UserId, groupId model.GroupId) *mReviewWriterMockDeleteNotUsedReviews {
 	if mmDeleteNotUsedReviews.mock.funcDeleteNotUsedReviews != nil {
 		mmDeleteNotUsedReviews.mock.t.Fatalf("ReviewWriterMock.DeleteNotUsedReviews mock is already set by Set")
 	}
@@ -567,7 +567,7 @@ func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) ExpectCtxPa
 }
 
 // ExpectUserIdParam2 sets up expected param userId for ReviewWriter.DeleteNotUsedReviews
-func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) ExpectUserIdParam2(userId entity.UserId) *mReviewWriterMockDeleteNotUsedReviews {
+func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) ExpectUserIdParam2(userId model.UserId) *mReviewWriterMockDeleteNotUsedReviews {
 	if mmDeleteNotUsedReviews.mock.funcDeleteNotUsedReviews != nil {
 		mmDeleteNotUsedReviews.mock.t.Fatalf("ReviewWriterMock.DeleteNotUsedReviews mock is already set by Set")
 	}
@@ -590,7 +590,7 @@ func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) ExpectUserI
 }
 
 // ExpectGroupIdParam3 sets up expected param groupId for ReviewWriter.DeleteNotUsedReviews
-func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) ExpectGroupIdParam3(groupId entity.GroupId) *mReviewWriterMockDeleteNotUsedReviews {
+func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) ExpectGroupIdParam3(groupId model.GroupId) *mReviewWriterMockDeleteNotUsedReviews {
 	if mmDeleteNotUsedReviews.mock.funcDeleteNotUsedReviews != nil {
 		mmDeleteNotUsedReviews.mock.t.Fatalf("ReviewWriterMock.DeleteNotUsedReviews mock is already set by Set")
 	}
@@ -613,7 +613,7 @@ func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) ExpectGroup
 }
 
 // Inspect accepts an inspector function that has same arguments as the ReviewWriter.DeleteNotUsedReviews
-func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) Inspect(f func(ctx context.Context, userId entity.UserId, groupId entity.GroupId)) *mReviewWriterMockDeleteNotUsedReviews {
+func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) Inspect(f func(ctx context.Context, userId model.UserId, groupId model.GroupId)) *mReviewWriterMockDeleteNotUsedReviews {
 	if mmDeleteNotUsedReviews.mock.inspectFuncDeleteNotUsedReviews != nil {
 		mmDeleteNotUsedReviews.mock.t.Fatalf("Inspect function is already set for ReviewWriterMock.DeleteNotUsedReviews")
 	}
@@ -638,7 +638,7 @@ func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) Return(err 
 }
 
 // Set uses given function f to mock the ReviewWriter.DeleteNotUsedReviews method
-func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) Set(f func(ctx context.Context, userId entity.UserId, groupId entity.GroupId) (err error)) *ReviewWriterMock {
+func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) Set(f func(ctx context.Context, userId model.UserId, groupId model.GroupId) (err error)) *ReviewWriterMock {
 	if mmDeleteNotUsedReviews.defaultExpectation != nil {
 		mmDeleteNotUsedReviews.mock.t.Fatalf("Default expectation is already set for the ReviewWriter.DeleteNotUsedReviews method")
 	}
@@ -654,7 +654,7 @@ func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) Set(f func(
 
 // When sets expectation for the ReviewWriter.DeleteNotUsedReviews which will trigger the result defined by the following
 // Then helper
-func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) When(ctx context.Context, userId entity.UserId, groupId entity.GroupId) *ReviewWriterMockDeleteNotUsedReviewsExpectation {
+func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) When(ctx context.Context, userId model.UserId, groupId model.GroupId) *ReviewWriterMockDeleteNotUsedReviewsExpectation {
 	if mmDeleteNotUsedReviews.mock.funcDeleteNotUsedReviews != nil {
 		mmDeleteNotUsedReviews.mock.t.Fatalf("ReviewWriterMock.DeleteNotUsedReviews mock is already set by Set")
 	}
@@ -695,8 +695,8 @@ func (mmDeleteNotUsedReviews *mReviewWriterMockDeleteNotUsedReviews) invocations
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// DeleteNotUsedReviews implements mm_service.ReviewWriter
-func (mmDeleteNotUsedReviews *ReviewWriterMock) DeleteNotUsedReviews(ctx context.Context, userId entity.UserId, groupId entity.GroupId) (err error) {
+// DeleteNotUsedReviews implements mm_module.ReviewWriter
+func (mmDeleteNotUsedReviews *ReviewWriterMock) DeleteNotUsedReviews(ctx context.Context, userId model.UserId, groupId model.GroupId) (err error) {
 	mm_atomic.AddUint64(&mmDeleteNotUsedReviews.beforeDeleteNotUsedReviewsCounter, 1)
 	defer mm_atomic.AddUint64(&mmDeleteNotUsedReviews.afterDeleteNotUsedReviewsCounter, 1)
 

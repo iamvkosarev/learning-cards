@@ -1,6 +1,10 @@
 package config
 
+import (
+	"time"
+)
+
 type CardsConfig struct {
-	Common   Config `json:"common"`
-	Database `yaml:"database"`
+	Common          Config `yaml:"common"`
+	Database        `yaml:"database"`
 }

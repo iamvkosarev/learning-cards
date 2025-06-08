@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
@@ -12,26 +12,27 @@ type GroupService interface {
 	CreateGroup(
 		ctx context.Context,
 		name, description string,
-		visibility entity.GroupVisibility,
+		visibility model.GroupVisibility,
+		cardSideTypes []model.CardSideType,
 	) (
-		entity.GroupId,
+		model.GroupId,
 		error,
 	)
-	List(ctx context.Context) ([]entity.Group, error)
-	GetGroup(ctx context.Context, id entity.GroupId) (entity.Group, error)
-	UpdateGroup(ctx context.Context, updateGroup entity.UpdateGroup) error
-	DeleteGroup(ctx context.Context, id entity.GroupId) error
+	List(ctx context.Context) ([]*model.Group, error)
+	GetGroup(ctx context.Context, id model.GroupId) (*model.Group, error)
+	UpdateGroup(ctx context.Context, updateGroup model.UpdateGroup) error
+	DeleteGroup(ctx context.Context, id model.GroupId) error
 }
 
 type CardsService interface {
 	AddCard(
-		ctx context.Context, groupId entity.GroupId, frontText,
+		ctx context.Context, groupId model.GroupId, frontText,
 		backText string,
-	) (entity.CardId, error)
-	ListCards(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error)
-	GetCard(ctx context.Context, id entity.CardId) (entity.Card, error)
-	UpdateCard(ctx context.Context, card entity.UpdateCard) error
-	DeleteCard(ctx context.Context, id entity.CardId) error
+	) (model.CardId, error)
+	ListCards(ctx context.Context, groupId model.GroupId) ([]*model.Card, error)
+	GetCard(ctx context.Context, id model.CardId) (*model.Card, error)
+	UpdateCard(ctx context.Context, card model.UpdateCard) error
+	DeleteCard(ctx context.Context, id model.CardId) error
 }
 
 type CardServerDeps struct {
@@ -56,8 +57,11 @@ func (s *CardServer) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest
 	*pb.CreateGroupResponse,
 	error,
 ) {
-	visibility := entity.GroupVisibility(req.Visibility)
-	groupId, err := s.GroupService.CreateGroup(ctx, req.GroupName, req.Description, visibility)
+	visibility := model.GroupVisibility(req.Visibility)
+	groupId, err := s.GroupService.CreateGroup(
+		ctx, req.GroupName, req.Description, visibility,
+		cardSideTypesToModel(req.CardSideTypes),
+	)
 
 	if err != nil {
 		return nil, err
@@ -86,7 +90,7 @@ func (s *CardServer) ListGroups(ctx context.Context, _ *pb.ListGroupsRequest) (*
 }
 
 func (s *CardServer) GetGroup(ctx context.Context, req *pb.GetGroupRequest) (*pb.GetGroupResponse, error) {
-	groupId := entity.GroupId(req.GroupId)
+	groupId := model.GroupId(req.GroupId)
 
 	group, err := s.GroupService.GetGroup(ctx, groupId)
 
@@ -99,13 +103,14 @@ func (s *CardServer) GetGroup(ctx context.Context, req *pb.GetGroupRequest) (*pb
 }
 
 func (s *CardServer) UpdateGroup(ctx context.Context, req *pb.UpdateGroupRequest) (*emptypb.Empty, error) {
-	groupId := entity.GroupId(req.GroupId)
-	visibility := entity.GroupVisibility(req.Visibility)
-	group := entity.UpdateGroup{
-		Id:          groupId,
-		Name:        req.GroupName,
-		Description: req.Description,
-		Visibility:  visibility,
+	groupId := model.GroupId(req.GroupId)
+	visibility := model.GroupVisibility(req.Visibility)
+	group := model.UpdateGroup{
+		Id:           groupId,
+		Name:         req.GroupName,
+		Description:  req.Description,
+		Visibility:   visibility,
+		CardSideType: cardSideTypesToModel(req.CardSideTypes),
 	}
 
 	if err := s.GroupService.UpdateGroup(ctx, group); err != nil {
@@ -117,7 +122,7 @@ func (s *CardServer) UpdateGroup(ctx context.Context, req *pb.UpdateGroupRequest
 }
 
 func (s *CardServer) DeleteGroup(ctx context.Context, req *pb.DeleteGroupRequest) (*emptypb.Empty, error) {
-	groupId := entity.GroupId(req.GroupId)
+	groupId := model.GroupId(req.GroupId)
 
 	if err := s.GroupService.DeleteGroup(ctx, groupId); err != nil {
 		return nil, err
@@ -128,7 +133,7 @@ func (s *CardServer) DeleteGroup(ctx context.Context, req *pb.DeleteGroupRequest
 }
 
 func (s *CardServer) AddCard(ctx context.Context, req *pb.AddCardRequest) (*pb.AddCardResponse, error) {
-	groupId := entity.GroupId(req.GroupId)
+	groupId := model.GroupId(req.GroupId)
 	cardId, err := s.CardsService.AddCard(ctx, groupId, req.FrontText, req.BackText)
 
 	if err != nil {
@@ -147,7 +152,7 @@ func (s *CardServer) ListCards(ctx context.Context, req *pb.ListCardsRequest) (
 	*pb.ListCardsResponse,
 	error,
 ) {
-	groupId := entity.GroupId(req.GroupId)
+	groupId := model.GroupId(req.GroupId)
 	cards, err := s.CardsService.ListCards(ctx, groupId)
 
 	if err != nil {
@@ -165,7 +170,7 @@ func (s *CardServer) ListCards(ctx context.Context, req *pb.ListCardsRequest) (
 }
 
 func (s *CardServer) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.GetCardResponse, error) {
-	cardId := entity.CardId(req.CardId)
+	cardId := model.CardId(req.CardId)
 	card, err := s.CardsService.GetCard(ctx, cardId)
 
 	if err != nil {
@@ -177,8 +182,8 @@ func (s *CardServer) GetCard(ctx context.Context, req *pb.GetCardRequest) (*pb.G
 }
 
 func (s *CardServer) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest) (*emptypb.Empty, error) {
-	cardId := entity.CardId(req.CardId)
-	card := entity.UpdateCard{Id: cardId, FrontText: req.FrontText, BackText: req.BackText}
+	cardId := model.CardId(req.CardId)
+	card := model.UpdateCard{Id: cardId, FrontText: req.FrontText, BackText: req.BackText}
 
 	if err := s.CardsService.UpdateCard(ctx, card); err != nil {
 		return nil, err
@@ -189,7 +194,7 @@ func (s *CardServer) UpdateCard(ctx context.Context, req *pb.UpdateCardRequest) 
 }
 
 func (s *CardServer) DeleteCard(ctx context.Context, req *pb.DeleteCardRequest) (*emptypb.Empty, error) {
-	cardId := entity.CardId(req.CardId)
+	cardId := model.CardId(req.CardId)
 
 	if err := s.CardsService.DeleteCard(ctx, cardId); err != nil {
 		return nil, err

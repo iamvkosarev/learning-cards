@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.GroupWriter -o group_writer_mock.go -n GroupWriterMock -p mocks
+//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/module.GroupWriter -o group_writer_mock.go -n GroupWriterMock -p mocks
 
 import (
 	"context"
@@ -11,37 +11,37 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
-// GroupWriterMock implements mm_service.GroupWriter
+// GroupWriterMock implements mm_module.GroupWriter
 type GroupWriterMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcAddGroup          func(ctx context.Context, group entity.Group) (g1 entity.GroupId, err error)
+	funcAddGroup          func(ctx context.Context, group *model.Group) (g1 model.GroupId, err error)
 	funcAddGroupOrigin    string
-	inspectFuncAddGroup   func(ctx context.Context, group entity.Group)
+	inspectFuncAddGroup   func(ctx context.Context, group *model.Group)
 	afterAddGroupCounter  uint64
 	beforeAddGroupCounter uint64
 	AddGroupMock          mGroupWriterMockAddGroup
 
-	funcDeleteGroup          func(ctx context.Context, groupId entity.GroupId) (err error)
+	funcDeleteGroup          func(ctx context.Context, groupId model.GroupId) (err error)
 	funcDeleteGroupOrigin    string
-	inspectFuncDeleteGroup   func(ctx context.Context, groupId entity.GroupId)
+	inspectFuncDeleteGroup   func(ctx context.Context, groupId model.GroupId)
 	afterDeleteGroupCounter  uint64
 	beforeDeleteGroupCounter uint64
 	DeleteGroupMock          mGroupWriterMockDeleteGroup
 
-	funcUpdateGroup          func(ctx context.Context, group entity.Group) (err error)
+	funcUpdateGroup          func(ctx context.Context, group *model.Group) (err error)
 	funcUpdateGroupOrigin    string
-	inspectFuncUpdateGroup   func(ctx context.Context, group entity.Group)
+	inspectFuncUpdateGroup   func(ctx context.Context, group *model.Group)
 	afterUpdateGroupCounter  uint64
 	beforeUpdateGroupCounter uint64
 	UpdateGroupMock          mGroupWriterMockUpdateGroup
 }
 
-// NewGroupWriterMock returns a mock for mm_service.GroupWriter
+// NewGroupWriterMock returns a mock for mm_module.GroupWriter
 func NewGroupWriterMock(t minimock.Tester) *GroupWriterMock {
 	m := &GroupWriterMock{t: t}
 
@@ -90,18 +90,18 @@ type GroupWriterMockAddGroupExpectation struct {
 // GroupWriterMockAddGroupParams contains parameters of the GroupWriter.AddGroup
 type GroupWriterMockAddGroupParams struct {
 	ctx   context.Context
-	group entity.Group
+	group *model.Group
 }
 
 // GroupWriterMockAddGroupParamPtrs contains pointers to parameters of the GroupWriter.AddGroup
 type GroupWriterMockAddGroupParamPtrs struct {
 	ctx   *context.Context
-	group *entity.Group
+	group **model.Group
 }
 
 // GroupWriterMockAddGroupResults contains results of the GroupWriter.AddGroup
 type GroupWriterMockAddGroupResults struct {
-	g1  entity.GroupId
+	g1  model.GroupId
 	err error
 }
 
@@ -123,7 +123,7 @@ func (mmAddGroup *mGroupWriterMockAddGroup) Optional() *mGroupWriterMockAddGroup
 }
 
 // Expect sets up expected params for GroupWriter.AddGroup
-func (mmAddGroup *mGroupWriterMockAddGroup) Expect(ctx context.Context, group entity.Group) *mGroupWriterMockAddGroup {
+func (mmAddGroup *mGroupWriterMockAddGroup) Expect(ctx context.Context, group *model.Group) *mGroupWriterMockAddGroup {
 	if mmAddGroup.mock.funcAddGroup != nil {
 		mmAddGroup.mock.t.Fatalf("GroupWriterMock.AddGroup mock is already set by Set")
 	}
@@ -171,7 +171,7 @@ func (mmAddGroup *mGroupWriterMockAddGroup) ExpectCtxParam1(ctx context.Context)
 }
 
 // ExpectGroupParam2 sets up expected param group for GroupWriter.AddGroup
-func (mmAddGroup *mGroupWriterMockAddGroup) ExpectGroupParam2(group entity.Group) *mGroupWriterMockAddGroup {
+func (mmAddGroup *mGroupWriterMockAddGroup) ExpectGroupParam2(group *model.Group) *mGroupWriterMockAddGroup {
 	if mmAddGroup.mock.funcAddGroup != nil {
 		mmAddGroup.mock.t.Fatalf("GroupWriterMock.AddGroup mock is already set by Set")
 	}
@@ -194,7 +194,7 @@ func (mmAddGroup *mGroupWriterMockAddGroup) ExpectGroupParam2(group entity.Group
 }
 
 // Inspect accepts an inspector function that has same arguments as the GroupWriter.AddGroup
-func (mmAddGroup *mGroupWriterMockAddGroup) Inspect(f func(ctx context.Context, group entity.Group)) *mGroupWriterMockAddGroup {
+func (mmAddGroup *mGroupWriterMockAddGroup) Inspect(f func(ctx context.Context, group *model.Group)) *mGroupWriterMockAddGroup {
 	if mmAddGroup.mock.inspectFuncAddGroup != nil {
 		mmAddGroup.mock.t.Fatalf("Inspect function is already set for GroupWriterMock.AddGroup")
 	}
@@ -205,7 +205,7 @@ func (mmAddGroup *mGroupWriterMockAddGroup) Inspect(f func(ctx context.Context, 
 }
 
 // Return sets up results that will be returned by GroupWriter.AddGroup
-func (mmAddGroup *mGroupWriterMockAddGroup) Return(g1 entity.GroupId, err error) *GroupWriterMock {
+func (mmAddGroup *mGroupWriterMockAddGroup) Return(g1 model.GroupId, err error) *GroupWriterMock {
 	if mmAddGroup.mock.funcAddGroup != nil {
 		mmAddGroup.mock.t.Fatalf("GroupWriterMock.AddGroup mock is already set by Set")
 	}
@@ -219,7 +219,7 @@ func (mmAddGroup *mGroupWriterMockAddGroup) Return(g1 entity.GroupId, err error)
 }
 
 // Set uses given function f to mock the GroupWriter.AddGroup method
-func (mmAddGroup *mGroupWriterMockAddGroup) Set(f func(ctx context.Context, group entity.Group) (g1 entity.GroupId, err error)) *GroupWriterMock {
+func (mmAddGroup *mGroupWriterMockAddGroup) Set(f func(ctx context.Context, group *model.Group) (g1 model.GroupId, err error)) *GroupWriterMock {
 	if mmAddGroup.defaultExpectation != nil {
 		mmAddGroup.mock.t.Fatalf("Default expectation is already set for the GroupWriter.AddGroup method")
 	}
@@ -235,7 +235,7 @@ func (mmAddGroup *mGroupWriterMockAddGroup) Set(f func(ctx context.Context, grou
 
 // When sets expectation for the GroupWriter.AddGroup which will trigger the result defined by the following
 // Then helper
-func (mmAddGroup *mGroupWriterMockAddGroup) When(ctx context.Context, group entity.Group) *GroupWriterMockAddGroupExpectation {
+func (mmAddGroup *mGroupWriterMockAddGroup) When(ctx context.Context, group *model.Group) *GroupWriterMockAddGroupExpectation {
 	if mmAddGroup.mock.funcAddGroup != nil {
 		mmAddGroup.mock.t.Fatalf("GroupWriterMock.AddGroup mock is already set by Set")
 	}
@@ -250,7 +250,7 @@ func (mmAddGroup *mGroupWriterMockAddGroup) When(ctx context.Context, group enti
 }
 
 // Then sets up GroupWriter.AddGroup return parameters for the expectation previously defined by the When method
-func (e *GroupWriterMockAddGroupExpectation) Then(g1 entity.GroupId, err error) *GroupWriterMock {
+func (e *GroupWriterMockAddGroupExpectation) Then(g1 model.GroupId, err error) *GroupWriterMock {
 	e.results = &GroupWriterMockAddGroupResults{g1, err}
 	return e.mock
 }
@@ -276,8 +276,8 @@ func (mmAddGroup *mGroupWriterMockAddGroup) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// AddGroup implements mm_service.GroupWriter
-func (mmAddGroup *GroupWriterMock) AddGroup(ctx context.Context, group entity.Group) (g1 entity.GroupId, err error) {
+// AddGroup implements mm_module.GroupWriter
+func (mmAddGroup *GroupWriterMock) AddGroup(ctx context.Context, group *model.Group) (g1 model.GroupId, err error) {
 	mm_atomic.AddUint64(&mmAddGroup.beforeAddGroupCounter, 1)
 	defer mm_atomic.AddUint64(&mmAddGroup.afterAddGroupCounter, 1)
 
@@ -433,13 +433,13 @@ type GroupWriterMockDeleteGroupExpectation struct {
 // GroupWriterMockDeleteGroupParams contains parameters of the GroupWriter.DeleteGroup
 type GroupWriterMockDeleteGroupParams struct {
 	ctx     context.Context
-	groupId entity.GroupId
+	groupId model.GroupId
 }
 
 // GroupWriterMockDeleteGroupParamPtrs contains pointers to parameters of the GroupWriter.DeleteGroup
 type GroupWriterMockDeleteGroupParamPtrs struct {
 	ctx     *context.Context
-	groupId *entity.GroupId
+	groupId *model.GroupId
 }
 
 // GroupWriterMockDeleteGroupResults contains results of the GroupWriter.DeleteGroup
@@ -465,7 +465,7 @@ func (mmDeleteGroup *mGroupWriterMockDeleteGroup) Optional() *mGroupWriterMockDe
 }
 
 // Expect sets up expected params for GroupWriter.DeleteGroup
-func (mmDeleteGroup *mGroupWriterMockDeleteGroup) Expect(ctx context.Context, groupId entity.GroupId) *mGroupWriterMockDeleteGroup {
+func (mmDeleteGroup *mGroupWriterMockDeleteGroup) Expect(ctx context.Context, groupId model.GroupId) *mGroupWriterMockDeleteGroup {
 	if mmDeleteGroup.mock.funcDeleteGroup != nil {
 		mmDeleteGroup.mock.t.Fatalf("GroupWriterMock.DeleteGroup mock is already set by Set")
 	}
@@ -513,7 +513,7 @@ func (mmDeleteGroup *mGroupWriterMockDeleteGroup) ExpectCtxParam1(ctx context.Co
 }
 
 // ExpectGroupIdParam2 sets up expected param groupId for GroupWriter.DeleteGroup
-func (mmDeleteGroup *mGroupWriterMockDeleteGroup) ExpectGroupIdParam2(groupId entity.GroupId) *mGroupWriterMockDeleteGroup {
+func (mmDeleteGroup *mGroupWriterMockDeleteGroup) ExpectGroupIdParam2(groupId model.GroupId) *mGroupWriterMockDeleteGroup {
 	if mmDeleteGroup.mock.funcDeleteGroup != nil {
 		mmDeleteGroup.mock.t.Fatalf("GroupWriterMock.DeleteGroup mock is already set by Set")
 	}
@@ -536,7 +536,7 @@ func (mmDeleteGroup *mGroupWriterMockDeleteGroup) ExpectGroupIdParam2(groupId en
 }
 
 // Inspect accepts an inspector function that has same arguments as the GroupWriter.DeleteGroup
-func (mmDeleteGroup *mGroupWriterMockDeleteGroup) Inspect(f func(ctx context.Context, groupId entity.GroupId)) *mGroupWriterMockDeleteGroup {
+func (mmDeleteGroup *mGroupWriterMockDeleteGroup) Inspect(f func(ctx context.Context, groupId model.GroupId)) *mGroupWriterMockDeleteGroup {
 	if mmDeleteGroup.mock.inspectFuncDeleteGroup != nil {
 		mmDeleteGroup.mock.t.Fatalf("Inspect function is already set for GroupWriterMock.DeleteGroup")
 	}
@@ -561,7 +561,7 @@ func (mmDeleteGroup *mGroupWriterMockDeleteGroup) Return(err error) *GroupWriter
 }
 
 // Set uses given function f to mock the GroupWriter.DeleteGroup method
-func (mmDeleteGroup *mGroupWriterMockDeleteGroup) Set(f func(ctx context.Context, groupId entity.GroupId) (err error)) *GroupWriterMock {
+func (mmDeleteGroup *mGroupWriterMockDeleteGroup) Set(f func(ctx context.Context, groupId model.GroupId) (err error)) *GroupWriterMock {
 	if mmDeleteGroup.defaultExpectation != nil {
 		mmDeleteGroup.mock.t.Fatalf("Default expectation is already set for the GroupWriter.DeleteGroup method")
 	}
@@ -577,7 +577,7 @@ func (mmDeleteGroup *mGroupWriterMockDeleteGroup) Set(f func(ctx context.Context
 
 // When sets expectation for the GroupWriter.DeleteGroup which will trigger the result defined by the following
 // Then helper
-func (mmDeleteGroup *mGroupWriterMockDeleteGroup) When(ctx context.Context, groupId entity.GroupId) *GroupWriterMockDeleteGroupExpectation {
+func (mmDeleteGroup *mGroupWriterMockDeleteGroup) When(ctx context.Context, groupId model.GroupId) *GroupWriterMockDeleteGroupExpectation {
 	if mmDeleteGroup.mock.funcDeleteGroup != nil {
 		mmDeleteGroup.mock.t.Fatalf("GroupWriterMock.DeleteGroup mock is already set by Set")
 	}
@@ -618,8 +618,8 @@ func (mmDeleteGroup *mGroupWriterMockDeleteGroup) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// DeleteGroup implements mm_service.GroupWriter
-func (mmDeleteGroup *GroupWriterMock) DeleteGroup(ctx context.Context, groupId entity.GroupId) (err error) {
+// DeleteGroup implements mm_module.GroupWriter
+func (mmDeleteGroup *GroupWriterMock) DeleteGroup(ctx context.Context, groupId model.GroupId) (err error) {
 	mm_atomic.AddUint64(&mmDeleteGroup.beforeDeleteGroupCounter, 1)
 	defer mm_atomic.AddUint64(&mmDeleteGroup.afterDeleteGroupCounter, 1)
 
@@ -775,13 +775,13 @@ type GroupWriterMockUpdateGroupExpectation struct {
 // GroupWriterMockUpdateGroupParams contains parameters of the GroupWriter.UpdateGroup
 type GroupWriterMockUpdateGroupParams struct {
 	ctx   context.Context
-	group entity.Group
+	group *model.Group
 }
 
 // GroupWriterMockUpdateGroupParamPtrs contains pointers to parameters of the GroupWriter.UpdateGroup
 type GroupWriterMockUpdateGroupParamPtrs struct {
 	ctx   *context.Context
-	group *entity.Group
+	group **model.Group
 }
 
 // GroupWriterMockUpdateGroupResults contains results of the GroupWriter.UpdateGroup
@@ -807,7 +807,7 @@ func (mmUpdateGroup *mGroupWriterMockUpdateGroup) Optional() *mGroupWriterMockUp
 }
 
 // Expect sets up expected params for GroupWriter.UpdateGroup
-func (mmUpdateGroup *mGroupWriterMockUpdateGroup) Expect(ctx context.Context, group entity.Group) *mGroupWriterMockUpdateGroup {
+func (mmUpdateGroup *mGroupWriterMockUpdateGroup) Expect(ctx context.Context, group *model.Group) *mGroupWriterMockUpdateGroup {
 	if mmUpdateGroup.mock.funcUpdateGroup != nil {
 		mmUpdateGroup.mock.t.Fatalf("GroupWriterMock.UpdateGroup mock is already set by Set")
 	}
@@ -855,7 +855,7 @@ func (mmUpdateGroup *mGroupWriterMockUpdateGroup) ExpectCtxParam1(ctx context.Co
 }
 
 // ExpectGroupParam2 sets up expected param group for GroupWriter.UpdateGroup
-func (mmUpdateGroup *mGroupWriterMockUpdateGroup) ExpectGroupParam2(group entity.Group) *mGroupWriterMockUpdateGroup {
+func (mmUpdateGroup *mGroupWriterMockUpdateGroup) ExpectGroupParam2(group *model.Group) *mGroupWriterMockUpdateGroup {
 	if mmUpdateGroup.mock.funcUpdateGroup != nil {
 		mmUpdateGroup.mock.t.Fatalf("GroupWriterMock.UpdateGroup mock is already set by Set")
 	}
@@ -878,7 +878,7 @@ func (mmUpdateGroup *mGroupWriterMockUpdateGroup) ExpectGroupParam2(group entity
 }
 
 // Inspect accepts an inspector function that has same arguments as the GroupWriter.UpdateGroup
-func (mmUpdateGroup *mGroupWriterMockUpdateGroup) Inspect(f func(ctx context.Context, group entity.Group)) *mGroupWriterMockUpdateGroup {
+func (mmUpdateGroup *mGroupWriterMockUpdateGroup) Inspect(f func(ctx context.Context, group *model.Group)) *mGroupWriterMockUpdateGroup {
 	if mmUpdateGroup.mock.inspectFuncUpdateGroup != nil {
 		mmUpdateGroup.mock.t.Fatalf("Inspect function is already set for GroupWriterMock.UpdateGroup")
 	}
@@ -903,7 +903,7 @@ func (mmUpdateGroup *mGroupWriterMockUpdateGroup) Return(err error) *GroupWriter
 }
 
 // Set uses given function f to mock the GroupWriter.UpdateGroup method
-func (mmUpdateGroup *mGroupWriterMockUpdateGroup) Set(f func(ctx context.Context, group entity.Group) (err error)) *GroupWriterMock {
+func (mmUpdateGroup *mGroupWriterMockUpdateGroup) Set(f func(ctx context.Context, group *model.Group) (err error)) *GroupWriterMock {
 	if mmUpdateGroup.defaultExpectation != nil {
 		mmUpdateGroup.mock.t.Fatalf("Default expectation is already set for the GroupWriter.UpdateGroup method")
 	}
@@ -919,7 +919,7 @@ func (mmUpdateGroup *mGroupWriterMockUpdateGroup) Set(f func(ctx context.Context
 
 // When sets expectation for the GroupWriter.UpdateGroup which will trigger the result defined by the following
 // Then helper
-func (mmUpdateGroup *mGroupWriterMockUpdateGroup) When(ctx context.Context, group entity.Group) *GroupWriterMockUpdateGroupExpectation {
+func (mmUpdateGroup *mGroupWriterMockUpdateGroup) When(ctx context.Context, group *model.Group) *GroupWriterMockUpdateGroupExpectation {
 	if mmUpdateGroup.mock.funcUpdateGroup != nil {
 		mmUpdateGroup.mock.t.Fatalf("GroupWriterMock.UpdateGroup mock is already set by Set")
 	}
@@ -960,8 +960,8 @@ func (mmUpdateGroup *mGroupWriterMockUpdateGroup) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// UpdateGroup implements mm_service.GroupWriter
-func (mmUpdateGroup *GroupWriterMock) UpdateGroup(ctx context.Context, group entity.Group) (err error) {
+// UpdateGroup implements mm_module.GroupWriter
+func (mmUpdateGroup *GroupWriterMock) UpdateGroup(ctx context.Context, group *model.Group) (err error) {
 	mm_atomic.AddUint64(&mmUpdateGroup.beforeUpdateGroupCounter, 1)
 	defer mm_atomic.AddUint64(&mmUpdateGroup.afterUpdateGroupCounter, 1)
 

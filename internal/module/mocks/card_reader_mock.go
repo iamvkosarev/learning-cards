@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.CardReader -o card_reader_mock.go -n CardReaderMock -p mocks
+//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/module.CardReader -o card_reader_mock.go -n CardReaderMock -p mocks
 
 import (
 	"context"
@@ -11,30 +11,30 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
-// CardReaderMock implements mm_service.CardReader
+// CardReaderMock implements mm_module.CardReader
 type CardReaderMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcGetCard          func(ctx context.Context, cardId entity.CardId) (c2 entity.Card, err error)
+	funcGetCard          func(ctx context.Context, cardId model.CardId) (cp1 *model.Card, err error)
 	funcGetCardOrigin    string
-	inspectFuncGetCard   func(ctx context.Context, cardId entity.CardId)
+	inspectFuncGetCard   func(ctx context.Context, cardId model.CardId)
 	afterGetCardCounter  uint64
 	beforeGetCardCounter uint64
 	GetCardMock          mCardReaderMockGetCard
 
-	funcListCards          func(ctx context.Context, groupId entity.GroupId) (ca1 []entity.Card, err error)
+	funcListCards          func(ctx context.Context, groupId model.GroupId) (cpa1 []*model.Card, err error)
 	funcListCardsOrigin    string
-	inspectFuncListCards   func(ctx context.Context, groupId entity.GroupId)
+	inspectFuncListCards   func(ctx context.Context, groupId model.GroupId)
 	afterListCardsCounter  uint64
 	beforeListCardsCounter uint64
 	ListCardsMock          mCardReaderMockListCards
 }
 
-// NewCardReaderMock returns a mock for mm_service.CardReader
+// NewCardReaderMock returns a mock for mm_module.CardReader
 func NewCardReaderMock(t minimock.Tester) *CardReaderMock {
 	m := &CardReaderMock{t: t}
 
@@ -80,18 +80,18 @@ type CardReaderMockGetCardExpectation struct {
 // CardReaderMockGetCardParams contains parameters of the CardReader.GetCard
 type CardReaderMockGetCardParams struct {
 	ctx    context.Context
-	cardId entity.CardId
+	cardId model.CardId
 }
 
 // CardReaderMockGetCardParamPtrs contains pointers to parameters of the CardReader.GetCard
 type CardReaderMockGetCardParamPtrs struct {
 	ctx    *context.Context
-	cardId *entity.CardId
+	cardId *model.CardId
 }
 
 // CardReaderMockGetCardResults contains results of the CardReader.GetCard
 type CardReaderMockGetCardResults struct {
-	c2  entity.Card
+	cp1 *model.Card
 	err error
 }
 
@@ -113,7 +113,7 @@ func (mmGetCard *mCardReaderMockGetCard) Optional() *mCardReaderMockGetCard {
 }
 
 // Expect sets up expected params for CardReader.GetCard
-func (mmGetCard *mCardReaderMockGetCard) Expect(ctx context.Context, cardId entity.CardId) *mCardReaderMockGetCard {
+func (mmGetCard *mCardReaderMockGetCard) Expect(ctx context.Context, cardId model.CardId) *mCardReaderMockGetCard {
 	if mmGetCard.mock.funcGetCard != nil {
 		mmGetCard.mock.t.Fatalf("CardReaderMock.GetCard mock is already set by Set")
 	}
@@ -161,7 +161,7 @@ func (mmGetCard *mCardReaderMockGetCard) ExpectCtxParam1(ctx context.Context) *m
 }
 
 // ExpectCardIdParam2 sets up expected param cardId for CardReader.GetCard
-func (mmGetCard *mCardReaderMockGetCard) ExpectCardIdParam2(cardId entity.CardId) *mCardReaderMockGetCard {
+func (mmGetCard *mCardReaderMockGetCard) ExpectCardIdParam2(cardId model.CardId) *mCardReaderMockGetCard {
 	if mmGetCard.mock.funcGetCard != nil {
 		mmGetCard.mock.t.Fatalf("CardReaderMock.GetCard mock is already set by Set")
 	}
@@ -184,7 +184,7 @@ func (mmGetCard *mCardReaderMockGetCard) ExpectCardIdParam2(cardId entity.CardId
 }
 
 // Inspect accepts an inspector function that has same arguments as the CardReader.GetCard
-func (mmGetCard *mCardReaderMockGetCard) Inspect(f func(ctx context.Context, cardId entity.CardId)) *mCardReaderMockGetCard {
+func (mmGetCard *mCardReaderMockGetCard) Inspect(f func(ctx context.Context, cardId model.CardId)) *mCardReaderMockGetCard {
 	if mmGetCard.mock.inspectFuncGetCard != nil {
 		mmGetCard.mock.t.Fatalf("Inspect function is already set for CardReaderMock.GetCard")
 	}
@@ -195,7 +195,7 @@ func (mmGetCard *mCardReaderMockGetCard) Inspect(f func(ctx context.Context, car
 }
 
 // Return sets up results that will be returned by CardReader.GetCard
-func (mmGetCard *mCardReaderMockGetCard) Return(c2 entity.Card, err error) *CardReaderMock {
+func (mmGetCard *mCardReaderMockGetCard) Return(cp1 *model.Card, err error) *CardReaderMock {
 	if mmGetCard.mock.funcGetCard != nil {
 		mmGetCard.mock.t.Fatalf("CardReaderMock.GetCard mock is already set by Set")
 	}
@@ -203,13 +203,13 @@ func (mmGetCard *mCardReaderMockGetCard) Return(c2 entity.Card, err error) *Card
 	if mmGetCard.defaultExpectation == nil {
 		mmGetCard.defaultExpectation = &CardReaderMockGetCardExpectation{mock: mmGetCard.mock}
 	}
-	mmGetCard.defaultExpectation.results = &CardReaderMockGetCardResults{c2, err}
+	mmGetCard.defaultExpectation.results = &CardReaderMockGetCardResults{cp1, err}
 	mmGetCard.defaultExpectation.returnOrigin = minimock.CallerInfo(1)
 	return mmGetCard.mock
 }
 
 // Set uses given function f to mock the CardReader.GetCard method
-func (mmGetCard *mCardReaderMockGetCard) Set(f func(ctx context.Context, cardId entity.CardId) (c2 entity.Card, err error)) *CardReaderMock {
+func (mmGetCard *mCardReaderMockGetCard) Set(f func(ctx context.Context, cardId model.CardId) (cp1 *model.Card, err error)) *CardReaderMock {
 	if mmGetCard.defaultExpectation != nil {
 		mmGetCard.mock.t.Fatalf("Default expectation is already set for the CardReader.GetCard method")
 	}
@@ -225,7 +225,7 @@ func (mmGetCard *mCardReaderMockGetCard) Set(f func(ctx context.Context, cardId 
 
 // When sets expectation for the CardReader.GetCard which will trigger the result defined by the following
 // Then helper
-func (mmGetCard *mCardReaderMockGetCard) When(ctx context.Context, cardId entity.CardId) *CardReaderMockGetCardExpectation {
+func (mmGetCard *mCardReaderMockGetCard) When(ctx context.Context, cardId model.CardId) *CardReaderMockGetCardExpectation {
 	if mmGetCard.mock.funcGetCard != nil {
 		mmGetCard.mock.t.Fatalf("CardReaderMock.GetCard mock is already set by Set")
 	}
@@ -240,8 +240,8 @@ func (mmGetCard *mCardReaderMockGetCard) When(ctx context.Context, cardId entity
 }
 
 // Then sets up CardReader.GetCard return parameters for the expectation previously defined by the When method
-func (e *CardReaderMockGetCardExpectation) Then(c2 entity.Card, err error) *CardReaderMock {
-	e.results = &CardReaderMockGetCardResults{c2, err}
+func (e *CardReaderMockGetCardExpectation) Then(cp1 *model.Card, err error) *CardReaderMock {
+	e.results = &CardReaderMockGetCardResults{cp1, err}
 	return e.mock
 }
 
@@ -266,8 +266,8 @@ func (mmGetCard *mCardReaderMockGetCard) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// GetCard implements mm_service.CardReader
-func (mmGetCard *CardReaderMock) GetCard(ctx context.Context, cardId entity.CardId) (c2 entity.Card, err error) {
+// GetCard implements mm_module.CardReader
+func (mmGetCard *CardReaderMock) GetCard(ctx context.Context, cardId model.CardId) (cp1 *model.Card, err error) {
 	mm_atomic.AddUint64(&mmGetCard.beforeGetCardCounter, 1)
 	defer mm_atomic.AddUint64(&mmGetCard.afterGetCardCounter, 1)
 
@@ -287,7 +287,7 @@ func (mmGetCard *CardReaderMock) GetCard(ctx context.Context, cardId entity.Card
 	for _, e := range mmGetCard.GetCardMock.expectations {
 		if minimock.Equal(*e.params, mm_params) {
 			mm_atomic.AddUint64(&e.Counter, 1)
-			return e.results.c2, e.results.err
+			return e.results.cp1, e.results.err
 		}
 	}
 
@@ -319,7 +319,7 @@ func (mmGetCard *CardReaderMock) GetCard(ctx context.Context, cardId entity.Card
 		if mm_results == nil {
 			mmGetCard.t.Fatal("No results are set for the CardReaderMock.GetCard")
 		}
-		return (*mm_results).c2, (*mm_results).err
+		return (*mm_results).cp1, (*mm_results).err
 	}
 	if mmGetCard.funcGetCard != nil {
 		return mmGetCard.funcGetCard(ctx, cardId)
@@ -423,19 +423,19 @@ type CardReaderMockListCardsExpectation struct {
 // CardReaderMockListCardsParams contains parameters of the CardReader.ListCards
 type CardReaderMockListCardsParams struct {
 	ctx     context.Context
-	groupId entity.GroupId
+	groupId model.GroupId
 }
 
 // CardReaderMockListCardsParamPtrs contains pointers to parameters of the CardReader.ListCards
 type CardReaderMockListCardsParamPtrs struct {
 	ctx     *context.Context
-	groupId *entity.GroupId
+	groupId *model.GroupId
 }
 
 // CardReaderMockListCardsResults contains results of the CardReader.ListCards
 type CardReaderMockListCardsResults struct {
-	ca1 []entity.Card
-	err error
+	cpa1 []*model.Card
+	err  error
 }
 
 // CardReaderMockListCardsOrigins contains origins of expectations of the CardReader.ListCards
@@ -456,7 +456,7 @@ func (mmListCards *mCardReaderMockListCards) Optional() *mCardReaderMockListCard
 }
 
 // Expect sets up expected params for CardReader.ListCards
-func (mmListCards *mCardReaderMockListCards) Expect(ctx context.Context, groupId entity.GroupId) *mCardReaderMockListCards {
+func (mmListCards *mCardReaderMockListCards) Expect(ctx context.Context, groupId model.GroupId) *mCardReaderMockListCards {
 	if mmListCards.mock.funcListCards != nil {
 		mmListCards.mock.t.Fatalf("CardReaderMock.ListCards mock is already set by Set")
 	}
@@ -504,7 +504,7 @@ func (mmListCards *mCardReaderMockListCards) ExpectCtxParam1(ctx context.Context
 }
 
 // ExpectGroupIdParam2 sets up expected param groupId for CardReader.ListCards
-func (mmListCards *mCardReaderMockListCards) ExpectGroupIdParam2(groupId entity.GroupId) *mCardReaderMockListCards {
+func (mmListCards *mCardReaderMockListCards) ExpectGroupIdParam2(groupId model.GroupId) *mCardReaderMockListCards {
 	if mmListCards.mock.funcListCards != nil {
 		mmListCards.mock.t.Fatalf("CardReaderMock.ListCards mock is already set by Set")
 	}
@@ -527,7 +527,7 @@ func (mmListCards *mCardReaderMockListCards) ExpectGroupIdParam2(groupId entity.
 }
 
 // Inspect accepts an inspector function that has same arguments as the CardReader.ListCards
-func (mmListCards *mCardReaderMockListCards) Inspect(f func(ctx context.Context, groupId entity.GroupId)) *mCardReaderMockListCards {
+func (mmListCards *mCardReaderMockListCards) Inspect(f func(ctx context.Context, groupId model.GroupId)) *mCardReaderMockListCards {
 	if mmListCards.mock.inspectFuncListCards != nil {
 		mmListCards.mock.t.Fatalf("Inspect function is already set for CardReaderMock.ListCards")
 	}
@@ -538,7 +538,7 @@ func (mmListCards *mCardReaderMockListCards) Inspect(f func(ctx context.Context,
 }
 
 // Return sets up results that will be returned by CardReader.ListCards
-func (mmListCards *mCardReaderMockListCards) Return(ca1 []entity.Card, err error) *CardReaderMock {
+func (mmListCards *mCardReaderMockListCards) Return(cpa1 []*model.Card, err error) *CardReaderMock {
 	if mmListCards.mock.funcListCards != nil {
 		mmListCards.mock.t.Fatalf("CardReaderMock.ListCards mock is already set by Set")
 	}
@@ -546,13 +546,13 @@ func (mmListCards *mCardReaderMockListCards) Return(ca1 []entity.Card, err error
 	if mmListCards.defaultExpectation == nil {
 		mmListCards.defaultExpectation = &CardReaderMockListCardsExpectation{mock: mmListCards.mock}
 	}
-	mmListCards.defaultExpectation.results = &CardReaderMockListCardsResults{ca1, err}
+	mmListCards.defaultExpectation.results = &CardReaderMockListCardsResults{cpa1, err}
 	mmListCards.defaultExpectation.returnOrigin = minimock.CallerInfo(1)
 	return mmListCards.mock
 }
 
 // Set uses given function f to mock the CardReader.ListCards method
-func (mmListCards *mCardReaderMockListCards) Set(f func(ctx context.Context, groupId entity.GroupId) (ca1 []entity.Card, err error)) *CardReaderMock {
+func (mmListCards *mCardReaderMockListCards) Set(f func(ctx context.Context, groupId model.GroupId) (cpa1 []*model.Card, err error)) *CardReaderMock {
 	if mmListCards.defaultExpectation != nil {
 		mmListCards.mock.t.Fatalf("Default expectation is already set for the CardReader.ListCards method")
 	}
@@ -568,7 +568,7 @@ func (mmListCards *mCardReaderMockListCards) Set(f func(ctx context.Context, gro
 
 // When sets expectation for the CardReader.ListCards which will trigger the result defined by the following
 // Then helper
-func (mmListCards *mCardReaderMockListCards) When(ctx context.Context, groupId entity.GroupId) *CardReaderMockListCardsExpectation {
+func (mmListCards *mCardReaderMockListCards) When(ctx context.Context, groupId model.GroupId) *CardReaderMockListCardsExpectation {
 	if mmListCards.mock.funcListCards != nil {
 		mmListCards.mock.t.Fatalf("CardReaderMock.ListCards mock is already set by Set")
 	}
@@ -583,8 +583,8 @@ func (mmListCards *mCardReaderMockListCards) When(ctx context.Context, groupId e
 }
 
 // Then sets up CardReader.ListCards return parameters for the expectation previously defined by the When method
-func (e *CardReaderMockListCardsExpectation) Then(ca1 []entity.Card, err error) *CardReaderMock {
-	e.results = &CardReaderMockListCardsResults{ca1, err}
+func (e *CardReaderMockListCardsExpectation) Then(cpa1 []*model.Card, err error) *CardReaderMock {
+	e.results = &CardReaderMockListCardsResults{cpa1, err}
 	return e.mock
 }
 
@@ -609,8 +609,8 @@ func (mmListCards *mCardReaderMockListCards) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// ListCards implements mm_service.CardReader
-func (mmListCards *CardReaderMock) ListCards(ctx context.Context, groupId entity.GroupId) (ca1 []entity.Card, err error) {
+// ListCards implements mm_module.CardReader
+func (mmListCards *CardReaderMock) ListCards(ctx context.Context, groupId model.GroupId) (cpa1 []*model.Card, err error) {
 	mm_atomic.AddUint64(&mmListCards.beforeListCardsCounter, 1)
 	defer mm_atomic.AddUint64(&mmListCards.afterListCardsCounter, 1)
 
@@ -630,7 +630,7 @@ func (mmListCards *CardReaderMock) ListCards(ctx context.Context, groupId entity
 	for _, e := range mmListCards.ListCardsMock.expectations {
 		if minimock.Equal(*e.params, mm_params) {
 			mm_atomic.AddUint64(&e.Counter, 1)
-			return e.results.ca1, e.results.err
+			return e.results.cpa1, e.results.err
 		}
 	}
 
@@ -662,7 +662,7 @@ func (mmListCards *CardReaderMock) ListCards(ctx context.Context, groupId entity
 		if mm_results == nil {
 			mmListCards.t.Fatal("No results are set for the CardReaderMock.ListCards")
 		}
-		return (*mm_results).ca1, (*mm_results).err
+		return (*mm_results).cpa1, (*mm_results).err
 	}
 	if mmListCards.funcListCards != nil {
 		return mmListCards.funcListCards(ctx, groupId)

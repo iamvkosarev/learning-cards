@@ -1,12 +1,12 @@
 package server
 
 import (
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"time"
 )
 
-func groupToResponse(group entity.Group) *pb.CardsGroup {
+func groupToResponse(group *model.Group) *pb.CardsGroup {
 	return &pb.CardsGroup{
 		Id:          int64(group.Id),
 		OwnerId:     int64(group.OwnerId),
@@ -14,53 +14,79 @@ func groupToResponse(group entity.Group) *pb.CardsGroup {
 		Description: group.Description,
 		CreatedAt:   group.CreateTime.Format(time.RFC3339),
 		Visibility:  pb.GroupVisibility(group.Visibility),
+		CardSideTypes: []pb.CardSideType{
+			pb.CardSideType(group.CardSideTypes[model.CARD_SIDE_FIRST]),
+			pb.CardSideType(group.CardSideTypes[model.CARD_SIDE_SECOND]),
+		},
 	}
 }
 
-func cardToResponse(card entity.Card) *pb.Card {
+func cardToResponse(card *model.Card) *pb.Card {
 	return &pb.Card{
-		Id:        int64(card.Id),
-		GroupId:   int64(card.GroupId),
-		FrontText: card.FrontText,
-		BackText:  card.BackText,
+		Id:      int64(card.Id),
+		GroupId: int64(card.GroupId),
+		Sides: []*pb.CardSide{
+			cardSideToResponse(card.GetFirst()),
+			cardSideToResponse(card.GetSecond()),
+		},
 		CreatedAt: card.CreateTime.Format(time.RFC3339),
 	}
 }
 
-func cardToReviewResponse(card entity.Card) *pb.ReviewCard {
-	return &pb.ReviewCard{
-		Id:        int64(card.Id),
-		FrontText: card.FrontText,
-		BackText:  card.BackText,
+func cardSideToResponse(card model.CardSide) *pb.CardSide {
+	readingPairs := make([]*pb.ReadingPair, len(card.ReadingPairs))
+	for i, readingPair := range card.ReadingPairs {
+		readingPairs[i] = &pb.ReadingPair{
+			Reading: readingPair.Reading,
+			Text:    readingPair.Text,
+		}
+	}
+	return &pb.CardSide{
+		Text:         card.Text,
+		ReadingPairs: readingPairs,
 	}
 }
-func markToResponse(mark entity.Mark) pb.Mark {
+
+func markToResponse(mark model.Mark) pb.Mark {
 	switch mark {
-	case entity.MARK_A:
+	case model.MARK_A:
 		return pb.Mark_MARK_A
-	case entity.MARK_B:
+	case model.MARK_B:
 		return pb.Mark_MARK_B
-	case entity.MARK_C:
+	case model.MARK_C:
 		return pb.Mark_MARK_C
-	case entity.MARK_D:
+	case model.MARK_D:
 		return pb.Mark_MARK_D
-	case entity.MARK_E:
+	case model.MARK_E:
 		return pb.Mark_MARK_E
 	default:
 		return pb.Mark_MARK_NULL
 	}
 }
 
-func answerToEntity(answer pb.CardAnswer) entity.Answer {
+func cardSideTypesToModel(cardSideTypes []pb.CardSideType) []model.CardSideType {
+	types := make([]model.CardSideType, len(cardSideTypes))
+	for i, sideType := range cardSideTypes {
+		switch sideType {
+		case pb.CardSideType_CARD_SIDE_JAPANESE:
+			types[i] = model.CARD_SIDE_TYPE_JAPANESE
+		default:
+			types[i] = model.CARD_SIDE_TYPE_NULL
+		}
+	}
+	return types
+}
+
+func answerToModels(answer pb.CardAnswer) model.Answer {
 	switch answer {
 	case pb.CardAnswer_EASY:
-		return entity.ANSWER_EASY
+		return model.ANSWER_EASY
 	case pb.CardAnswer_FAIL:
-		return entity.ANSWER_FAIL
+		return model.ANSWER_FAIL
 	case pb.CardAnswer_HARD:
-		return entity.ANSWER_HARD
+		return model.ANSWER_HARD
 	case pb.CardAnswer_GOOD:
-		return entity.ANSWER_GOOD
+		return model.ANSWER_GOOD
 	}
-	return entity.ANSWER_EASY
+	return model.ANSWER_EASY
 }

@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.ReviewReader -o review_reader_mock.go -n ReviewReaderMock -p mocks
+//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/module.ReviewReader -o review_reader_mock.go -n ReviewReaderMock -p mocks
 
 import (
 	"context"
@@ -11,23 +11,23 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
-// ReviewReaderMock implements mm_service.ReviewReader
+// ReviewReaderMock implements mm_module.ReviewReader
 type ReviewReaderMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcGetCardsReviews          func(ctx context.Context, user entity.UserId, group entity.GroupId) (ca1 []entity.CardReview, err error)
+	funcGetCardsReviews          func(ctx context.Context, user model.UserId, group model.GroupId) (cpa1 []*model.CardReview, err error)
 	funcGetCardsReviewsOrigin    string
-	inspectFuncGetCardsReviews   func(ctx context.Context, user entity.UserId, group entity.GroupId)
+	inspectFuncGetCardsReviews   func(ctx context.Context, user model.UserId, group model.GroupId)
 	afterGetCardsReviewsCounter  uint64
 	beforeGetCardsReviewsCounter uint64
 	GetCardsReviewsMock          mReviewReaderMockGetCardsReviews
 }
 
-// NewReviewReaderMock returns a mock for mm_service.ReviewReader
+// NewReviewReaderMock returns a mock for mm_module.ReviewReader
 func NewReviewReaderMock(t minimock.Tester) *ReviewReaderMock {
 	m := &ReviewReaderMock{t: t}
 
@@ -70,21 +70,21 @@ type ReviewReaderMockGetCardsReviewsExpectation struct {
 // ReviewReaderMockGetCardsReviewsParams contains parameters of the ReviewReader.GetCardsReviews
 type ReviewReaderMockGetCardsReviewsParams struct {
 	ctx   context.Context
-	user  entity.UserId
-	group entity.GroupId
+	user  model.UserId
+	group model.GroupId
 }
 
 // ReviewReaderMockGetCardsReviewsParamPtrs contains pointers to parameters of the ReviewReader.GetCardsReviews
 type ReviewReaderMockGetCardsReviewsParamPtrs struct {
 	ctx   *context.Context
-	user  *entity.UserId
-	group *entity.GroupId
+	user  *model.UserId
+	group *model.GroupId
 }
 
 // ReviewReaderMockGetCardsReviewsResults contains results of the ReviewReader.GetCardsReviews
 type ReviewReaderMockGetCardsReviewsResults struct {
-	ca1 []entity.CardReview
-	err error
+	cpa1 []*model.CardReview
+	err  error
 }
 
 // ReviewReaderMockGetCardsReviewsOrigins contains origins of expectations of the ReviewReader.GetCardsReviews
@@ -106,7 +106,7 @@ func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Optional() *mReviewRe
 }
 
 // Expect sets up expected params for ReviewReader.GetCardsReviews
-func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Expect(ctx context.Context, user entity.UserId, group entity.GroupId) *mReviewReaderMockGetCardsReviews {
+func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Expect(ctx context.Context, user model.UserId, group model.GroupId) *mReviewReaderMockGetCardsReviews {
 	if mmGetCardsReviews.mock.funcGetCardsReviews != nil {
 		mmGetCardsReviews.mock.t.Fatalf("ReviewReaderMock.GetCardsReviews mock is already set by Set")
 	}
@@ -154,7 +154,7 @@ func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) ExpectCtxParam1(ctx c
 }
 
 // ExpectUserParam2 sets up expected param user for ReviewReader.GetCardsReviews
-func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) ExpectUserParam2(user entity.UserId) *mReviewReaderMockGetCardsReviews {
+func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) ExpectUserParam2(user model.UserId) *mReviewReaderMockGetCardsReviews {
 	if mmGetCardsReviews.mock.funcGetCardsReviews != nil {
 		mmGetCardsReviews.mock.t.Fatalf("ReviewReaderMock.GetCardsReviews mock is already set by Set")
 	}
@@ -177,7 +177,7 @@ func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) ExpectUserParam2(user
 }
 
 // ExpectGroupParam3 sets up expected param group for ReviewReader.GetCardsReviews
-func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) ExpectGroupParam3(group entity.GroupId) *mReviewReaderMockGetCardsReviews {
+func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) ExpectGroupParam3(group model.GroupId) *mReviewReaderMockGetCardsReviews {
 	if mmGetCardsReviews.mock.funcGetCardsReviews != nil {
 		mmGetCardsReviews.mock.t.Fatalf("ReviewReaderMock.GetCardsReviews mock is already set by Set")
 	}
@@ -200,7 +200,7 @@ func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) ExpectGroupParam3(gro
 }
 
 // Inspect accepts an inspector function that has same arguments as the ReviewReader.GetCardsReviews
-func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Inspect(f func(ctx context.Context, user entity.UserId, group entity.GroupId)) *mReviewReaderMockGetCardsReviews {
+func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Inspect(f func(ctx context.Context, user model.UserId, group model.GroupId)) *mReviewReaderMockGetCardsReviews {
 	if mmGetCardsReviews.mock.inspectFuncGetCardsReviews != nil {
 		mmGetCardsReviews.mock.t.Fatalf("Inspect function is already set for ReviewReaderMock.GetCardsReviews")
 	}
@@ -211,7 +211,7 @@ func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Inspect(f func(ctx co
 }
 
 // Return sets up results that will be returned by ReviewReader.GetCardsReviews
-func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Return(ca1 []entity.CardReview, err error) *ReviewReaderMock {
+func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Return(cpa1 []*model.CardReview, err error) *ReviewReaderMock {
 	if mmGetCardsReviews.mock.funcGetCardsReviews != nil {
 		mmGetCardsReviews.mock.t.Fatalf("ReviewReaderMock.GetCardsReviews mock is already set by Set")
 	}
@@ -219,13 +219,13 @@ func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Return(ca1 []entity.C
 	if mmGetCardsReviews.defaultExpectation == nil {
 		mmGetCardsReviews.defaultExpectation = &ReviewReaderMockGetCardsReviewsExpectation{mock: mmGetCardsReviews.mock}
 	}
-	mmGetCardsReviews.defaultExpectation.results = &ReviewReaderMockGetCardsReviewsResults{ca1, err}
+	mmGetCardsReviews.defaultExpectation.results = &ReviewReaderMockGetCardsReviewsResults{cpa1, err}
 	mmGetCardsReviews.defaultExpectation.returnOrigin = minimock.CallerInfo(1)
 	return mmGetCardsReviews.mock
 }
 
 // Set uses given function f to mock the ReviewReader.GetCardsReviews method
-func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Set(f func(ctx context.Context, user entity.UserId, group entity.GroupId) (ca1 []entity.CardReview, err error)) *ReviewReaderMock {
+func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Set(f func(ctx context.Context, user model.UserId, group model.GroupId) (cpa1 []*model.CardReview, err error)) *ReviewReaderMock {
 	if mmGetCardsReviews.defaultExpectation != nil {
 		mmGetCardsReviews.mock.t.Fatalf("Default expectation is already set for the ReviewReader.GetCardsReviews method")
 	}
@@ -241,7 +241,7 @@ func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) Set(f func(ctx contex
 
 // When sets expectation for the ReviewReader.GetCardsReviews which will trigger the result defined by the following
 // Then helper
-func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) When(ctx context.Context, user entity.UserId, group entity.GroupId) *ReviewReaderMockGetCardsReviewsExpectation {
+func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) When(ctx context.Context, user model.UserId, group model.GroupId) *ReviewReaderMockGetCardsReviewsExpectation {
 	if mmGetCardsReviews.mock.funcGetCardsReviews != nil {
 		mmGetCardsReviews.mock.t.Fatalf("ReviewReaderMock.GetCardsReviews mock is already set by Set")
 	}
@@ -256,8 +256,8 @@ func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) When(ctx context.Cont
 }
 
 // Then sets up ReviewReader.GetCardsReviews return parameters for the expectation previously defined by the When method
-func (e *ReviewReaderMockGetCardsReviewsExpectation) Then(ca1 []entity.CardReview, err error) *ReviewReaderMock {
-	e.results = &ReviewReaderMockGetCardsReviewsResults{ca1, err}
+func (e *ReviewReaderMockGetCardsReviewsExpectation) Then(cpa1 []*model.CardReview, err error) *ReviewReaderMock {
+	e.results = &ReviewReaderMockGetCardsReviewsResults{cpa1, err}
 	return e.mock
 }
 
@@ -282,8 +282,8 @@ func (mmGetCardsReviews *mReviewReaderMockGetCardsReviews) invocationsDone() boo
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// GetCardsReviews implements mm_service.ReviewReader
-func (mmGetCardsReviews *ReviewReaderMock) GetCardsReviews(ctx context.Context, user entity.UserId, group entity.GroupId) (ca1 []entity.CardReview, err error) {
+// GetCardsReviews implements mm_module.ReviewReader
+func (mmGetCardsReviews *ReviewReaderMock) GetCardsReviews(ctx context.Context, user model.UserId, group model.GroupId) (cpa1 []*model.CardReview, err error) {
 	mm_atomic.AddUint64(&mmGetCardsReviews.beforeGetCardsReviewsCounter, 1)
 	defer mm_atomic.AddUint64(&mmGetCardsReviews.afterGetCardsReviewsCounter, 1)
 
@@ -303,7 +303,7 @@ func (mmGetCardsReviews *ReviewReaderMock) GetCardsReviews(ctx context.Context, 
 	for _, e := range mmGetCardsReviews.GetCardsReviewsMock.expectations {
 		if minimock.Equal(*e.params, mm_params) {
 			mm_atomic.AddUint64(&e.Counter, 1)
-			return e.results.ca1, e.results.err
+			return e.results.cpa1, e.results.err
 		}
 	}
 
@@ -340,7 +340,7 @@ func (mmGetCardsReviews *ReviewReaderMock) GetCardsReviews(ctx context.Context, 
 		if mm_results == nil {
 			mmGetCardsReviews.t.Fatal("No results are set for the ReviewReaderMock.GetCardsReviews")
 		}
-		return (*mm_results).ca1, (*mm_results).err
+		return (*mm_results).cpa1, (*mm_results).err
 	}
 	if mmGetCardsReviews.funcGetCardsReviews != nil {
 		return mmGetCardsReviews.funcGetCardsReviews(ctx, user, group)

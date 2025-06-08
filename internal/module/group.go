@@ -1,41 +1,41 @@
-package service
+package module
 
 import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
 //go:generate minimock -i UserVerifier -o ./mocks/user_verifier_mock.go -n NewUserVerifierMock -p mocks
 type UserVerifier interface {
-	VerifyUserByContext(ctx context.Context) (userID entity.UserId, err error)
+	VerifyUserByContext(ctx context.Context) (userID model.UserId, err error)
 }
 
 //go:generate minimock -i UserReader -o ./mocks/user_reader_mock.go -n UserReaderMock -p mocks
 type UserReader interface {
-	GetUser(ctx context.Context, id entity.UserId) (entity.User, error)
+	GetUser(ctx context.Context, id model.UserId) (model.User, error)
 }
 
 //go:generate minimock -i UserWriter -o ./mocks/user_reader_mock.go -n UserWriterMock -p mocks
 type UserWriter interface {
-	AddUser(ctx context.Context, user entity.User) error
+	AddUser(ctx context.Context, user model.User) error
 }
 
 //go:generate minimock -i GroupReader -o ./mocks/group_reader_mock.go -n GroupReaderMock -p mocks
 type GroupReader interface {
-	GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error)
-	ListGroups(ctx context.Context, id entity.UserId) ([]entity.Group, error)
+	GetGroup(ctx context.Context, groupId model.GroupId) (*model.Group, error)
+	ListGroups(ctx context.Context, id model.UserId) ([]*model.Group, error)
 }
 
 //go:generate minimock -i GroupWriter -o ./mocks/group_writer_mock.go -n GroupWriterMock -p mocks
 type GroupWriter interface {
-	AddGroup(ctx context.Context, group entity.Group) (entity.GroupId, error)
-	UpdateGroup(ctx context.Context, group entity.Group) error
-	DeleteGroup(ctx context.Context, groupId entity.GroupId) error
+	AddGroup(ctx context.Context, group *model.Group) (model.GroupId, error)
+	UpdateGroup(ctx context.Context, group *model.Group) error
+	DeleteGroup(ctx context.Context, groupId model.GroupId) error
 }
 
-type GroupServiceDeps struct {
+type GroupsDeps struct {
 	GroupReader  GroupReader
 	GroupWriter  GroupWriter
 	UserReader   UserReader
@@ -43,30 +43,30 @@ type GroupServiceDeps struct {
 	UserVerifier UserVerifier
 }
 
-type GroupService struct {
-	GroupServiceDeps
+type Groups struct {
+	GroupsDeps
 }
 
-func NewGroupService(deps GroupServiceDeps) *GroupService {
-	return &GroupService{
-		GroupServiceDeps: deps,
+func NewGroups(deps GroupsDeps) *Groups {
+	return &Groups{
+		GroupsDeps: deps,
 	}
 }
 
-func (g *GroupService) CreateGroup(
+func (g *Groups) CreateGroup(
 	ctx context.Context,
 	name, description string,
-	visibility entity.GroupVisibility,
-) (entity.GroupId, error) {
+	visibility model.GroupVisibility, cardSideTypes []model.CardSideType,
+) (model.GroupId, error) {
 	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return 0, err
 	}
 	_, err = g.UserReader.GetUser(ctx, userId)
 	if err != nil {
-		if errors.Is(err, entity.ErrUserNotFound) {
+		if errors.Is(err, model.ErrUserNotFound) {
 			err = g.UserWriter.AddUser(
-				ctx, entity.User{
+				ctx, model.User{
 					UserId: userId,
 				},
 			)
@@ -78,15 +78,16 @@ func (g *GroupService) CreateGroup(
 		}
 	}
 
-	if visibility == entity.GROUP_VISIBILITY_NULL {
-		visibility = entity.GROUP_VISIBILITY_PRIVATE
+	if visibility == model.GROUP_VISIBILITY_NULL {
+		visibility = model.GROUP_VISIBILITY_PRIVATE
 	}
 
-	group := entity.Group{
-		Name:        name,
-		Description: description,
-		Visibility:  visibility,
-		OwnerId:     userId,
+	group := &model.Group{
+		Name:          name,
+		Description:   description,
+		Visibility:    visibility,
+		OwnerId:       userId,
+		CardSideTypes: cardSideTypes,
 	}
 
 	groupId, err := g.GroupWriter.AddGroup(ctx, group)
@@ -97,18 +98,18 @@ func (g *GroupService) CreateGroup(
 	return groupId, nil
 }
 
-func (g *GroupService) GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
+func (g *Groups) GetGroup(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 	if err != nil {
-		return entity.Group{}, err
+		return nil, err
 	}
 	if err = g.getReadGroupAccessByGroup(ctx, group); err != nil {
-		return entity.Group{}, err
+		return nil, err
 	}
 	return group, nil
 }
 
-func (g *GroupService) List(ctx context.Context) ([]entity.Group, error) {
+func (g *Groups) List(ctx context.Context) ([]*model.Group, error) {
 	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return nil, err
@@ -121,7 +122,8 @@ func (g *GroupService) List(ctx context.Context) ([]entity.Group, error) {
 	return groups, nil
 }
 
-func (g *GroupService) UpdateGroup(ctx context.Context, updateGroup entity.UpdateGroup) error {
+func (g *Groups) UpdateGroup(ctx context.Context, updateGroup model.UpdateGroup) error {
+	op := "module.Groups.UpdateGroup"
 	group, err := g.GroupReader.GetGroup(ctx, updateGroup.Id)
 
 	if err != nil {
@@ -132,7 +134,7 @@ func (g *GroupService) UpdateGroup(ctx context.Context, updateGroup entity.Updat
 		return err
 	}
 
-	if updateGroup.Visibility != entity.GROUP_VISIBILITY_NULL {
+	if updateGroup.Visibility != model.GROUP_VISIBILITY_NULL {
 		group.Visibility = updateGroup.Visibility
 	}
 	if updateGroup.Description != "" {
@@ -140,6 +142,24 @@ func (g *GroupService) UpdateGroup(ctx context.Context, updateGroup entity.Updat
 	}
 	if updateGroup.Name != "" {
 		group.Name = updateGroup.Name
+	}
+
+	if len(updateGroup.CardSideType) > 0 {
+		for sideI, updateSideType := range updateGroup.CardSideType {
+			currentSideType := group.CardSideTypes[sideI]
+
+			if currentSideType != updateSideType {
+				if updateSideType != model.CARD_SIDE_TYPE_NULL &&
+					currentSideType != model.CARD_SIDE_TYPE_NULL {
+					return fmt.Errorf(
+						"%s: current side type %v, update sie type %v: %w", op, currentSideType, updateSideType,
+						model.ErrGroupModifyNotNullCardsSideType,
+					)
+				} else {
+					group.CardSideTypes[sideI] = updateSideType
+				}
+			}
+		}
 	}
 
 	err = g.GroupWriter.UpdateGroup(ctx, group)
@@ -150,7 +170,7 @@ func (g *GroupService) UpdateGroup(ctx context.Context, updateGroup entity.Updat
 	return nil
 }
 
-func (g *GroupService) DeleteGroup(ctx context.Context, groupId entity.GroupId) error {
+func (g *Groups) DeleteGroup(ctx context.Context, groupId model.GroupId) error {
 	if err := g.CheckWriteGroupAccess(ctx, groupId); err != nil {
 		return err
 	}
@@ -160,7 +180,7 @@ func (g *GroupService) DeleteGroup(ctx context.Context, groupId entity.GroupId) 
 	return nil
 }
 
-func (g *GroupService) CheckReadGroupAccess(ctx context.Context, groupId entity.GroupId) error {
+func (g *Groups) CheckReadGroupAccess(ctx context.Context, groupId model.GroupId) error {
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 
 	if err != nil {
@@ -169,20 +189,20 @@ func (g *GroupService) CheckReadGroupAccess(ctx context.Context, groupId entity.
 	return g.getReadGroupAccessByGroup(ctx, group)
 }
 
-func (g *GroupService) getReadGroupAccessByGroup(ctx context.Context, group entity.Group) error {
+func (g *Groups) getReadGroupAccessByGroup(ctx context.Context, group *model.Group) error {
 	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 	if userId != group.OwnerId &&
-		(group.Visibility == entity.GROUP_VISIBILITY_PRIVATE ||
-			group.Visibility == entity.GROUP_VISIBILITY_NULL) {
-		return entity.ErrGroupReadAccessDenied
+		(group.Visibility == model.GROUP_VISIBILITY_PRIVATE ||
+			group.Visibility == model.GROUP_VISIBILITY_NULL) {
+		return model.ErrGroupReadAccessDenied
 	}
 	return nil
 }
 
-func (g *GroupService) CheckWriteGroupAccess(ctx context.Context, groupId entity.GroupId) error {
+func (g *Groups) CheckWriteGroupAccess(ctx context.Context, groupId model.GroupId) error {
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 
 	if err != nil {
@@ -191,13 +211,13 @@ func (g *GroupService) CheckWriteGroupAccess(ctx context.Context, groupId entity
 	return g.getWriteGroupAccessByGroup(ctx, group)
 }
 
-func (g *GroupService) getWriteGroupAccessByGroup(ctx context.Context, group entity.Group) error {
+func (g *Groups) getWriteGroupAccessByGroup(ctx context.Context, group *model.Group) error {
 	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 	if userId != group.OwnerId {
-		return entity.ErrGroupWriteAccessDenied
+		return model.ErrGroupWriteAccessDenied
 	}
 	return nil
 }

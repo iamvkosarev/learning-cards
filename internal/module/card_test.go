@@ -1,10 +1,10 @@
-package service
+package module
 
 import (
 	"context"
 	"github.com/gojuno/minimock/v3"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
-	"github.com/iamvkosarev/learning-cards/internal/service/mocks"
+	"github.com/iamvkosarev/learning-cards/internal/model"
+	"github.com/iamvkosarev/learning-cards/internal/module/mocks"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/metadata"
 	"testing"
@@ -14,15 +14,15 @@ func TestCardsService_AddCard(t *testing.T) {
 	ctxNotCorrectUser := context.Background()
 	md := metadata.Pairs("authorization", "Bearer correct-user-token")
 	ctxCorrectUser := metadata.NewOutgoingContext(ctxNotCorrectUser, md)
-	cardId := entity.CardId(200)
-	groupId := entity.GroupId(0)
+	cardId := model.CardId(200)
+	groupId := model.GroupId(200)
 	tests := []struct {
 		name      string
 		ctx       context.Context
-		groupId   entity.GroupId
+		groupId   model.GroupId
 		frontText string
 		backText  string
-		result    entity.CardId
+		result    model.CardId
 		err       error
 	}{
 		{
@@ -38,22 +38,26 @@ func TestCardsService_AddCard(t *testing.T) {
 			name:    "no access",
 			ctx:     ctxNotCorrectUser,
 			groupId: groupId,
-			err:     entity.ErrGroupWriteAccessDenied,
+			err:     model.ErrGroupWriteAccessDenied,
 		},
 	}
 
 	mc := minimock.NewController(t)
 
+	cardDecoratorMock := mocks.NewCardDecoratorMock(mc)
+	cardDecoratorMock.DecorateCardMock.Return(nil)
+
 	cardsWriterMock := mocks.NewCardWriterMock(mc)
 	cardsWriterMock.AddCardMock.Return(cardId, nil)
 
-	groupAccessChecker := mocks.NewGroupAccessChecker(mc)
+	groupAccessChecker := mocks.NewGroupAccessCheckerMock(mc)
 	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxCorrectUser, groupId).Then(nil)
-	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(entity.ErrGroupWriteAccessDenied)
-	cardService := NewCardsService(
-		CardsServiceDeps{
+	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(model.ErrGroupWriteAccessDenied)
+	cardService := NewCards(
+		CardsDeps{
 			CardWriter:         cardsWriterMock,
 			GroupAccessChecker: groupAccessChecker,
+			CardDecorator:      cardDecoratorMock,
 		},
 	)
 	for _, test := range tests {
@@ -76,16 +80,16 @@ func TestCardsService_DeleteCard(t *testing.T) {
 	ctxNotCorrectUser := context.Background()
 	md := metadata.Pairs("authorization", "Bearer correct-user-token")
 	ctxCorrectUser := metadata.NewOutgoingContext(ctxNotCorrectUser, md)
-	correctCardId := entity.CardId(200)
-	notExistsCardId := entity.CardId(0)
-	card := entity.Card{
+	correctCardId := model.CardId(200)
+	notExistsCardId := model.CardId(0)
+	card := &model.Card{
 		Id: correctCardId,
 	}
-	groupId := entity.GroupId(0)
+	groupId := model.GroupId(0)
 	tests := []struct {
 		name   string
 		ctx    context.Context
-		cardId entity.CardId
+		cardId model.CardId
 		err    error
 	}{
 		{
@@ -98,13 +102,13 @@ func TestCardsService_DeleteCard(t *testing.T) {
 			name:   "no access",
 			ctx:    ctxNotCorrectUser,
 			cardId: correctCardId,
-			err:    entity.ErrGroupWriteAccessDenied,
+			err:    model.ErrGroupWriteAccessDenied,
 		},
 		{
 			name:   "no found",
 			ctx:    ctxNotCorrectUser,
 			cardId: notExistsCardId,
-			err:    entity.ErrCardNotFound,
+			err:    model.ErrCardNotFound,
 		},
 	}
 
@@ -112,16 +116,16 @@ func TestCardsService_DeleteCard(t *testing.T) {
 
 	cardsReaderMock := mocks.NewCardReaderMock(mc)
 	cardsReaderMock.GetCardMock.When(minimock.AnyContext, correctCardId).Then(card, nil)
-	cardsReaderMock.GetCardMock.When(minimock.AnyContext, notExistsCardId).Then(card, entity.ErrCardNotFound)
+	cardsReaderMock.GetCardMock.When(minimock.AnyContext, notExistsCardId).Then(card, model.ErrCardNotFound)
 
 	cardsWriterMock := mocks.NewCardWriterMock(mc)
 	cardsWriterMock.DeleteCardMock.When(minimock.AnyContext, correctCardId).Then(nil)
 
-	groupAccessChecker := mocks.NewGroupAccessChecker(mc)
+	groupAccessChecker := mocks.NewGroupAccessCheckerMock(mc)
 	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxCorrectUser, groupId).Then(nil)
-	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(entity.ErrGroupWriteAccessDenied)
-	cardService := NewCardsService(
-		CardsServiceDeps{
+	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(model.ErrGroupWriteAccessDenied)
+	cardService := NewCards(
+		CardsDeps{
 			CardReader:         cardsReaderMock,
 			CardWriter:         cardsWriterMock,
 			GroupAccessChecker: groupAccessChecker,
@@ -143,17 +147,17 @@ func TestCardsService_GetCard(t *testing.T) {
 	ctxNotCorrectUser := context.Background()
 	md := metadata.Pairs("authorization", "Bearer correct-user-token")
 	ctxCorrectUser := metadata.NewOutgoingContext(ctxNotCorrectUser, md)
-	correctCardId := entity.CardId(200)
-	notExistCardId := entity.CardId(0)
-	correctCard := entity.Card{
+	correctCardId := model.CardId(200)
+	notExistCardId := model.CardId(0)
+	correctCard := &model.Card{
 		Id: correctCardId,
 	}
-	groupId := entity.GroupId(0)
+	groupId := model.GroupId(0)
 	tests := []struct {
 		name   string
 		ctx    context.Context
-		cardId entity.CardId
-		result entity.Card
+		cardId model.CardId
+		result *model.Card
 		err    error
 	}{
 		{
@@ -167,13 +171,13 @@ func TestCardsService_GetCard(t *testing.T) {
 			name:   "no access",
 			ctx:    ctxNotCorrectUser,
 			cardId: correctCardId,
-			err:    entity.ErrGroupWriteAccessDenied,
+			err:    model.ErrGroupWriteAccessDenied,
 		},
 		{
 			name:   "no found",
 			ctx:    ctxNotCorrectUser,
 			cardId: notExistCardId,
-			err:    entity.ErrCardNotFound,
+			err:    model.ErrCardNotFound,
 		},
 	}
 
@@ -181,13 +185,13 @@ func TestCardsService_GetCard(t *testing.T) {
 
 	cardsReaderMock := mocks.NewCardReaderMock(mc)
 	cardsReaderMock.GetCardMock.When(minimock.AnyContext, correctCardId).Then(correctCard, nil)
-	cardsReaderMock.GetCardMock.When(minimock.AnyContext, notExistCardId).Then(correctCard, entity.ErrCardNotFound)
+	cardsReaderMock.GetCardMock.When(minimock.AnyContext, notExistCardId).Then(correctCard, model.ErrCardNotFound)
 
-	groupAccessChecker := mocks.NewGroupAccessChecker(mc)
+	groupAccessChecker := mocks.NewGroupAccessCheckerMock(mc)
 	groupAccessChecker.CheckReadGroupAccessMock.When(ctxCorrectUser, groupId).Then(nil)
-	groupAccessChecker.CheckReadGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(entity.ErrGroupWriteAccessDenied)
-	cardService := NewCardsService(
-		CardsServiceDeps{
+	groupAccessChecker.CheckReadGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(model.ErrGroupWriteAccessDenied)
+	cardService := NewCards(
+		CardsDeps{
 			CardReader:         cardsReaderMock,
 			GroupAccessChecker: groupAccessChecker,
 		},
@@ -210,16 +214,16 @@ func TestCardsService_ListCards(t *testing.T) {
 	ctxNotCorrectUser := context.Background()
 	md := metadata.Pairs("authorization", "Bearer correct-user-token")
 	ctx := metadata.NewOutgoingContext(ctxNotCorrectUser, md)
-	groupId := entity.GroupId(200)
-	notExistGroupId := entity.GroupId(1)
-	correctCards := []entity.Card{
+	groupId := model.GroupId(200)
+	notExistGroupId := model.GroupId(1)
+	correctCards := []*model.Card{
 		{},
 	}
 	tests := []struct {
 		name    string
 		ctx     context.Context
-		groupId entity.GroupId
-		result  []entity.Card
+		groupId model.GroupId
+		result  []*model.Card
 		err     error
 	}{
 		{
@@ -233,13 +237,13 @@ func TestCardsService_ListCards(t *testing.T) {
 			name:    "no access",
 			ctx:     ctxNotCorrectUser,
 			groupId: groupId,
-			err:     entity.ErrGroupWriteAccessDenied,
+			err:     model.ErrGroupWriteAccessDenied,
 		},
 		{
 			name:    "no found",
 			ctx:     ctx,
 			groupId: notExistGroupId,
-			err:     entity.ErrGroupNotFound,
+			err:     model.ErrGroupNotFound,
 		},
 	}
 
@@ -247,16 +251,16 @@ func TestCardsService_ListCards(t *testing.T) {
 
 	cardsReaderMock := mocks.NewCardReaderMock(mc)
 	cardsReaderMock.ListCardsMock.When(minimock.AnyContext, groupId).Then(correctCards, nil)
-	cardsReaderMock.ListCardsMock.When(minimock.AnyContext, notExistGroupId).Then(nil, entity.ErrGroupNotFound)
+	cardsReaderMock.ListCardsMock.When(minimock.AnyContext, notExistGroupId).Then(nil, model.ErrGroupNotFound)
 
-	groupAccessChecker := mocks.NewGroupAccessChecker(mc)
+	groupAccessChecker := mocks.NewGroupAccessCheckerMock(mc)
 	groupAccessChecker.CheckReadGroupAccessMock.When(ctx, groupId).Then(nil)
 	groupAccessChecker.CheckReadGroupAccessMock.When(ctx, notExistGroupId).Then(nil)
 	groupAccessChecker.CheckReadGroupAccessMock.When(
 		ctxNotCorrectUser, groupId,
-	).Then(entity.ErrGroupWriteAccessDenied)
-	cardService := NewCardsService(
-		CardsServiceDeps{
+	).Then(model.ErrGroupWriteAccessDenied)
+	cardService := NewCards(
+		CardsDeps{
 			CardReader:         cardsReaderMock,
 			GroupAccessChecker: groupAccessChecker,
 		},

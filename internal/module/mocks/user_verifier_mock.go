@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.UserVerifier -o user_verifier_mock.go -n NewUserVerifierMock -p mocks
+//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/module.UserVerifier -o user_verifier_mock.go -n NewUserVerifierMock -p mocks
 
 import (
 	"context"
@@ -11,15 +11,15 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
-// NewUserVerifierMock implements mm_service.UserVerifier
+// NewUserVerifierMock implements mm_module.UserVerifier
 type NewUserVerifierMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcVerifyUserByContext          func(ctx context.Context) (userID entity.UserId, err error)
+	funcVerifyUserByContext          func(ctx context.Context) (userID model.UserId, err error)
 	funcVerifyUserByContextOrigin    string
 	inspectFuncVerifyUserByContext   func(ctx context.Context)
 	afterVerifyUserByContextCounter  uint64
@@ -27,7 +27,7 @@ type NewUserVerifierMock struct {
 	VerifyUserByContextMock          mNewUserVerifierMockVerifyUserByContext
 }
 
-// NewNewUserVerifierMock returns a mock for mm_service.UserVerifier
+// NewNewUserVerifierMock returns a mock for mm_module.UserVerifier
 func NewNewUserVerifierMock(t minimock.Tester) *NewUserVerifierMock {
 	m := &NewUserVerifierMock{t: t}
 
@@ -79,7 +79,7 @@ type NewUserVerifierMockVerifyUserByContextParamPtrs struct {
 
 // NewUserVerifierMockVerifyUserByContextResults contains results of the UserVerifier.VerifyUserByContext
 type NewUserVerifierMockVerifyUserByContextResults struct {
-	userID entity.UserId
+	userID model.UserId
 	err    error
 }
 
@@ -159,7 +159,7 @@ func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Inspect(f 
 }
 
 // Return sets up results that will be returned by UserVerifier.VerifyUserByContext
-func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Return(userID entity.UserId, err error) *NewUserVerifierMock {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Return(userID model.UserId, err error) *NewUserVerifierMock {
 	if mmVerifyUserByContext.mock.funcVerifyUserByContext != nil {
 		mmVerifyUserByContext.mock.t.Fatalf("NewUserVerifierMock.VerifyUserByContext mock is already set by Set")
 	}
@@ -173,7 +173,7 @@ func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Return(use
 }
 
 // Set uses given function f to mock the UserVerifier.VerifyUserByContext method
-func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Set(f func(ctx context.Context) (userID entity.UserId, err error)) *NewUserVerifierMock {
+func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) Set(f func(ctx context.Context) (userID model.UserId, err error)) *NewUserVerifierMock {
 	if mmVerifyUserByContext.defaultExpectation != nil {
 		mmVerifyUserByContext.mock.t.Fatalf("Default expectation is already set for the UserVerifier.VerifyUserByContext method")
 	}
@@ -204,7 +204,7 @@ func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) When(ctx c
 }
 
 // Then sets up UserVerifier.VerifyUserByContext return parameters for the expectation previously defined by the When method
-func (e *NewUserVerifierMockVerifyUserByContextExpectation) Then(userID entity.UserId, err error) *NewUserVerifierMock {
+func (e *NewUserVerifierMockVerifyUserByContextExpectation) Then(userID model.UserId, err error) *NewUserVerifierMock {
 	e.results = &NewUserVerifierMockVerifyUserByContextResults{userID, err}
 	return e.mock
 }
@@ -230,8 +230,8 @@ func (mmVerifyUserByContext *mNewUserVerifierMockVerifyUserByContext) invocation
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// VerifyUserByContext implements mm_service.UserVerifier
-func (mmVerifyUserByContext *NewUserVerifierMock) VerifyUserByContext(ctx context.Context) (userID entity.UserId, err error) {
+// VerifyUserByContext implements mm_module.UserVerifier
+func (mmVerifyUserByContext *NewUserVerifierMock) VerifyUserByContext(ctx context.Context) (userID model.UserId, err error) {
 	mm_atomic.AddUint64(&mmVerifyUserByContext.beforeVerifyUserByContextCounter, 1)
 	defer mm_atomic.AddUint64(&mmVerifyUserByContext.afterVerifyUserByContextCounter, 1)
 

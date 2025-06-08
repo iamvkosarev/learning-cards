@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -18,14 +18,14 @@ func NewCardRepository(pool *pgxpool.Pool) *CardRepository {
 	return &CardRepository{db: pool}
 }
 
-func (cr CardRepository) AddCard(ctx context.Context, card entity.Card) (entity.CardId, error) {
+func (cr CardRepository) AddCard(ctx context.Context, card *model.Card) (model.CardId, error) {
 	const op = "postgres.CardRepository.AddCard"
 
 	var id int64
 	err := cr.db.QueryRow(
 		ctx,
 		`INSERT INTO cards (group_id, front_text, back_text) VALUES ($1, $2, $3) RETURNING id`,
-		card.GroupId, card.FrontText, card.BackText,
+		card.GroupId, card.GetFirst().Text, card.GetSecond().Text,
 	).Scan(&id)
 
 	var pgErr *pgconn.PgError
@@ -37,13 +37,15 @@ func (cr CardRepository) AddCard(ctx context.Context, card entity.Card) (entity.
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return entity.CardId(id), nil
+	return model.CardId(id), nil
 }
 
-func (cr CardRepository) GetCard(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
+func (cr CardRepository) GetCard(ctx context.Context, cardId model.CardId) (*model.Card, error) {
 	op := "postgres.CardRepository.GetCard"
 
-	var card entity.Card
+	card := &model.Card{}
+	var front, back string
+	var reading *string
 
 	err := cr.db.QueryRow(
 		ctx,
@@ -52,23 +54,29 @@ func (cr CardRepository) GetCard(ctx context.Context, cardId entity.CardId) (ent
 	).Scan(
 		&card.Id,
 		&card.GroupId,
-		&card.FrontText,
-		&card.BackText,
+		&front,
+		&back,
 		&card.CreateTime,
 		&card.UpdateTime,
+		&reading,
 	)
+	card.SetText(front, back)
+
+	if err != nil {
+		return nil, fmt.Errorf("%s: failed to parse reading pairs %w", op, err)
+	}
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return card, fmt.Errorf("%s: card not found: %w", op, entity.ErrCardNotFound)
+			return nil, fmt.Errorf("%s: card id %v not found: %w", op, cardId, model.ErrCardNotFound)
 		}
-		return card, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	return card, nil
 }
 
-func (cr CardRepository) ListCards(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {
+func (cr CardRepository) ListCards(ctx context.Context, groupId model.GroupId) ([]*model.Card, error) {
 	op := "postgres.CardRepository.ListCards"
 
 	rows, err := cr.db.Query(
@@ -82,31 +90,34 @@ func (cr CardRepository) ListCards(ctx context.Context, groupId entity.GroupId) 
 	}
 	defer rows.Close()
 
-	var cards []entity.Card
+	cards := make([]*model.Card, 0)
 
 	for rows.Next() {
-		var card entity.Card
+		card := &model.Card{}
+		var front, back string
 		err = rows.Scan(
 			&card.Id,
 			&card.GroupId,
-			&card.FrontText,
-			&card.BackText,
+			&front,
+			&back,
 			&card.CreateTime,
 			&card.UpdateTime,
 		)
+		card.SetText(front, back)
+
 		if err != nil {
 			return nil, fmt.Errorf("%s: scan error %w", op, err)
 		}
 		cards = append(cards, card)
 	}
-	if err := rows.Err(); err != nil {
+	if err = rows.Err(); err != nil {
 		return nil, fmt.Errorf("%s: rows error %w", op, err)
 	}
 
 	return cards, nil
 }
 
-func (cr CardRepository) UpdateCard(ctx context.Context, card entity.Card) error {
+func (cr CardRepository) UpdateCard(ctx context.Context, card *model.Card) error {
 	op := "postgres.CardRepository.UpdateCard"
 
 	cmdTag, err := cr.db.Exec(
@@ -116,8 +127,8 @@ func (cr CardRepository) UpdateCard(ctx context.Context, card entity.Card) error
 		     back_text = $2,
 		     updated_at = $3
 		 WHERE id = $4`,
-		card.FrontText,
-		card.BackText,
+		card.GetFirst().Text,
+		card.GetSecond().Text,
 		card.UpdateTime,
 		card.Id,
 	)
@@ -127,13 +138,13 @@ func (cr CardRepository) UpdateCard(ctx context.Context, card entity.Card) error
 	}
 
 	if cmdTag.RowsAffected() == 0 {
-		return fmt.Errorf("%s: %w", op, entity.ErrCardNotFound)
+		return fmt.Errorf("%s: not affected rows, while updating card id %v: %w", op, card.Id, model.ErrCardNotFound)
 	}
 
 	return nil
 }
 
-func (cr CardRepository) DeleteCard(ctx context.Context, cardId entity.CardId) error {
+func (cr CardRepository) DeleteCard(ctx context.Context, cardId model.CardId) error {
 	const op = "postgres.CardRepository.DeleteCard"
 
 	cmdTag, err := cr.db.Exec(
@@ -147,7 +158,7 @@ func (cr CardRepository) DeleteCard(ctx context.Context, cardId entity.CardId) e
 	}
 
 	if cmdTag.RowsAffected() == 0 {
-		return fmt.Errorf("%s: %w", op, entity.ErrCardNotFound)
+		return fmt.Errorf("%s: %w", op, model.ErrCardNotFound)
 	}
 
 	return nil

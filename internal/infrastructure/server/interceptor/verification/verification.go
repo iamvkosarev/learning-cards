@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -44,37 +44,37 @@ func Interceptor(log *slog.Logger, verificationService Verifier) grpc.UnaryServe
 			return nil, fmt.Errorf("verification err: %w", err)
 		}
 
-		ctx = setUserId(ctx, entity.UserId(userId))
+		ctx = setUserId(ctx, model.UserId(userId))
 
 		return handler(ctx, req)
 	}
 }
 
-func GetUserId(ctx context.Context) (entity.UserId, error) {
-	userId, ok := ctx.Value(userIdKey).(entity.UserId)
+func GetUserId(ctx context.Context) (model.UserId, error) {
+	userId, ok := ctx.Value(userIdKey).(model.UserId)
 	if !ok {
-		return entity.UserId(0), entity.ErrVerificationFailed
+		return model.UserId(0), model.ErrVerificationFailed
 	}
 	return userId, nil
 }
 
-func setUserId(ctx context.Context, userId entity.UserId) context.Context {
+func setUserId(ctx context.Context, userId model.UserId) context.Context {
 	return context.WithValue(ctx, userIdKey, userId)
 }
 
 func GetTokenFormContext(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", entity.ErrMetadataIsEmpty
+		return "", model.ErrMetadataIsEmpty
 	}
 	authValues := md[authMetaKey]
 	if len(authValues) == 0 {
-		return "", entity.ErrNoAuthHeader
+		return "", model.ErrNoAuthHeader
 	}
 
 	parts := strings.SplitN(authValues[0], " ", 2)
 	if len(parts) != 2 || !strings.EqualFold(parts[0], authBearer) {
-		return "", entity.ErrIncorrectAuthHeader
+		return "", model.ErrIncorrectAuthHeader
 	}
 
 	return parts[1], nil

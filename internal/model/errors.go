@@ -1,4 +1,4 @@
-package entity
+package model
 
 import (
 	"google.golang.org/grpc/codes"
@@ -13,12 +13,18 @@ var (
 
 	ErrUserNotFound = NewServerError(codes.NotFound, "user not found")
 
-	ErrGroupExists            = NewServerError(codes.InvalidArgument, "group already exists")
-	ErrGroupNotFound          = NewServerError(codes.NotFound, "group not found")
-	ErrGroupReadAccessDenied  = NewServerError(codes.PermissionDenied, "group read access denied")
-	ErrGroupWriteAccessDenied = NewServerError(codes.PermissionDenied, "group write access denied")
+	ErrGroupExists                     = NewServerError(codes.InvalidArgument, "group already exists")
+	ErrGroupNotFound                   = NewServerError(codes.NotFound, "group not found")
+	ErrGroupReadAccessDenied           = NewServerError(codes.PermissionDenied, "group read access denied")
+	ErrGroupWriteAccessDenied          = NewServerError(codes.PermissionDenied, "group write access denied")
+	ErrGroupModifyNotNullCardsSideType = NewServerError(
+		codes.InvalidArgument,
+		"forbidden change of group's not-null cards-side-type value",
+	)
 
 	ErrCardNotFound = NewServerError(codes.NotFound, "card not found")
+
+	ErrTimeOut = NewServerError(codes.Canceled, "time is out")
 )
 
 type ValidationError struct {

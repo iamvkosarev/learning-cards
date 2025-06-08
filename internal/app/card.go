@@ -5,6 +5,8 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/config"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
+	"github.com/iamvkosarev/learning-cards/internal/model"
+	"github.com/iamvkosarev/learning-cards/internal/module"
 	"github.com/iamvkosarev/learning-cards/internal/repository/postgres"
 	"github.com/iamvkosarev/learning-cards/internal/service"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
@@ -59,8 +61,8 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 
 	verifier := server.VerifyFunc(verification.GetUserId)
 
-	groupService := service.NewGroupService(
-		service.GroupServiceDeps{
+	groupsService := module.NewGroups(
+		module.GroupsDeps{
 			GroupReader:  groupRepo,
 			GroupWriter:  groupRepo,
 			UserReader:   userRepo,
@@ -68,17 +70,18 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 			UserVerifier: verifier,
 		},
 	)
-	cardsService := service.NewCardsService(
-		service.CardsServiceDeps{
+
+	cardsService := module.NewCards(
+		module.CardsDeps{
 			CardWriter:         cardRepo,
 			CardReader:         cardRepo,
-			GroupAccessChecker: groupService,
+			GroupAccessChecker: groupsService,
 		},
 	)
 
 	server := server.NewCardServer(
 		server.CardServerDeps{
-			GroupService: groupService,
+			GroupService: groupsService,
 			CardsService: cardsService,
 			AuthVerifier: verifier,
 			Logger:       logger,

@@ -3,8 +3,8 @@ package client
 import (
 	"context"
 	"fmt"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -78,86 +78,90 @@ func (c *CardsClient) Close() {
 	c.conn.Close()
 }
 
-func (c *CardsClient) GetCard(ctx context.Context, cardId entity.CardId) (entity.Card, error) {
+func (c *CardsClient) GetCard(ctx context.Context, cardId model.CardId) (*model.Card, error) {
 	resp, err := c.cardService.GetCard(ctx, &pb.GetCardRequest{CardId: int64(cardId)})
 	if err != nil {
-		return entity.Card{}, err
+		return nil, err
 	}
 	createAt, err := time.Parse(time.RFC3339, resp.Card.CreatedAt)
 	if err != nil {
-		return entity.Card{}, fmt.Errorf("error parsing create time %w", err)
+		return nil, fmt.Errorf("error parsing create time %w", err)
 	}
-	return entity.Card{
-		Id:         entity.CardId(resp.Card.Id),
-		GroupId:    entity.GroupId(resp.Card.GroupId),
-		FrontText:  resp.Card.FrontText,
-		BackText:   resp.Card.BackText,
+
+	return &model.Card{
+		Id:         model.CardId(resp.Card.Id),
+		GroupId:    model.GroupId(resp.Card.GroupId),
+		Sides:      model.NewCardSides(resp.Card.FrontText, resp.Card.BackText),
 		CreateTime: createAt,
 	}, nil
 }
 
-func (c *CardsClient) ListCards(ctx context.Context, groupId entity.GroupId) ([]entity.Card, error) {
+func (c *CardsClient) ListCards(ctx context.Context, groupId model.GroupId) ([]*model.Card, error) {
 	resp, err := c.cardService.ListCards(ctx, &pb.ListCardsRequest{GroupId: int64(groupId)})
 	if err != nil {
-		return []entity.Card{}, err
+		return nil, err
 	}
-	cards := make([]entity.Card, len(resp.Cards))
+	cards := make([]*model.Card, len(resp.Cards))
 	for i, card := range resp.Cards {
-		createAt, err := time.Parse(time.RFC3339, card.CreatedAt)
+		var createAt time.Time
+		createAt, err = time.Parse(time.RFC3339, card.CreatedAt)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing create time %w", err)
 		}
-		cards[i] = entity.Card{
-			Id:         entity.CardId(card.Id),
-			GroupId:    entity.GroupId(card.GroupId),
-			FrontText:  card.FrontText,
-			BackText:   card.BackText,
+		cards[i] = &model.Card{
+			Id:         model.CardId(card.Id),
+			GroupId:    model.GroupId(card.GroupId),
+			Sides:      model.NewCardSides(card.FrontText, card.BackText),
 			CreateTime: createAt,
 		}
 	}
 	return cards, nil
 }
 
-func (c *CardsClient) GetGroup(ctx context.Context, groupId entity.GroupId) (entity.Group, error) {
+func (c *CardsClient) GetGroup(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
 	resp, err := c.cardService.GetGroup(ctx, &pb.GetGroupRequest{GroupId: int64(groupId)})
 	if err != nil {
-		return entity.Group{}, err
+		return nil, err
 	}
 	if resp.Group == nil {
-		return entity.Group{}, fmt.Errorf("error getting group from card service: group (groupId: %v) is nil", groupId)
+		return nil, fmt.Errorf("error getting group from card service: group (groupId: %v) is nil", groupId)
 	}
 	createAt, err := time.Parse(time.RFC3339, resp.Group.CreatedAt)
 	if err != nil {
-		return entity.Group{}, fmt.Errorf("error parsing create time %w", err)
+		return nil, fmt.Errorf("error parsing create time %w", err)
 	}
-	return entity.Group{
-		Id:          entity.GroupId(resp.Group.Id),
-		OwnerId:     entity.UserId(resp.Group.OwnerId),
+	return &model.Group{
+		Id:          model.GroupId(resp.Group.Id),
+		OwnerId:     model.UserId(resp.Group.OwnerId),
 		Name:        resp.Group.Name,
 		Description: resp.Group.Description,
 		CreateTime:  createAt,
-		Visibility:  entity.GroupVisibility(resp.Group.Visibility),
+		Visibility:  model.GroupVisibility(resp.Group.Visibility),
+		CardSideTypes: []model.CardSideType{
+			model.CardSideType(resp.Group.CardSideTypes[model.CARD_SIDE_FIRST]),
+			model.CardSideType(resp.Group.CardSideTypes[model.CARD_SIDE_SECOND]),
+		},
 	}, nil
 }
 
-func (c *CardsClient) ListGroups(ctx context.Context, _ entity.UserId) ([]entity.Group, error) {
+func (c *CardsClient) ListGroups(ctx context.Context, _ model.UserId) ([]*model.Group, error) {
 	resp, err := c.cardService.ListGroups(ctx, &pb.ListGroupsRequest{})
 	if err != nil {
-		return []entity.Group{}, err
+		return nil, err
 	}
-	groups := make([]entity.Group, len(resp.Groups))
+	groups := make([]*model.Group, len(resp.Groups))
 	for i, group := range resp.Groups {
 		createAt, err := time.Parse(time.RFC3339, group.CreatedAt)
 		if err != nil {
 			return nil, fmt.Errorf("error parsing create time %w", err)
 		}
-		groups[i] = entity.Group{
-			Id:          entity.GroupId(group.Id),
-			OwnerId:     entity.UserId(group.OwnerId),
+		groups[i] = &model.Group{
+			Id:          model.GroupId(group.Id),
+			OwnerId:     model.UserId(group.OwnerId),
 			Name:        group.Name,
 			Description: group.Description,
 			CreateTime:  createAt,
-			Visibility:  entity.GroupVisibility(group.Visibility),
+			Visibility:  model.GroupVisibility(group.Visibility),
 		}
 	}
 	return groups, nil

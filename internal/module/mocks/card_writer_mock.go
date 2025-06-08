@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.CardWriter -o card_writer_mock.go -n CardWriterMock -p mocks
+//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/module.CardWriter -o card_writer_mock.go -n CardWriterMock -p mocks
 
 import (
 	"context"
@@ -11,37 +11,37 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
-// CardWriterMock implements mm_service.CardWriter
+// CardWriterMock implements mm_module.CardWriter
 type CardWriterMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcAddCard          func(ctx context.Context, card entity.Card) (c2 entity.CardId, err error)
+	funcAddCard          func(ctx context.Context, card *model.Card) (c2 model.CardId, err error)
 	funcAddCardOrigin    string
-	inspectFuncAddCard   func(ctx context.Context, card entity.Card)
+	inspectFuncAddCard   func(ctx context.Context, card *model.Card)
 	afterAddCardCounter  uint64
 	beforeAddCardCounter uint64
 	AddCardMock          mCardWriterMockAddCard
 
-	funcDeleteCard          func(ctx context.Context, cardId entity.CardId) (err error)
+	funcDeleteCard          func(ctx context.Context, cardId model.CardId) (err error)
 	funcDeleteCardOrigin    string
-	inspectFuncDeleteCard   func(ctx context.Context, cardId entity.CardId)
+	inspectFuncDeleteCard   func(ctx context.Context, cardId model.CardId)
 	afterDeleteCardCounter  uint64
 	beforeDeleteCardCounter uint64
 	DeleteCardMock          mCardWriterMockDeleteCard
 
-	funcUpdateCard          func(ctx context.Context, card entity.Card) (err error)
+	funcUpdateCard          func(ctx context.Context, card *model.Card) (err error)
 	funcUpdateCardOrigin    string
-	inspectFuncUpdateCard   func(ctx context.Context, card entity.Card)
+	inspectFuncUpdateCard   func(ctx context.Context, card *model.Card)
 	afterUpdateCardCounter  uint64
 	beforeUpdateCardCounter uint64
 	UpdateCardMock          mCardWriterMockUpdateCard
 }
 
-// NewCardWriterMock returns a mock for mm_service.CardWriter
+// NewCardWriterMock returns a mock for mm_module.CardWriter
 func NewCardWriterMock(t minimock.Tester) *CardWriterMock {
 	m := &CardWriterMock{t: t}
 
@@ -90,18 +90,18 @@ type CardWriterMockAddCardExpectation struct {
 // CardWriterMockAddCardParams contains parameters of the CardWriter.AddCard
 type CardWriterMockAddCardParams struct {
 	ctx  context.Context
-	card entity.Card
+	card *model.Card
 }
 
 // CardWriterMockAddCardParamPtrs contains pointers to parameters of the CardWriter.AddCard
 type CardWriterMockAddCardParamPtrs struct {
 	ctx  *context.Context
-	card *entity.Card
+	card **model.Card
 }
 
 // CardWriterMockAddCardResults contains results of the CardWriter.AddCard
 type CardWriterMockAddCardResults struct {
-	c2  entity.CardId
+	c2  model.CardId
 	err error
 }
 
@@ -123,7 +123,7 @@ func (mmAddCard *mCardWriterMockAddCard) Optional() *mCardWriterMockAddCard {
 }
 
 // Expect sets up expected params for CardWriter.AddCard
-func (mmAddCard *mCardWriterMockAddCard) Expect(ctx context.Context, card entity.Card) *mCardWriterMockAddCard {
+func (mmAddCard *mCardWriterMockAddCard) Expect(ctx context.Context, card *model.Card) *mCardWriterMockAddCard {
 	if mmAddCard.mock.funcAddCard != nil {
 		mmAddCard.mock.t.Fatalf("CardWriterMock.AddCard mock is already set by Set")
 	}
@@ -171,7 +171,7 @@ func (mmAddCard *mCardWriterMockAddCard) ExpectCtxParam1(ctx context.Context) *m
 }
 
 // ExpectCardParam2 sets up expected param card for CardWriter.AddCard
-func (mmAddCard *mCardWriterMockAddCard) ExpectCardParam2(card entity.Card) *mCardWriterMockAddCard {
+func (mmAddCard *mCardWriterMockAddCard) ExpectCardParam2(card *model.Card) *mCardWriterMockAddCard {
 	if mmAddCard.mock.funcAddCard != nil {
 		mmAddCard.mock.t.Fatalf("CardWriterMock.AddCard mock is already set by Set")
 	}
@@ -194,7 +194,7 @@ func (mmAddCard *mCardWriterMockAddCard) ExpectCardParam2(card entity.Card) *mCa
 }
 
 // Inspect accepts an inspector function that has same arguments as the CardWriter.AddCard
-func (mmAddCard *mCardWriterMockAddCard) Inspect(f func(ctx context.Context, card entity.Card)) *mCardWriterMockAddCard {
+func (mmAddCard *mCardWriterMockAddCard) Inspect(f func(ctx context.Context, card *model.Card)) *mCardWriterMockAddCard {
 	if mmAddCard.mock.inspectFuncAddCard != nil {
 		mmAddCard.mock.t.Fatalf("Inspect function is already set for CardWriterMock.AddCard")
 	}
@@ -205,7 +205,7 @@ func (mmAddCard *mCardWriterMockAddCard) Inspect(f func(ctx context.Context, car
 }
 
 // Return sets up results that will be returned by CardWriter.AddCard
-func (mmAddCard *mCardWriterMockAddCard) Return(c2 entity.CardId, err error) *CardWriterMock {
+func (mmAddCard *mCardWriterMockAddCard) Return(c2 model.CardId, err error) *CardWriterMock {
 	if mmAddCard.mock.funcAddCard != nil {
 		mmAddCard.mock.t.Fatalf("CardWriterMock.AddCard mock is already set by Set")
 	}
@@ -219,7 +219,7 @@ func (mmAddCard *mCardWriterMockAddCard) Return(c2 entity.CardId, err error) *Ca
 }
 
 // Set uses given function f to mock the CardWriter.AddCard method
-func (mmAddCard *mCardWriterMockAddCard) Set(f func(ctx context.Context, card entity.Card) (c2 entity.CardId, err error)) *CardWriterMock {
+func (mmAddCard *mCardWriterMockAddCard) Set(f func(ctx context.Context, card *model.Card) (c2 model.CardId, err error)) *CardWriterMock {
 	if mmAddCard.defaultExpectation != nil {
 		mmAddCard.mock.t.Fatalf("Default expectation is already set for the CardWriter.AddCard method")
 	}
@@ -235,7 +235,7 @@ func (mmAddCard *mCardWriterMockAddCard) Set(f func(ctx context.Context, card en
 
 // When sets expectation for the CardWriter.AddCard which will trigger the result defined by the following
 // Then helper
-func (mmAddCard *mCardWriterMockAddCard) When(ctx context.Context, card entity.Card) *CardWriterMockAddCardExpectation {
+func (mmAddCard *mCardWriterMockAddCard) When(ctx context.Context, card *model.Card) *CardWriterMockAddCardExpectation {
 	if mmAddCard.mock.funcAddCard != nil {
 		mmAddCard.mock.t.Fatalf("CardWriterMock.AddCard mock is already set by Set")
 	}
@@ -250,7 +250,7 @@ func (mmAddCard *mCardWriterMockAddCard) When(ctx context.Context, card entity.C
 }
 
 // Then sets up CardWriter.AddCard return parameters for the expectation previously defined by the When method
-func (e *CardWriterMockAddCardExpectation) Then(c2 entity.CardId, err error) *CardWriterMock {
+func (e *CardWriterMockAddCardExpectation) Then(c2 model.CardId, err error) *CardWriterMock {
 	e.results = &CardWriterMockAddCardResults{c2, err}
 	return e.mock
 }
@@ -276,8 +276,8 @@ func (mmAddCard *mCardWriterMockAddCard) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// AddCard implements mm_service.CardWriter
-func (mmAddCard *CardWriterMock) AddCard(ctx context.Context, card entity.Card) (c2 entity.CardId, err error) {
+// AddCard implements mm_module.CardWriter
+func (mmAddCard *CardWriterMock) AddCard(ctx context.Context, card *model.Card) (c2 model.CardId, err error) {
 	mm_atomic.AddUint64(&mmAddCard.beforeAddCardCounter, 1)
 	defer mm_atomic.AddUint64(&mmAddCard.afterAddCardCounter, 1)
 
@@ -433,13 +433,13 @@ type CardWriterMockDeleteCardExpectation struct {
 // CardWriterMockDeleteCardParams contains parameters of the CardWriter.DeleteCard
 type CardWriterMockDeleteCardParams struct {
 	ctx    context.Context
-	cardId entity.CardId
+	cardId model.CardId
 }
 
 // CardWriterMockDeleteCardParamPtrs contains pointers to parameters of the CardWriter.DeleteCard
 type CardWriterMockDeleteCardParamPtrs struct {
 	ctx    *context.Context
-	cardId *entity.CardId
+	cardId *model.CardId
 }
 
 // CardWriterMockDeleteCardResults contains results of the CardWriter.DeleteCard
@@ -465,7 +465,7 @@ func (mmDeleteCard *mCardWriterMockDeleteCard) Optional() *mCardWriterMockDelete
 }
 
 // Expect sets up expected params for CardWriter.DeleteCard
-func (mmDeleteCard *mCardWriterMockDeleteCard) Expect(ctx context.Context, cardId entity.CardId) *mCardWriterMockDeleteCard {
+func (mmDeleteCard *mCardWriterMockDeleteCard) Expect(ctx context.Context, cardId model.CardId) *mCardWriterMockDeleteCard {
 	if mmDeleteCard.mock.funcDeleteCard != nil {
 		mmDeleteCard.mock.t.Fatalf("CardWriterMock.DeleteCard mock is already set by Set")
 	}
@@ -513,7 +513,7 @@ func (mmDeleteCard *mCardWriterMockDeleteCard) ExpectCtxParam1(ctx context.Conte
 }
 
 // ExpectCardIdParam2 sets up expected param cardId for CardWriter.DeleteCard
-func (mmDeleteCard *mCardWriterMockDeleteCard) ExpectCardIdParam2(cardId entity.CardId) *mCardWriterMockDeleteCard {
+func (mmDeleteCard *mCardWriterMockDeleteCard) ExpectCardIdParam2(cardId model.CardId) *mCardWriterMockDeleteCard {
 	if mmDeleteCard.mock.funcDeleteCard != nil {
 		mmDeleteCard.mock.t.Fatalf("CardWriterMock.DeleteCard mock is already set by Set")
 	}
@@ -536,7 +536,7 @@ func (mmDeleteCard *mCardWriterMockDeleteCard) ExpectCardIdParam2(cardId entity.
 }
 
 // Inspect accepts an inspector function that has same arguments as the CardWriter.DeleteCard
-func (mmDeleteCard *mCardWriterMockDeleteCard) Inspect(f func(ctx context.Context, cardId entity.CardId)) *mCardWriterMockDeleteCard {
+func (mmDeleteCard *mCardWriterMockDeleteCard) Inspect(f func(ctx context.Context, cardId model.CardId)) *mCardWriterMockDeleteCard {
 	if mmDeleteCard.mock.inspectFuncDeleteCard != nil {
 		mmDeleteCard.mock.t.Fatalf("Inspect function is already set for CardWriterMock.DeleteCard")
 	}
@@ -561,7 +561,7 @@ func (mmDeleteCard *mCardWriterMockDeleteCard) Return(err error) *CardWriterMock
 }
 
 // Set uses given function f to mock the CardWriter.DeleteCard method
-func (mmDeleteCard *mCardWriterMockDeleteCard) Set(f func(ctx context.Context, cardId entity.CardId) (err error)) *CardWriterMock {
+func (mmDeleteCard *mCardWriterMockDeleteCard) Set(f func(ctx context.Context, cardId model.CardId) (err error)) *CardWriterMock {
 	if mmDeleteCard.defaultExpectation != nil {
 		mmDeleteCard.mock.t.Fatalf("Default expectation is already set for the CardWriter.DeleteCard method")
 	}
@@ -577,7 +577,7 @@ func (mmDeleteCard *mCardWriterMockDeleteCard) Set(f func(ctx context.Context, c
 
 // When sets expectation for the CardWriter.DeleteCard which will trigger the result defined by the following
 // Then helper
-func (mmDeleteCard *mCardWriterMockDeleteCard) When(ctx context.Context, cardId entity.CardId) *CardWriterMockDeleteCardExpectation {
+func (mmDeleteCard *mCardWriterMockDeleteCard) When(ctx context.Context, cardId model.CardId) *CardWriterMockDeleteCardExpectation {
 	if mmDeleteCard.mock.funcDeleteCard != nil {
 		mmDeleteCard.mock.t.Fatalf("CardWriterMock.DeleteCard mock is already set by Set")
 	}
@@ -618,8 +618,8 @@ func (mmDeleteCard *mCardWriterMockDeleteCard) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// DeleteCard implements mm_service.CardWriter
-func (mmDeleteCard *CardWriterMock) DeleteCard(ctx context.Context, cardId entity.CardId) (err error) {
+// DeleteCard implements mm_module.CardWriter
+func (mmDeleteCard *CardWriterMock) DeleteCard(ctx context.Context, cardId model.CardId) (err error) {
 	mm_atomic.AddUint64(&mmDeleteCard.beforeDeleteCardCounter, 1)
 	defer mm_atomic.AddUint64(&mmDeleteCard.afterDeleteCardCounter, 1)
 
@@ -775,13 +775,13 @@ type CardWriterMockUpdateCardExpectation struct {
 // CardWriterMockUpdateCardParams contains parameters of the CardWriter.UpdateCard
 type CardWriterMockUpdateCardParams struct {
 	ctx  context.Context
-	card entity.Card
+	card *model.Card
 }
 
 // CardWriterMockUpdateCardParamPtrs contains pointers to parameters of the CardWriter.UpdateCard
 type CardWriterMockUpdateCardParamPtrs struct {
 	ctx  *context.Context
-	card *entity.Card
+	card **model.Card
 }
 
 // CardWriterMockUpdateCardResults contains results of the CardWriter.UpdateCard
@@ -807,7 +807,7 @@ func (mmUpdateCard *mCardWriterMockUpdateCard) Optional() *mCardWriterMockUpdate
 }
 
 // Expect sets up expected params for CardWriter.UpdateCard
-func (mmUpdateCard *mCardWriterMockUpdateCard) Expect(ctx context.Context, card entity.Card) *mCardWriterMockUpdateCard {
+func (mmUpdateCard *mCardWriterMockUpdateCard) Expect(ctx context.Context, card *model.Card) *mCardWriterMockUpdateCard {
 	if mmUpdateCard.mock.funcUpdateCard != nil {
 		mmUpdateCard.mock.t.Fatalf("CardWriterMock.UpdateCard mock is already set by Set")
 	}
@@ -855,7 +855,7 @@ func (mmUpdateCard *mCardWriterMockUpdateCard) ExpectCtxParam1(ctx context.Conte
 }
 
 // ExpectCardParam2 sets up expected param card for CardWriter.UpdateCard
-func (mmUpdateCard *mCardWriterMockUpdateCard) ExpectCardParam2(card entity.Card) *mCardWriterMockUpdateCard {
+func (mmUpdateCard *mCardWriterMockUpdateCard) ExpectCardParam2(card *model.Card) *mCardWriterMockUpdateCard {
 	if mmUpdateCard.mock.funcUpdateCard != nil {
 		mmUpdateCard.mock.t.Fatalf("CardWriterMock.UpdateCard mock is already set by Set")
 	}
@@ -878,7 +878,7 @@ func (mmUpdateCard *mCardWriterMockUpdateCard) ExpectCardParam2(card entity.Card
 }
 
 // Inspect accepts an inspector function that has same arguments as the CardWriter.UpdateCard
-func (mmUpdateCard *mCardWriterMockUpdateCard) Inspect(f func(ctx context.Context, card entity.Card)) *mCardWriterMockUpdateCard {
+func (mmUpdateCard *mCardWriterMockUpdateCard) Inspect(f func(ctx context.Context, card *model.Card)) *mCardWriterMockUpdateCard {
 	if mmUpdateCard.mock.inspectFuncUpdateCard != nil {
 		mmUpdateCard.mock.t.Fatalf("Inspect function is already set for CardWriterMock.UpdateCard")
 	}
@@ -903,7 +903,7 @@ func (mmUpdateCard *mCardWriterMockUpdateCard) Return(err error) *CardWriterMock
 }
 
 // Set uses given function f to mock the CardWriter.UpdateCard method
-func (mmUpdateCard *mCardWriterMockUpdateCard) Set(f func(ctx context.Context, card entity.Card) (err error)) *CardWriterMock {
+func (mmUpdateCard *mCardWriterMockUpdateCard) Set(f func(ctx context.Context, card *model.Card) (err error)) *CardWriterMock {
 	if mmUpdateCard.defaultExpectation != nil {
 		mmUpdateCard.mock.t.Fatalf("Default expectation is already set for the CardWriter.UpdateCard method")
 	}
@@ -919,7 +919,7 @@ func (mmUpdateCard *mCardWriterMockUpdateCard) Set(f func(ctx context.Context, c
 
 // When sets expectation for the CardWriter.UpdateCard which will trigger the result defined by the following
 // Then helper
-func (mmUpdateCard *mCardWriterMockUpdateCard) When(ctx context.Context, card entity.Card) *CardWriterMockUpdateCardExpectation {
+func (mmUpdateCard *mCardWriterMockUpdateCard) When(ctx context.Context, card *model.Card) *CardWriterMockUpdateCardExpectation {
 	if mmUpdateCard.mock.funcUpdateCard != nil {
 		mmUpdateCard.mock.t.Fatalf("CardWriterMock.UpdateCard mock is already set by Set")
 	}
@@ -960,8 +960,8 @@ func (mmUpdateCard *mCardWriterMockUpdateCard) invocationsDone() bool {
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// UpdateCard implements mm_service.CardWriter
-func (mmUpdateCard *CardWriterMock) UpdateCard(ctx context.Context, card entity.Card) (err error) {
+// UpdateCard implements mm_module.CardWriter
+func (mmUpdateCard *CardWriterMock) UpdateCard(ctx context.Context, card *model.Card) (err error) {
 	mm_atomic.AddUint64(&mmUpdateCard.beforeUpdateCardCounter, 1)
 	defer mm_atomic.AddUint64(&mmUpdateCard.afterUpdateCardCounter, 1)
 

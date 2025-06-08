@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -18,10 +18,10 @@ func NewUserRepository(pool *pgxpool.Pool) *UserRepository {
 	return &UserRepository{db: pool}
 }
 
-func (u *UserRepository) GetUser(ctx context.Context, id entity.UserId) (entity.User, error) {
+func (u *UserRepository) GetUser(ctx context.Context, id model.UserId) (model.User, error) {
 	op := "postgres.UserRepository.GetUser"
 
-	var user entity.User
+	var user model.User
 
 	err := u.db.QueryRow(
 		ctx,
@@ -33,7 +33,7 @@ func (u *UserRepository) GetUser(ctx context.Context, id entity.UserId) (entity.
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return user, entity.ErrUserNotFound
+			return user, model.ErrUserNotFound
 		}
 		return user, fmt.Errorf("%s: %w", op, err)
 	}
@@ -41,7 +41,7 @@ func (u *UserRepository) GetUser(ctx context.Context, id entity.UserId) (entity.
 	return user, nil
 }
 
-func (u *UserRepository) AddUser(ctx context.Context, user entity.User) error {
+func (u *UserRepository) AddUser(ctx context.Context, user model.User) error {
 	const op = "postgres.UserRepository.AddUser"
 
 	var id int64

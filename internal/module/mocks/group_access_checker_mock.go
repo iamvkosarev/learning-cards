@@ -2,7 +2,7 @@
 
 package mocks
 
-//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/service.GroupAccessChecker -o group_access_checker_mock.go -n GroupAccessChecker -p mocks
+//go:generate minimock -i github.com/iamvkosarev/learning-cards/internal/module.GroupAccessChecker -o group_access_checker_mock.go -n GroupAccessCheckerMock -p mocks
 
 import (
 	"context"
@@ -11,91 +11,91 @@ import (
 	mm_time "time"
 
 	"github.com/gojuno/minimock/v3"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 )
 
-// GroupAccessChecker implements mm_service.GroupAccessChecker
-type GroupAccessChecker struct {
+// GroupAccessCheckerMock implements mm_module.GroupAccessChecker
+type GroupAccessCheckerMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcCheckReadGroupAccess          func(ctx context.Context, groupId entity.GroupId) (err error)
+	funcCheckReadGroupAccess          func(ctx context.Context, groupId model.GroupId) (err error)
 	funcCheckReadGroupAccessOrigin    string
-	inspectFuncCheckReadGroupAccess   func(ctx context.Context, groupId entity.GroupId)
+	inspectFuncCheckReadGroupAccess   func(ctx context.Context, groupId model.GroupId)
 	afterCheckReadGroupAccessCounter  uint64
 	beforeCheckReadGroupAccessCounter uint64
-	CheckReadGroupAccessMock          mGroupAccessCheckerCheckReadGroupAccess
+	CheckReadGroupAccessMock          mGroupAccessCheckerMockCheckReadGroupAccess
 
-	funcCheckWriteGroupAccess          func(ctx context.Context, groupId entity.GroupId) (err error)
+	funcCheckWriteGroupAccess          func(ctx context.Context, groupId model.GroupId) (err error)
 	funcCheckWriteGroupAccessOrigin    string
-	inspectFuncCheckWriteGroupAccess   func(ctx context.Context, groupId entity.GroupId)
+	inspectFuncCheckWriteGroupAccess   func(ctx context.Context, groupId model.GroupId)
 	afterCheckWriteGroupAccessCounter  uint64
 	beforeCheckWriteGroupAccessCounter uint64
-	CheckWriteGroupAccessMock          mGroupAccessCheckerCheckWriteGroupAccess
+	CheckWriteGroupAccessMock          mGroupAccessCheckerMockCheckWriteGroupAccess
 }
 
-// NewGroupAccessChecker returns a mock for mm_service.GroupAccessChecker
-func NewGroupAccessChecker(t minimock.Tester) *GroupAccessChecker {
-	m := &GroupAccessChecker{t: t}
+// NewGroupAccessCheckerMock returns a mock for mm_module.GroupAccessChecker
+func NewGroupAccessCheckerMock(t minimock.Tester) *GroupAccessCheckerMock {
+	m := &GroupAccessCheckerMock{t: t}
 
 	if controller, ok := t.(minimock.MockController); ok {
 		controller.RegisterMocker(m)
 	}
 
-	m.CheckReadGroupAccessMock = mGroupAccessCheckerCheckReadGroupAccess{mock: m}
-	m.CheckReadGroupAccessMock.callArgs = []*GroupAccessCheckerCheckReadGroupAccessParams{}
+	m.CheckReadGroupAccessMock = mGroupAccessCheckerMockCheckReadGroupAccess{mock: m}
+	m.CheckReadGroupAccessMock.callArgs = []*GroupAccessCheckerMockCheckReadGroupAccessParams{}
 
-	m.CheckWriteGroupAccessMock = mGroupAccessCheckerCheckWriteGroupAccess{mock: m}
-	m.CheckWriteGroupAccessMock.callArgs = []*GroupAccessCheckerCheckWriteGroupAccessParams{}
+	m.CheckWriteGroupAccessMock = mGroupAccessCheckerMockCheckWriteGroupAccess{mock: m}
+	m.CheckWriteGroupAccessMock.callArgs = []*GroupAccessCheckerMockCheckWriteGroupAccessParams{}
 
 	t.Cleanup(m.MinimockFinish)
 
 	return m
 }
 
-type mGroupAccessCheckerCheckReadGroupAccess struct {
+type mGroupAccessCheckerMockCheckReadGroupAccess struct {
 	optional           bool
-	mock               *GroupAccessChecker
-	defaultExpectation *GroupAccessCheckerCheckReadGroupAccessExpectation
-	expectations       []*GroupAccessCheckerCheckReadGroupAccessExpectation
+	mock               *GroupAccessCheckerMock
+	defaultExpectation *GroupAccessCheckerMockCheckReadGroupAccessExpectation
+	expectations       []*GroupAccessCheckerMockCheckReadGroupAccessExpectation
 
-	callArgs []*GroupAccessCheckerCheckReadGroupAccessParams
+	callArgs []*GroupAccessCheckerMockCheckReadGroupAccessParams
 	mutex    sync.RWMutex
 
 	expectedInvocations       uint64
 	expectedInvocationsOrigin string
 }
 
-// GroupAccessCheckerCheckReadGroupAccessExpectation specifies expectation struct of the GroupAccessChecker.CheckReadGroupAccess
-type GroupAccessCheckerCheckReadGroupAccessExpectation struct {
-	mock               *GroupAccessChecker
-	params             *GroupAccessCheckerCheckReadGroupAccessParams
-	paramPtrs          *GroupAccessCheckerCheckReadGroupAccessParamPtrs
-	expectationOrigins GroupAccessCheckerCheckReadGroupAccessExpectationOrigins
-	results            *GroupAccessCheckerCheckReadGroupAccessResults
+// GroupAccessCheckerMockCheckReadGroupAccessExpectation specifies expectation struct of the GroupAccessChecker.CheckReadGroupAccess
+type GroupAccessCheckerMockCheckReadGroupAccessExpectation struct {
+	mock               *GroupAccessCheckerMock
+	params             *GroupAccessCheckerMockCheckReadGroupAccessParams
+	paramPtrs          *GroupAccessCheckerMockCheckReadGroupAccessParamPtrs
+	expectationOrigins GroupAccessCheckerMockCheckReadGroupAccessExpectationOrigins
+	results            *GroupAccessCheckerMockCheckReadGroupAccessResults
 	returnOrigin       string
 	Counter            uint64
 }
 
-// GroupAccessCheckerCheckReadGroupAccessParams contains parameters of the GroupAccessChecker.CheckReadGroupAccess
-type GroupAccessCheckerCheckReadGroupAccessParams struct {
+// GroupAccessCheckerMockCheckReadGroupAccessParams contains parameters of the GroupAccessChecker.CheckReadGroupAccess
+type GroupAccessCheckerMockCheckReadGroupAccessParams struct {
 	ctx     context.Context
-	groupId entity.GroupId
+	groupId model.GroupId
 }
 
-// GroupAccessCheckerCheckReadGroupAccessParamPtrs contains pointers to parameters of the GroupAccessChecker.CheckReadGroupAccess
-type GroupAccessCheckerCheckReadGroupAccessParamPtrs struct {
+// GroupAccessCheckerMockCheckReadGroupAccessParamPtrs contains pointers to parameters of the GroupAccessChecker.CheckReadGroupAccess
+type GroupAccessCheckerMockCheckReadGroupAccessParamPtrs struct {
 	ctx     *context.Context
-	groupId *entity.GroupId
+	groupId *model.GroupId
 }
 
-// GroupAccessCheckerCheckReadGroupAccessResults contains results of the GroupAccessChecker.CheckReadGroupAccess
-type GroupAccessCheckerCheckReadGroupAccessResults struct {
+// GroupAccessCheckerMockCheckReadGroupAccessResults contains results of the GroupAccessChecker.CheckReadGroupAccess
+type GroupAccessCheckerMockCheckReadGroupAccessResults struct {
 	err error
 }
 
-// GroupAccessCheckerCheckReadGroupAccessOrigins contains origins of expectations of the GroupAccessChecker.CheckReadGroupAccess
-type GroupAccessCheckerCheckReadGroupAccessExpectationOrigins struct {
+// GroupAccessCheckerMockCheckReadGroupAccessOrigins contains origins of expectations of the GroupAccessChecker.CheckReadGroupAccess
+type GroupAccessCheckerMockCheckReadGroupAccessExpectationOrigins struct {
 	origin        string
 	originCtx     string
 	originGroupId string
@@ -106,26 +106,26 @@ type GroupAccessCheckerCheckReadGroupAccessExpectationOrigins struct {
 // Optional() makes method check to work in '0 or more' mode.
 // It is NOT RECOMMENDED to use this option unless you really need it, as default behaviour helps to
 // catch the problems when the expected method call is totally skipped during test run.
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Optional() *mGroupAccessCheckerCheckReadGroupAccess {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) Optional() *mGroupAccessCheckerMockCheckReadGroupAccess {
 	mmCheckReadGroupAccess.optional = true
 	return mmCheckReadGroupAccess
 }
 
 // Expect sets up expected params for GroupAccessChecker.CheckReadGroupAccess
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Expect(ctx context.Context, groupId entity.GroupId) *mGroupAccessCheckerCheckReadGroupAccess {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) Expect(ctx context.Context, groupId model.GroupId) *mGroupAccessCheckerMockCheckReadGroupAccess {
 	if mmCheckReadGroupAccess.mock.funcCheckReadGroupAccess != nil {
-		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckReadGroupAccess mock is already set by Set")
+		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckReadGroupAccess mock is already set by Set")
 	}
 
 	if mmCheckReadGroupAccess.defaultExpectation == nil {
-		mmCheckReadGroupAccess.defaultExpectation = &GroupAccessCheckerCheckReadGroupAccessExpectation{}
+		mmCheckReadGroupAccess.defaultExpectation = &GroupAccessCheckerMockCheckReadGroupAccessExpectation{}
 	}
 
 	if mmCheckReadGroupAccess.defaultExpectation.paramPtrs != nil {
-		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckReadGroupAccess mock is already set by ExpectParams functions")
+		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckReadGroupAccess mock is already set by ExpectParams functions")
 	}
 
-	mmCheckReadGroupAccess.defaultExpectation.params = &GroupAccessCheckerCheckReadGroupAccessParams{ctx, groupId}
+	mmCheckReadGroupAccess.defaultExpectation.params = &GroupAccessCheckerMockCheckReadGroupAccessParams{ctx, groupId}
 	mmCheckReadGroupAccess.defaultExpectation.expectationOrigins.origin = minimock.CallerInfo(1)
 	for _, e := range mmCheckReadGroupAccess.expectations {
 		if minimock.Equal(e.params, mmCheckReadGroupAccess.defaultExpectation.params) {
@@ -137,21 +137,21 @@ func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Expect(ct
 }
 
 // ExpectCtxParam1 sets up expected param ctx for GroupAccessChecker.CheckReadGroupAccess
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) ExpectCtxParam1(ctx context.Context) *mGroupAccessCheckerCheckReadGroupAccess {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) ExpectCtxParam1(ctx context.Context) *mGroupAccessCheckerMockCheckReadGroupAccess {
 	if mmCheckReadGroupAccess.mock.funcCheckReadGroupAccess != nil {
-		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckReadGroupAccess mock is already set by Set")
+		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckReadGroupAccess mock is already set by Set")
 	}
 
 	if mmCheckReadGroupAccess.defaultExpectation == nil {
-		mmCheckReadGroupAccess.defaultExpectation = &GroupAccessCheckerCheckReadGroupAccessExpectation{}
+		mmCheckReadGroupAccess.defaultExpectation = &GroupAccessCheckerMockCheckReadGroupAccessExpectation{}
 	}
 
 	if mmCheckReadGroupAccess.defaultExpectation.params != nil {
-		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckReadGroupAccess mock is already set by Expect")
+		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckReadGroupAccess mock is already set by Expect")
 	}
 
 	if mmCheckReadGroupAccess.defaultExpectation.paramPtrs == nil {
-		mmCheckReadGroupAccess.defaultExpectation.paramPtrs = &GroupAccessCheckerCheckReadGroupAccessParamPtrs{}
+		mmCheckReadGroupAccess.defaultExpectation.paramPtrs = &GroupAccessCheckerMockCheckReadGroupAccessParamPtrs{}
 	}
 	mmCheckReadGroupAccess.defaultExpectation.paramPtrs.ctx = &ctx
 	mmCheckReadGroupAccess.defaultExpectation.expectationOrigins.originCtx = minimock.CallerInfo(1)
@@ -160,21 +160,21 @@ func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) ExpectCtx
 }
 
 // ExpectGroupIdParam2 sets up expected param groupId for GroupAccessChecker.CheckReadGroupAccess
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) ExpectGroupIdParam2(groupId entity.GroupId) *mGroupAccessCheckerCheckReadGroupAccess {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) ExpectGroupIdParam2(groupId model.GroupId) *mGroupAccessCheckerMockCheckReadGroupAccess {
 	if mmCheckReadGroupAccess.mock.funcCheckReadGroupAccess != nil {
-		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckReadGroupAccess mock is already set by Set")
+		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckReadGroupAccess mock is already set by Set")
 	}
 
 	if mmCheckReadGroupAccess.defaultExpectation == nil {
-		mmCheckReadGroupAccess.defaultExpectation = &GroupAccessCheckerCheckReadGroupAccessExpectation{}
+		mmCheckReadGroupAccess.defaultExpectation = &GroupAccessCheckerMockCheckReadGroupAccessExpectation{}
 	}
 
 	if mmCheckReadGroupAccess.defaultExpectation.params != nil {
-		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckReadGroupAccess mock is already set by Expect")
+		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckReadGroupAccess mock is already set by Expect")
 	}
 
 	if mmCheckReadGroupAccess.defaultExpectation.paramPtrs == nil {
-		mmCheckReadGroupAccess.defaultExpectation.paramPtrs = &GroupAccessCheckerCheckReadGroupAccessParamPtrs{}
+		mmCheckReadGroupAccess.defaultExpectation.paramPtrs = &GroupAccessCheckerMockCheckReadGroupAccessParamPtrs{}
 	}
 	mmCheckReadGroupAccess.defaultExpectation.paramPtrs.groupId = &groupId
 	mmCheckReadGroupAccess.defaultExpectation.expectationOrigins.originGroupId = minimock.CallerInfo(1)
@@ -183,9 +183,9 @@ func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) ExpectGro
 }
 
 // Inspect accepts an inspector function that has same arguments as the GroupAccessChecker.CheckReadGroupAccess
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Inspect(f func(ctx context.Context, groupId entity.GroupId)) *mGroupAccessCheckerCheckReadGroupAccess {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) Inspect(f func(ctx context.Context, groupId model.GroupId)) *mGroupAccessCheckerMockCheckReadGroupAccess {
 	if mmCheckReadGroupAccess.mock.inspectFuncCheckReadGroupAccess != nil {
-		mmCheckReadGroupAccess.mock.t.Fatalf("Inspect function is already set for GroupAccessChecker.CheckReadGroupAccess")
+		mmCheckReadGroupAccess.mock.t.Fatalf("Inspect function is already set for GroupAccessCheckerMock.CheckReadGroupAccess")
 	}
 
 	mmCheckReadGroupAccess.mock.inspectFuncCheckReadGroupAccess = f
@@ -194,21 +194,21 @@ func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Inspect(f
 }
 
 // Return sets up results that will be returned by GroupAccessChecker.CheckReadGroupAccess
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Return(err error) *GroupAccessChecker {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) Return(err error) *GroupAccessCheckerMock {
 	if mmCheckReadGroupAccess.mock.funcCheckReadGroupAccess != nil {
-		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckReadGroupAccess mock is already set by Set")
+		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckReadGroupAccess mock is already set by Set")
 	}
 
 	if mmCheckReadGroupAccess.defaultExpectation == nil {
-		mmCheckReadGroupAccess.defaultExpectation = &GroupAccessCheckerCheckReadGroupAccessExpectation{mock: mmCheckReadGroupAccess.mock}
+		mmCheckReadGroupAccess.defaultExpectation = &GroupAccessCheckerMockCheckReadGroupAccessExpectation{mock: mmCheckReadGroupAccess.mock}
 	}
-	mmCheckReadGroupAccess.defaultExpectation.results = &GroupAccessCheckerCheckReadGroupAccessResults{err}
+	mmCheckReadGroupAccess.defaultExpectation.results = &GroupAccessCheckerMockCheckReadGroupAccessResults{err}
 	mmCheckReadGroupAccess.defaultExpectation.returnOrigin = minimock.CallerInfo(1)
 	return mmCheckReadGroupAccess.mock
 }
 
 // Set uses given function f to mock the GroupAccessChecker.CheckReadGroupAccess method
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Set(f func(ctx context.Context, groupId entity.GroupId) (err error)) *GroupAccessChecker {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) Set(f func(ctx context.Context, groupId model.GroupId) (err error)) *GroupAccessCheckerMock {
 	if mmCheckReadGroupAccess.defaultExpectation != nil {
 		mmCheckReadGroupAccess.mock.t.Fatalf("Default expectation is already set for the GroupAccessChecker.CheckReadGroupAccess method")
 	}
@@ -224,37 +224,37 @@ func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Set(f fun
 
 // When sets expectation for the GroupAccessChecker.CheckReadGroupAccess which will trigger the result defined by the following
 // Then helper
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) When(ctx context.Context, groupId entity.GroupId) *GroupAccessCheckerCheckReadGroupAccessExpectation {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) When(ctx context.Context, groupId model.GroupId) *GroupAccessCheckerMockCheckReadGroupAccessExpectation {
 	if mmCheckReadGroupAccess.mock.funcCheckReadGroupAccess != nil {
-		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckReadGroupAccess mock is already set by Set")
+		mmCheckReadGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckReadGroupAccess mock is already set by Set")
 	}
 
-	expectation := &GroupAccessCheckerCheckReadGroupAccessExpectation{
+	expectation := &GroupAccessCheckerMockCheckReadGroupAccessExpectation{
 		mock:               mmCheckReadGroupAccess.mock,
-		params:             &GroupAccessCheckerCheckReadGroupAccessParams{ctx, groupId},
-		expectationOrigins: GroupAccessCheckerCheckReadGroupAccessExpectationOrigins{origin: minimock.CallerInfo(1)},
+		params:             &GroupAccessCheckerMockCheckReadGroupAccessParams{ctx, groupId},
+		expectationOrigins: GroupAccessCheckerMockCheckReadGroupAccessExpectationOrigins{origin: minimock.CallerInfo(1)},
 	}
 	mmCheckReadGroupAccess.expectations = append(mmCheckReadGroupAccess.expectations, expectation)
 	return expectation
 }
 
 // Then sets up GroupAccessChecker.CheckReadGroupAccess return parameters for the expectation previously defined by the When method
-func (e *GroupAccessCheckerCheckReadGroupAccessExpectation) Then(err error) *GroupAccessChecker {
-	e.results = &GroupAccessCheckerCheckReadGroupAccessResults{err}
+func (e *GroupAccessCheckerMockCheckReadGroupAccessExpectation) Then(err error) *GroupAccessCheckerMock {
+	e.results = &GroupAccessCheckerMockCheckReadGroupAccessResults{err}
 	return e.mock
 }
 
 // Times sets number of times GroupAccessChecker.CheckReadGroupAccess should be invoked
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Times(n uint64) *mGroupAccessCheckerCheckReadGroupAccess {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) Times(n uint64) *mGroupAccessCheckerMockCheckReadGroupAccess {
 	if n == 0 {
-		mmCheckReadGroupAccess.mock.t.Fatalf("Times of GroupAccessChecker.CheckReadGroupAccess mock can not be zero")
+		mmCheckReadGroupAccess.mock.t.Fatalf("Times of GroupAccessCheckerMock.CheckReadGroupAccess mock can not be zero")
 	}
 	mm_atomic.StoreUint64(&mmCheckReadGroupAccess.expectedInvocations, n)
 	mmCheckReadGroupAccess.expectedInvocationsOrigin = minimock.CallerInfo(1)
 	return mmCheckReadGroupAccess
 }
 
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) invocationsDone() bool {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) invocationsDone() bool {
 	if len(mmCheckReadGroupAccess.expectations) == 0 && mmCheckReadGroupAccess.defaultExpectation == nil && mmCheckReadGroupAccess.mock.funcCheckReadGroupAccess == nil {
 		return true
 	}
@@ -265,8 +265,8 @@ func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) invocatio
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// CheckReadGroupAccess implements mm_service.GroupAccessChecker
-func (mmCheckReadGroupAccess *GroupAccessChecker) CheckReadGroupAccess(ctx context.Context, groupId entity.GroupId) (err error) {
+// CheckReadGroupAccess implements mm_module.GroupAccessChecker
+func (mmCheckReadGroupAccess *GroupAccessCheckerMock) CheckReadGroupAccess(ctx context.Context, groupId model.GroupId) (err error) {
 	mm_atomic.AddUint64(&mmCheckReadGroupAccess.beforeCheckReadGroupAccessCounter, 1)
 	defer mm_atomic.AddUint64(&mmCheckReadGroupAccess.afterCheckReadGroupAccessCounter, 1)
 
@@ -276,7 +276,7 @@ func (mmCheckReadGroupAccess *GroupAccessChecker) CheckReadGroupAccess(ctx conte
 		mmCheckReadGroupAccess.inspectFuncCheckReadGroupAccess(ctx, groupId)
 	}
 
-	mm_params := GroupAccessCheckerCheckReadGroupAccessParams{ctx, groupId}
+	mm_params := GroupAccessCheckerMockCheckReadGroupAccessParams{ctx, groupId}
 
 	// Record call args
 	mmCheckReadGroupAccess.CheckReadGroupAccessMock.mutex.Lock()
@@ -295,54 +295,54 @@ func (mmCheckReadGroupAccess *GroupAccessChecker) CheckReadGroupAccess(ctx conte
 		mm_want := mmCheckReadGroupAccess.CheckReadGroupAccessMock.defaultExpectation.params
 		mm_want_ptrs := mmCheckReadGroupAccess.CheckReadGroupAccessMock.defaultExpectation.paramPtrs
 
-		mm_got := GroupAccessCheckerCheckReadGroupAccessParams{ctx, groupId}
+		mm_got := GroupAccessCheckerMockCheckReadGroupAccessParams{ctx, groupId}
 
 		if mm_want_ptrs != nil {
 
 			if mm_want_ptrs.ctx != nil && !minimock.Equal(*mm_want_ptrs.ctx, mm_got.ctx) {
-				mmCheckReadGroupAccess.t.Errorf("GroupAccessChecker.CheckReadGroupAccess got unexpected parameter ctx, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
+				mmCheckReadGroupAccess.t.Errorf("GroupAccessCheckerMock.CheckReadGroupAccess got unexpected parameter ctx, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
 					mmCheckReadGroupAccess.CheckReadGroupAccessMock.defaultExpectation.expectationOrigins.originCtx, *mm_want_ptrs.ctx, mm_got.ctx, minimock.Diff(*mm_want_ptrs.ctx, mm_got.ctx))
 			}
 
 			if mm_want_ptrs.groupId != nil && !minimock.Equal(*mm_want_ptrs.groupId, mm_got.groupId) {
-				mmCheckReadGroupAccess.t.Errorf("GroupAccessChecker.CheckReadGroupAccess got unexpected parameter groupId, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
+				mmCheckReadGroupAccess.t.Errorf("GroupAccessCheckerMock.CheckReadGroupAccess got unexpected parameter groupId, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
 					mmCheckReadGroupAccess.CheckReadGroupAccessMock.defaultExpectation.expectationOrigins.originGroupId, *mm_want_ptrs.groupId, mm_got.groupId, minimock.Diff(*mm_want_ptrs.groupId, mm_got.groupId))
 			}
 
 		} else if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
-			mmCheckReadGroupAccess.t.Errorf("GroupAccessChecker.CheckReadGroupAccess got unexpected parameters, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
+			mmCheckReadGroupAccess.t.Errorf("GroupAccessCheckerMock.CheckReadGroupAccess got unexpected parameters, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
 				mmCheckReadGroupAccess.CheckReadGroupAccessMock.defaultExpectation.expectationOrigins.origin, *mm_want, mm_got, minimock.Diff(*mm_want, mm_got))
 		}
 
 		mm_results := mmCheckReadGroupAccess.CheckReadGroupAccessMock.defaultExpectation.results
 		if mm_results == nil {
-			mmCheckReadGroupAccess.t.Fatal("No results are set for the GroupAccessChecker.CheckReadGroupAccess")
+			mmCheckReadGroupAccess.t.Fatal("No results are set for the GroupAccessCheckerMock.CheckReadGroupAccess")
 		}
 		return (*mm_results).err
 	}
 	if mmCheckReadGroupAccess.funcCheckReadGroupAccess != nil {
 		return mmCheckReadGroupAccess.funcCheckReadGroupAccess(ctx, groupId)
 	}
-	mmCheckReadGroupAccess.t.Fatalf("Unexpected call to GroupAccessChecker.CheckReadGroupAccess. %v %v", ctx, groupId)
+	mmCheckReadGroupAccess.t.Fatalf("Unexpected call to GroupAccessCheckerMock.CheckReadGroupAccess. %v %v", ctx, groupId)
 	return
 }
 
-// CheckReadGroupAccessAfterCounter returns a count of finished GroupAccessChecker.CheckReadGroupAccess invocations
-func (mmCheckReadGroupAccess *GroupAccessChecker) CheckReadGroupAccessAfterCounter() uint64 {
+// CheckReadGroupAccessAfterCounter returns a count of finished GroupAccessCheckerMock.CheckReadGroupAccess invocations
+func (mmCheckReadGroupAccess *GroupAccessCheckerMock) CheckReadGroupAccessAfterCounter() uint64 {
 	return mm_atomic.LoadUint64(&mmCheckReadGroupAccess.afterCheckReadGroupAccessCounter)
 }
 
-// CheckReadGroupAccessBeforeCounter returns a count of GroupAccessChecker.CheckReadGroupAccess invocations
-func (mmCheckReadGroupAccess *GroupAccessChecker) CheckReadGroupAccessBeforeCounter() uint64 {
+// CheckReadGroupAccessBeforeCounter returns a count of GroupAccessCheckerMock.CheckReadGroupAccess invocations
+func (mmCheckReadGroupAccess *GroupAccessCheckerMock) CheckReadGroupAccessBeforeCounter() uint64 {
 	return mm_atomic.LoadUint64(&mmCheckReadGroupAccess.beforeCheckReadGroupAccessCounter)
 }
 
-// Calls returns a list of arguments used in each call to GroupAccessChecker.CheckReadGroupAccess.
+// Calls returns a list of arguments used in each call to GroupAccessCheckerMock.CheckReadGroupAccess.
 // The list is in the same order as the calls were made (i.e. recent calls have a higher index)
-func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Calls() []*GroupAccessCheckerCheckReadGroupAccessParams {
+func (mmCheckReadGroupAccess *mGroupAccessCheckerMockCheckReadGroupAccess) Calls() []*GroupAccessCheckerMockCheckReadGroupAccessParams {
 	mmCheckReadGroupAccess.mutex.RLock()
 
-	argCopy := make([]*GroupAccessCheckerCheckReadGroupAccessParams, len(mmCheckReadGroupAccess.callArgs))
+	argCopy := make([]*GroupAccessCheckerMockCheckReadGroupAccessParams, len(mmCheckReadGroupAccess.callArgs))
 	copy(argCopy, mmCheckReadGroupAccess.callArgs)
 
 	mmCheckReadGroupAccess.mutex.RUnlock()
@@ -352,7 +352,7 @@ func (mmCheckReadGroupAccess *mGroupAccessCheckerCheckReadGroupAccess) Calls() [
 
 // MinimockCheckReadGroupAccessDone returns true if the count of the CheckReadGroupAccess invocations corresponds
 // the number of defined expectations
-func (m *GroupAccessChecker) MinimockCheckReadGroupAccessDone() bool {
+func (m *GroupAccessCheckerMock) MinimockCheckReadGroupAccessDone() bool {
 	if m.CheckReadGroupAccessMock.optional {
 		// Optional methods provide '0 or more' call count restriction.
 		return true
@@ -368,10 +368,10 @@ func (m *GroupAccessChecker) MinimockCheckReadGroupAccessDone() bool {
 }
 
 // MinimockCheckReadGroupAccessInspect logs each unmet expectation
-func (m *GroupAccessChecker) MinimockCheckReadGroupAccessInspect() {
+func (m *GroupAccessCheckerMock) MinimockCheckReadGroupAccessInspect() {
 	for _, e := range m.CheckReadGroupAccessMock.expectations {
 		if mm_atomic.LoadUint64(&e.Counter) < 1 {
-			m.t.Errorf("Expected call to GroupAccessChecker.CheckReadGroupAccess at\n%s with params: %#v", e.expectationOrigins.origin, *e.params)
+			m.t.Errorf("Expected call to GroupAccessCheckerMock.CheckReadGroupAccess at\n%s with params: %#v", e.expectationOrigins.origin, *e.params)
 		}
 	}
 
@@ -379,65 +379,65 @@ func (m *GroupAccessChecker) MinimockCheckReadGroupAccessInspect() {
 	// if default expectation was set then invocations count should be greater than zero
 	if m.CheckReadGroupAccessMock.defaultExpectation != nil && afterCheckReadGroupAccessCounter < 1 {
 		if m.CheckReadGroupAccessMock.defaultExpectation.params == nil {
-			m.t.Errorf("Expected call to GroupAccessChecker.CheckReadGroupAccess at\n%s", m.CheckReadGroupAccessMock.defaultExpectation.returnOrigin)
+			m.t.Errorf("Expected call to GroupAccessCheckerMock.CheckReadGroupAccess at\n%s", m.CheckReadGroupAccessMock.defaultExpectation.returnOrigin)
 		} else {
-			m.t.Errorf("Expected call to GroupAccessChecker.CheckReadGroupAccess at\n%s with params: %#v", m.CheckReadGroupAccessMock.defaultExpectation.expectationOrigins.origin, *m.CheckReadGroupAccessMock.defaultExpectation.params)
+			m.t.Errorf("Expected call to GroupAccessCheckerMock.CheckReadGroupAccess at\n%s with params: %#v", m.CheckReadGroupAccessMock.defaultExpectation.expectationOrigins.origin, *m.CheckReadGroupAccessMock.defaultExpectation.params)
 		}
 	}
 	// if func was set then invocations count should be greater than zero
 	if m.funcCheckReadGroupAccess != nil && afterCheckReadGroupAccessCounter < 1 {
-		m.t.Errorf("Expected call to GroupAccessChecker.CheckReadGroupAccess at\n%s", m.funcCheckReadGroupAccessOrigin)
+		m.t.Errorf("Expected call to GroupAccessCheckerMock.CheckReadGroupAccess at\n%s", m.funcCheckReadGroupAccessOrigin)
 	}
 
 	if !m.CheckReadGroupAccessMock.invocationsDone() && afterCheckReadGroupAccessCounter > 0 {
-		m.t.Errorf("Expected %d calls to GroupAccessChecker.CheckReadGroupAccess at\n%s but found %d calls",
+		m.t.Errorf("Expected %d calls to GroupAccessCheckerMock.CheckReadGroupAccess at\n%s but found %d calls",
 			mm_atomic.LoadUint64(&m.CheckReadGroupAccessMock.expectedInvocations), m.CheckReadGroupAccessMock.expectedInvocationsOrigin, afterCheckReadGroupAccessCounter)
 	}
 }
 
-type mGroupAccessCheckerCheckWriteGroupAccess struct {
+type mGroupAccessCheckerMockCheckWriteGroupAccess struct {
 	optional           bool
-	mock               *GroupAccessChecker
-	defaultExpectation *GroupAccessCheckerCheckWriteGroupAccessExpectation
-	expectations       []*GroupAccessCheckerCheckWriteGroupAccessExpectation
+	mock               *GroupAccessCheckerMock
+	defaultExpectation *GroupAccessCheckerMockCheckWriteGroupAccessExpectation
+	expectations       []*GroupAccessCheckerMockCheckWriteGroupAccessExpectation
 
-	callArgs []*GroupAccessCheckerCheckWriteGroupAccessParams
+	callArgs []*GroupAccessCheckerMockCheckWriteGroupAccessParams
 	mutex    sync.RWMutex
 
 	expectedInvocations       uint64
 	expectedInvocationsOrigin string
 }
 
-// GroupAccessCheckerCheckWriteGroupAccessExpectation specifies expectation struct of the GroupAccessChecker.CheckWriteGroupAccess
-type GroupAccessCheckerCheckWriteGroupAccessExpectation struct {
-	mock               *GroupAccessChecker
-	params             *GroupAccessCheckerCheckWriteGroupAccessParams
-	paramPtrs          *GroupAccessCheckerCheckWriteGroupAccessParamPtrs
-	expectationOrigins GroupAccessCheckerCheckWriteGroupAccessExpectationOrigins
-	results            *GroupAccessCheckerCheckWriteGroupAccessResults
+// GroupAccessCheckerMockCheckWriteGroupAccessExpectation specifies expectation struct of the GroupAccessChecker.CheckWriteGroupAccess
+type GroupAccessCheckerMockCheckWriteGroupAccessExpectation struct {
+	mock               *GroupAccessCheckerMock
+	params             *GroupAccessCheckerMockCheckWriteGroupAccessParams
+	paramPtrs          *GroupAccessCheckerMockCheckWriteGroupAccessParamPtrs
+	expectationOrigins GroupAccessCheckerMockCheckWriteGroupAccessExpectationOrigins
+	results            *GroupAccessCheckerMockCheckWriteGroupAccessResults
 	returnOrigin       string
 	Counter            uint64
 }
 
-// GroupAccessCheckerCheckWriteGroupAccessParams contains parameters of the GroupAccessChecker.CheckWriteGroupAccess
-type GroupAccessCheckerCheckWriteGroupAccessParams struct {
+// GroupAccessCheckerMockCheckWriteGroupAccessParams contains parameters of the GroupAccessChecker.CheckWriteGroupAccess
+type GroupAccessCheckerMockCheckWriteGroupAccessParams struct {
 	ctx     context.Context
-	groupId entity.GroupId
+	groupId model.GroupId
 }
 
-// GroupAccessCheckerCheckWriteGroupAccessParamPtrs contains pointers to parameters of the GroupAccessChecker.CheckWriteGroupAccess
-type GroupAccessCheckerCheckWriteGroupAccessParamPtrs struct {
+// GroupAccessCheckerMockCheckWriteGroupAccessParamPtrs contains pointers to parameters of the GroupAccessChecker.CheckWriteGroupAccess
+type GroupAccessCheckerMockCheckWriteGroupAccessParamPtrs struct {
 	ctx     *context.Context
-	groupId *entity.GroupId
+	groupId *model.GroupId
 }
 
-// GroupAccessCheckerCheckWriteGroupAccessResults contains results of the GroupAccessChecker.CheckWriteGroupAccess
-type GroupAccessCheckerCheckWriteGroupAccessResults struct {
+// GroupAccessCheckerMockCheckWriteGroupAccessResults contains results of the GroupAccessChecker.CheckWriteGroupAccess
+type GroupAccessCheckerMockCheckWriteGroupAccessResults struct {
 	err error
 }
 
-// GroupAccessCheckerCheckWriteGroupAccessOrigins contains origins of expectations of the GroupAccessChecker.CheckWriteGroupAccess
-type GroupAccessCheckerCheckWriteGroupAccessExpectationOrigins struct {
+// GroupAccessCheckerMockCheckWriteGroupAccessOrigins contains origins of expectations of the GroupAccessChecker.CheckWriteGroupAccess
+type GroupAccessCheckerMockCheckWriteGroupAccessExpectationOrigins struct {
 	origin        string
 	originCtx     string
 	originGroupId string
@@ -448,26 +448,26 @@ type GroupAccessCheckerCheckWriteGroupAccessExpectationOrigins struct {
 // Optional() makes method check to work in '0 or more' mode.
 // It is NOT RECOMMENDED to use this option unless you really need it, as default behaviour helps to
 // catch the problems when the expected method call is totally skipped during test run.
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Optional() *mGroupAccessCheckerCheckWriteGroupAccess {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) Optional() *mGroupAccessCheckerMockCheckWriteGroupAccess {
 	mmCheckWriteGroupAccess.optional = true
 	return mmCheckWriteGroupAccess
 }
 
 // Expect sets up expected params for GroupAccessChecker.CheckWriteGroupAccess
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Expect(ctx context.Context, groupId entity.GroupId) *mGroupAccessCheckerCheckWriteGroupAccess {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) Expect(ctx context.Context, groupId model.GroupId) *mGroupAccessCheckerMockCheckWriteGroupAccess {
 	if mmCheckWriteGroupAccess.mock.funcCheckWriteGroupAccess != nil {
-		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckWriteGroupAccess mock is already set by Set")
+		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckWriteGroupAccess mock is already set by Set")
 	}
 
 	if mmCheckWriteGroupAccess.defaultExpectation == nil {
-		mmCheckWriteGroupAccess.defaultExpectation = &GroupAccessCheckerCheckWriteGroupAccessExpectation{}
+		mmCheckWriteGroupAccess.defaultExpectation = &GroupAccessCheckerMockCheckWriteGroupAccessExpectation{}
 	}
 
 	if mmCheckWriteGroupAccess.defaultExpectation.paramPtrs != nil {
-		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckWriteGroupAccess mock is already set by ExpectParams functions")
+		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckWriteGroupAccess mock is already set by ExpectParams functions")
 	}
 
-	mmCheckWriteGroupAccess.defaultExpectation.params = &GroupAccessCheckerCheckWriteGroupAccessParams{ctx, groupId}
+	mmCheckWriteGroupAccess.defaultExpectation.params = &GroupAccessCheckerMockCheckWriteGroupAccessParams{ctx, groupId}
 	mmCheckWriteGroupAccess.defaultExpectation.expectationOrigins.origin = minimock.CallerInfo(1)
 	for _, e := range mmCheckWriteGroupAccess.expectations {
 		if minimock.Equal(e.params, mmCheckWriteGroupAccess.defaultExpectation.params) {
@@ -479,21 +479,21 @@ func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Expect(
 }
 
 // ExpectCtxParam1 sets up expected param ctx for GroupAccessChecker.CheckWriteGroupAccess
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) ExpectCtxParam1(ctx context.Context) *mGroupAccessCheckerCheckWriteGroupAccess {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) ExpectCtxParam1(ctx context.Context) *mGroupAccessCheckerMockCheckWriteGroupAccess {
 	if mmCheckWriteGroupAccess.mock.funcCheckWriteGroupAccess != nil {
-		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckWriteGroupAccess mock is already set by Set")
+		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckWriteGroupAccess mock is already set by Set")
 	}
 
 	if mmCheckWriteGroupAccess.defaultExpectation == nil {
-		mmCheckWriteGroupAccess.defaultExpectation = &GroupAccessCheckerCheckWriteGroupAccessExpectation{}
+		mmCheckWriteGroupAccess.defaultExpectation = &GroupAccessCheckerMockCheckWriteGroupAccessExpectation{}
 	}
 
 	if mmCheckWriteGroupAccess.defaultExpectation.params != nil {
-		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckWriteGroupAccess mock is already set by Expect")
+		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckWriteGroupAccess mock is already set by Expect")
 	}
 
 	if mmCheckWriteGroupAccess.defaultExpectation.paramPtrs == nil {
-		mmCheckWriteGroupAccess.defaultExpectation.paramPtrs = &GroupAccessCheckerCheckWriteGroupAccessParamPtrs{}
+		mmCheckWriteGroupAccess.defaultExpectation.paramPtrs = &GroupAccessCheckerMockCheckWriteGroupAccessParamPtrs{}
 	}
 	mmCheckWriteGroupAccess.defaultExpectation.paramPtrs.ctx = &ctx
 	mmCheckWriteGroupAccess.defaultExpectation.expectationOrigins.originCtx = minimock.CallerInfo(1)
@@ -502,21 +502,21 @@ func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) ExpectC
 }
 
 // ExpectGroupIdParam2 sets up expected param groupId for GroupAccessChecker.CheckWriteGroupAccess
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) ExpectGroupIdParam2(groupId entity.GroupId) *mGroupAccessCheckerCheckWriteGroupAccess {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) ExpectGroupIdParam2(groupId model.GroupId) *mGroupAccessCheckerMockCheckWriteGroupAccess {
 	if mmCheckWriteGroupAccess.mock.funcCheckWriteGroupAccess != nil {
-		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckWriteGroupAccess mock is already set by Set")
+		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckWriteGroupAccess mock is already set by Set")
 	}
 
 	if mmCheckWriteGroupAccess.defaultExpectation == nil {
-		mmCheckWriteGroupAccess.defaultExpectation = &GroupAccessCheckerCheckWriteGroupAccessExpectation{}
+		mmCheckWriteGroupAccess.defaultExpectation = &GroupAccessCheckerMockCheckWriteGroupAccessExpectation{}
 	}
 
 	if mmCheckWriteGroupAccess.defaultExpectation.params != nil {
-		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckWriteGroupAccess mock is already set by Expect")
+		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckWriteGroupAccess mock is already set by Expect")
 	}
 
 	if mmCheckWriteGroupAccess.defaultExpectation.paramPtrs == nil {
-		mmCheckWriteGroupAccess.defaultExpectation.paramPtrs = &GroupAccessCheckerCheckWriteGroupAccessParamPtrs{}
+		mmCheckWriteGroupAccess.defaultExpectation.paramPtrs = &GroupAccessCheckerMockCheckWriteGroupAccessParamPtrs{}
 	}
 	mmCheckWriteGroupAccess.defaultExpectation.paramPtrs.groupId = &groupId
 	mmCheckWriteGroupAccess.defaultExpectation.expectationOrigins.originGroupId = minimock.CallerInfo(1)
@@ -525,9 +525,9 @@ func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) ExpectG
 }
 
 // Inspect accepts an inspector function that has same arguments as the GroupAccessChecker.CheckWriteGroupAccess
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Inspect(f func(ctx context.Context, groupId entity.GroupId)) *mGroupAccessCheckerCheckWriteGroupAccess {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) Inspect(f func(ctx context.Context, groupId model.GroupId)) *mGroupAccessCheckerMockCheckWriteGroupAccess {
 	if mmCheckWriteGroupAccess.mock.inspectFuncCheckWriteGroupAccess != nil {
-		mmCheckWriteGroupAccess.mock.t.Fatalf("Inspect function is already set for GroupAccessChecker.CheckWriteGroupAccess")
+		mmCheckWriteGroupAccess.mock.t.Fatalf("Inspect function is already set for GroupAccessCheckerMock.CheckWriteGroupAccess")
 	}
 
 	mmCheckWriteGroupAccess.mock.inspectFuncCheckWriteGroupAccess = f
@@ -536,21 +536,21 @@ func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Inspect
 }
 
 // Return sets up results that will be returned by GroupAccessChecker.CheckWriteGroupAccess
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Return(err error) *GroupAccessChecker {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) Return(err error) *GroupAccessCheckerMock {
 	if mmCheckWriteGroupAccess.mock.funcCheckWriteGroupAccess != nil {
-		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckWriteGroupAccess mock is already set by Set")
+		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckWriteGroupAccess mock is already set by Set")
 	}
 
 	if mmCheckWriteGroupAccess.defaultExpectation == nil {
-		mmCheckWriteGroupAccess.defaultExpectation = &GroupAccessCheckerCheckWriteGroupAccessExpectation{mock: mmCheckWriteGroupAccess.mock}
+		mmCheckWriteGroupAccess.defaultExpectation = &GroupAccessCheckerMockCheckWriteGroupAccessExpectation{mock: mmCheckWriteGroupAccess.mock}
 	}
-	mmCheckWriteGroupAccess.defaultExpectation.results = &GroupAccessCheckerCheckWriteGroupAccessResults{err}
+	mmCheckWriteGroupAccess.defaultExpectation.results = &GroupAccessCheckerMockCheckWriteGroupAccessResults{err}
 	mmCheckWriteGroupAccess.defaultExpectation.returnOrigin = minimock.CallerInfo(1)
 	return mmCheckWriteGroupAccess.mock
 }
 
 // Set uses given function f to mock the GroupAccessChecker.CheckWriteGroupAccess method
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Set(f func(ctx context.Context, groupId entity.GroupId) (err error)) *GroupAccessChecker {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) Set(f func(ctx context.Context, groupId model.GroupId) (err error)) *GroupAccessCheckerMock {
 	if mmCheckWriteGroupAccess.defaultExpectation != nil {
 		mmCheckWriteGroupAccess.mock.t.Fatalf("Default expectation is already set for the GroupAccessChecker.CheckWriteGroupAccess method")
 	}
@@ -566,37 +566,37 @@ func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Set(f f
 
 // When sets expectation for the GroupAccessChecker.CheckWriteGroupAccess which will trigger the result defined by the following
 // Then helper
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) When(ctx context.Context, groupId entity.GroupId) *GroupAccessCheckerCheckWriteGroupAccessExpectation {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) When(ctx context.Context, groupId model.GroupId) *GroupAccessCheckerMockCheckWriteGroupAccessExpectation {
 	if mmCheckWriteGroupAccess.mock.funcCheckWriteGroupAccess != nil {
-		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessChecker.CheckWriteGroupAccess mock is already set by Set")
+		mmCheckWriteGroupAccess.mock.t.Fatalf("GroupAccessCheckerMock.CheckWriteGroupAccess mock is already set by Set")
 	}
 
-	expectation := &GroupAccessCheckerCheckWriteGroupAccessExpectation{
+	expectation := &GroupAccessCheckerMockCheckWriteGroupAccessExpectation{
 		mock:               mmCheckWriteGroupAccess.mock,
-		params:             &GroupAccessCheckerCheckWriteGroupAccessParams{ctx, groupId},
-		expectationOrigins: GroupAccessCheckerCheckWriteGroupAccessExpectationOrigins{origin: minimock.CallerInfo(1)},
+		params:             &GroupAccessCheckerMockCheckWriteGroupAccessParams{ctx, groupId},
+		expectationOrigins: GroupAccessCheckerMockCheckWriteGroupAccessExpectationOrigins{origin: minimock.CallerInfo(1)},
 	}
 	mmCheckWriteGroupAccess.expectations = append(mmCheckWriteGroupAccess.expectations, expectation)
 	return expectation
 }
 
 // Then sets up GroupAccessChecker.CheckWriteGroupAccess return parameters for the expectation previously defined by the When method
-func (e *GroupAccessCheckerCheckWriteGroupAccessExpectation) Then(err error) *GroupAccessChecker {
-	e.results = &GroupAccessCheckerCheckWriteGroupAccessResults{err}
+func (e *GroupAccessCheckerMockCheckWriteGroupAccessExpectation) Then(err error) *GroupAccessCheckerMock {
+	e.results = &GroupAccessCheckerMockCheckWriteGroupAccessResults{err}
 	return e.mock
 }
 
 // Times sets number of times GroupAccessChecker.CheckWriteGroupAccess should be invoked
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Times(n uint64) *mGroupAccessCheckerCheckWriteGroupAccess {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) Times(n uint64) *mGroupAccessCheckerMockCheckWriteGroupAccess {
 	if n == 0 {
-		mmCheckWriteGroupAccess.mock.t.Fatalf("Times of GroupAccessChecker.CheckWriteGroupAccess mock can not be zero")
+		mmCheckWriteGroupAccess.mock.t.Fatalf("Times of GroupAccessCheckerMock.CheckWriteGroupAccess mock can not be zero")
 	}
 	mm_atomic.StoreUint64(&mmCheckWriteGroupAccess.expectedInvocations, n)
 	mmCheckWriteGroupAccess.expectedInvocationsOrigin = minimock.CallerInfo(1)
 	return mmCheckWriteGroupAccess
 }
 
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) invocationsDone() bool {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) invocationsDone() bool {
 	if len(mmCheckWriteGroupAccess.expectations) == 0 && mmCheckWriteGroupAccess.defaultExpectation == nil && mmCheckWriteGroupAccess.mock.funcCheckWriteGroupAccess == nil {
 		return true
 	}
@@ -607,8 +607,8 @@ func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) invocat
 	return totalInvocations > 0 && (expectedInvocations == 0 || expectedInvocations == totalInvocations)
 }
 
-// CheckWriteGroupAccess implements mm_service.GroupAccessChecker
-func (mmCheckWriteGroupAccess *GroupAccessChecker) CheckWriteGroupAccess(ctx context.Context, groupId entity.GroupId) (err error) {
+// CheckWriteGroupAccess implements mm_module.GroupAccessChecker
+func (mmCheckWriteGroupAccess *GroupAccessCheckerMock) CheckWriteGroupAccess(ctx context.Context, groupId model.GroupId) (err error) {
 	mm_atomic.AddUint64(&mmCheckWriteGroupAccess.beforeCheckWriteGroupAccessCounter, 1)
 	defer mm_atomic.AddUint64(&mmCheckWriteGroupAccess.afterCheckWriteGroupAccessCounter, 1)
 
@@ -618,7 +618,7 @@ func (mmCheckWriteGroupAccess *GroupAccessChecker) CheckWriteGroupAccess(ctx con
 		mmCheckWriteGroupAccess.inspectFuncCheckWriteGroupAccess(ctx, groupId)
 	}
 
-	mm_params := GroupAccessCheckerCheckWriteGroupAccessParams{ctx, groupId}
+	mm_params := GroupAccessCheckerMockCheckWriteGroupAccessParams{ctx, groupId}
 
 	// Record call args
 	mmCheckWriteGroupAccess.CheckWriteGroupAccessMock.mutex.Lock()
@@ -637,54 +637,54 @@ func (mmCheckWriteGroupAccess *GroupAccessChecker) CheckWriteGroupAccess(ctx con
 		mm_want := mmCheckWriteGroupAccess.CheckWriteGroupAccessMock.defaultExpectation.params
 		mm_want_ptrs := mmCheckWriteGroupAccess.CheckWriteGroupAccessMock.defaultExpectation.paramPtrs
 
-		mm_got := GroupAccessCheckerCheckWriteGroupAccessParams{ctx, groupId}
+		mm_got := GroupAccessCheckerMockCheckWriteGroupAccessParams{ctx, groupId}
 
 		if mm_want_ptrs != nil {
 
 			if mm_want_ptrs.ctx != nil && !minimock.Equal(*mm_want_ptrs.ctx, mm_got.ctx) {
-				mmCheckWriteGroupAccess.t.Errorf("GroupAccessChecker.CheckWriteGroupAccess got unexpected parameter ctx, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
+				mmCheckWriteGroupAccess.t.Errorf("GroupAccessCheckerMock.CheckWriteGroupAccess got unexpected parameter ctx, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
 					mmCheckWriteGroupAccess.CheckWriteGroupAccessMock.defaultExpectation.expectationOrigins.originCtx, *mm_want_ptrs.ctx, mm_got.ctx, minimock.Diff(*mm_want_ptrs.ctx, mm_got.ctx))
 			}
 
 			if mm_want_ptrs.groupId != nil && !minimock.Equal(*mm_want_ptrs.groupId, mm_got.groupId) {
-				mmCheckWriteGroupAccess.t.Errorf("GroupAccessChecker.CheckWriteGroupAccess got unexpected parameter groupId, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
+				mmCheckWriteGroupAccess.t.Errorf("GroupAccessCheckerMock.CheckWriteGroupAccess got unexpected parameter groupId, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
 					mmCheckWriteGroupAccess.CheckWriteGroupAccessMock.defaultExpectation.expectationOrigins.originGroupId, *mm_want_ptrs.groupId, mm_got.groupId, minimock.Diff(*mm_want_ptrs.groupId, mm_got.groupId))
 			}
 
 		} else if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
-			mmCheckWriteGroupAccess.t.Errorf("GroupAccessChecker.CheckWriteGroupAccess got unexpected parameters, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
+			mmCheckWriteGroupAccess.t.Errorf("GroupAccessCheckerMock.CheckWriteGroupAccess got unexpected parameters, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
 				mmCheckWriteGroupAccess.CheckWriteGroupAccessMock.defaultExpectation.expectationOrigins.origin, *mm_want, mm_got, minimock.Diff(*mm_want, mm_got))
 		}
 
 		mm_results := mmCheckWriteGroupAccess.CheckWriteGroupAccessMock.defaultExpectation.results
 		if mm_results == nil {
-			mmCheckWriteGroupAccess.t.Fatal("No results are set for the GroupAccessChecker.CheckWriteGroupAccess")
+			mmCheckWriteGroupAccess.t.Fatal("No results are set for the GroupAccessCheckerMock.CheckWriteGroupAccess")
 		}
 		return (*mm_results).err
 	}
 	if mmCheckWriteGroupAccess.funcCheckWriteGroupAccess != nil {
 		return mmCheckWriteGroupAccess.funcCheckWriteGroupAccess(ctx, groupId)
 	}
-	mmCheckWriteGroupAccess.t.Fatalf("Unexpected call to GroupAccessChecker.CheckWriteGroupAccess. %v %v", ctx, groupId)
+	mmCheckWriteGroupAccess.t.Fatalf("Unexpected call to GroupAccessCheckerMock.CheckWriteGroupAccess. %v %v", ctx, groupId)
 	return
 }
 
-// CheckWriteGroupAccessAfterCounter returns a count of finished GroupAccessChecker.CheckWriteGroupAccess invocations
-func (mmCheckWriteGroupAccess *GroupAccessChecker) CheckWriteGroupAccessAfterCounter() uint64 {
+// CheckWriteGroupAccessAfterCounter returns a count of finished GroupAccessCheckerMock.CheckWriteGroupAccess invocations
+func (mmCheckWriteGroupAccess *GroupAccessCheckerMock) CheckWriteGroupAccessAfterCounter() uint64 {
 	return mm_atomic.LoadUint64(&mmCheckWriteGroupAccess.afterCheckWriteGroupAccessCounter)
 }
 
-// CheckWriteGroupAccessBeforeCounter returns a count of GroupAccessChecker.CheckWriteGroupAccess invocations
-func (mmCheckWriteGroupAccess *GroupAccessChecker) CheckWriteGroupAccessBeforeCounter() uint64 {
+// CheckWriteGroupAccessBeforeCounter returns a count of GroupAccessCheckerMock.CheckWriteGroupAccess invocations
+func (mmCheckWriteGroupAccess *GroupAccessCheckerMock) CheckWriteGroupAccessBeforeCounter() uint64 {
 	return mm_atomic.LoadUint64(&mmCheckWriteGroupAccess.beforeCheckWriteGroupAccessCounter)
 }
 
-// Calls returns a list of arguments used in each call to GroupAccessChecker.CheckWriteGroupAccess.
+// Calls returns a list of arguments used in each call to GroupAccessCheckerMock.CheckWriteGroupAccess.
 // The list is in the same order as the calls were made (i.e. recent calls have a higher index)
-func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Calls() []*GroupAccessCheckerCheckWriteGroupAccessParams {
+func (mmCheckWriteGroupAccess *mGroupAccessCheckerMockCheckWriteGroupAccess) Calls() []*GroupAccessCheckerMockCheckWriteGroupAccessParams {
 	mmCheckWriteGroupAccess.mutex.RLock()
 
-	argCopy := make([]*GroupAccessCheckerCheckWriteGroupAccessParams, len(mmCheckWriteGroupAccess.callArgs))
+	argCopy := make([]*GroupAccessCheckerMockCheckWriteGroupAccessParams, len(mmCheckWriteGroupAccess.callArgs))
 	copy(argCopy, mmCheckWriteGroupAccess.callArgs)
 
 	mmCheckWriteGroupAccess.mutex.RUnlock()
@@ -694,7 +694,7 @@ func (mmCheckWriteGroupAccess *mGroupAccessCheckerCheckWriteGroupAccess) Calls()
 
 // MinimockCheckWriteGroupAccessDone returns true if the count of the CheckWriteGroupAccess invocations corresponds
 // the number of defined expectations
-func (m *GroupAccessChecker) MinimockCheckWriteGroupAccessDone() bool {
+func (m *GroupAccessCheckerMock) MinimockCheckWriteGroupAccessDone() bool {
 	if m.CheckWriteGroupAccessMock.optional {
 		// Optional methods provide '0 or more' call count restriction.
 		return true
@@ -710,10 +710,10 @@ func (m *GroupAccessChecker) MinimockCheckWriteGroupAccessDone() bool {
 }
 
 // MinimockCheckWriteGroupAccessInspect logs each unmet expectation
-func (m *GroupAccessChecker) MinimockCheckWriteGroupAccessInspect() {
+func (m *GroupAccessCheckerMock) MinimockCheckWriteGroupAccessInspect() {
 	for _, e := range m.CheckWriteGroupAccessMock.expectations {
 		if mm_atomic.LoadUint64(&e.Counter) < 1 {
-			m.t.Errorf("Expected call to GroupAccessChecker.CheckWriteGroupAccess at\n%s with params: %#v", e.expectationOrigins.origin, *e.params)
+			m.t.Errorf("Expected call to GroupAccessCheckerMock.CheckWriteGroupAccess at\n%s with params: %#v", e.expectationOrigins.origin, *e.params)
 		}
 	}
 
@@ -721,24 +721,24 @@ func (m *GroupAccessChecker) MinimockCheckWriteGroupAccessInspect() {
 	// if default expectation was set then invocations count should be greater than zero
 	if m.CheckWriteGroupAccessMock.defaultExpectation != nil && afterCheckWriteGroupAccessCounter < 1 {
 		if m.CheckWriteGroupAccessMock.defaultExpectation.params == nil {
-			m.t.Errorf("Expected call to GroupAccessChecker.CheckWriteGroupAccess at\n%s", m.CheckWriteGroupAccessMock.defaultExpectation.returnOrigin)
+			m.t.Errorf("Expected call to GroupAccessCheckerMock.CheckWriteGroupAccess at\n%s", m.CheckWriteGroupAccessMock.defaultExpectation.returnOrigin)
 		} else {
-			m.t.Errorf("Expected call to GroupAccessChecker.CheckWriteGroupAccess at\n%s with params: %#v", m.CheckWriteGroupAccessMock.defaultExpectation.expectationOrigins.origin, *m.CheckWriteGroupAccessMock.defaultExpectation.params)
+			m.t.Errorf("Expected call to GroupAccessCheckerMock.CheckWriteGroupAccess at\n%s with params: %#v", m.CheckWriteGroupAccessMock.defaultExpectation.expectationOrigins.origin, *m.CheckWriteGroupAccessMock.defaultExpectation.params)
 		}
 	}
 	// if func was set then invocations count should be greater than zero
 	if m.funcCheckWriteGroupAccess != nil && afterCheckWriteGroupAccessCounter < 1 {
-		m.t.Errorf("Expected call to GroupAccessChecker.CheckWriteGroupAccess at\n%s", m.funcCheckWriteGroupAccessOrigin)
+		m.t.Errorf("Expected call to GroupAccessCheckerMock.CheckWriteGroupAccess at\n%s", m.funcCheckWriteGroupAccessOrigin)
 	}
 
 	if !m.CheckWriteGroupAccessMock.invocationsDone() && afterCheckWriteGroupAccessCounter > 0 {
-		m.t.Errorf("Expected %d calls to GroupAccessChecker.CheckWriteGroupAccess at\n%s but found %d calls",
+		m.t.Errorf("Expected %d calls to GroupAccessCheckerMock.CheckWriteGroupAccess at\n%s but found %d calls",
 			mm_atomic.LoadUint64(&m.CheckWriteGroupAccessMock.expectedInvocations), m.CheckWriteGroupAccessMock.expectedInvocationsOrigin, afterCheckWriteGroupAccessCounter)
 	}
 }
 
 // MinimockFinish checks that all mocked methods have been called the expected number of times
-func (m *GroupAccessChecker) MinimockFinish() {
+func (m *GroupAccessCheckerMock) MinimockFinish() {
 	m.finishOnce.Do(func() {
 		if !m.minimockDone() {
 			m.MinimockCheckReadGroupAccessInspect()
@@ -749,7 +749,7 @@ func (m *GroupAccessChecker) MinimockFinish() {
 }
 
 // MinimockWait waits for all mocked methods to be called the expected number of times
-func (m *GroupAccessChecker) MinimockWait(timeout mm_time.Duration) {
+func (m *GroupAccessCheckerMock) MinimockWait(timeout mm_time.Duration) {
 	timeoutCh := mm_time.After(timeout)
 	for {
 		if m.minimockDone() {
@@ -764,7 +764,7 @@ func (m *GroupAccessChecker) MinimockWait(timeout mm_time.Duration) {
 	}
 }
 
-func (m *GroupAccessChecker) minimockDone() bool {
+func (m *GroupAccessCheckerMock) minimockDone() bool {
 	done := true
 	return done &&
 		m.MinimockCheckReadGroupAccessDone() &&

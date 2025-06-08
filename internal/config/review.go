@@ -7,11 +7,11 @@ type ReviewsService struct {
 }
 
 type CardsServer struct {
-	Address string `json:"address"`
+	Address string `yaml:"address"`
 }
 
 type ReviewsConfig struct {
-	Common         Config `json:"common"`
+	Common         Config `yaml:"common"`
 	Database       `yaml:"database"`
 	CardsServer    `yaml:"cards_server"`
 	ReviewsService `yaml:"review_service"`

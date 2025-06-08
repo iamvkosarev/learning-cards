@@ -3,7 +3,7 @@ package interceptor
 import (
 	"context"
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 	"google.golang.org/grpc"
 	"log/slog"
 )
@@ -29,7 +29,7 @@ func ValidationInterceptor(logger *slog.Logger) grpc.UnaryServerInterceptor {
 					getUserIdAttr(ctx),
 					sl.Err(err),
 				)
-				return nil, entity.NewValidationError(err)
+				return nil, model.NewValidationError(err)
 			}
 		}
 

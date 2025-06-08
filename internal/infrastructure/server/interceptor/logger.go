@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -80,12 +80,12 @@ func getUserId(ctx context.Context) string {
 }
 
 func mapDomainErrorToGRPC(err error) error {
-	var validationErr *entity.ValidationError
+	var validationErr *model.ValidationError
 	if errors.As(err, &validationErr) {
 		return status.Error(codes.InvalidArgument, validationErr.Error())
 	}
 
-	var serverErr *entity.ServerError
+	var serverErr *model.ServerError
 	if errors.As(err, &serverErr) {
 		return status.Error(serverErr.Code, serverErr.Message)
 	}

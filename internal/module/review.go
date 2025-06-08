@@ -1,10 +1,10 @@
-package service
+package module
 
 import (
 	"context"
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/config"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 	"slices"
 	"sort"
 	"time"
@@ -26,23 +26,23 @@ const (
 
 //go:generate minimock -i ReviewReader -o ./mocks/review_reader_mock.go -n ReviewReaderMock -p mocks
 type ReviewReader interface {
-	GetCardsReviews(ctx context.Context, user entity.UserId, group entity.GroupId) ([]entity.CardReview, error)
+	GetCardsReviews(ctx context.Context, user model.UserId, group model.GroupId) ([]*model.CardReview, error)
 }
 
 //go:generate minimock -i ReviewWriter -o ./mocks/review_writer_mock.go -n ReviewWriterMock -p mocks
 type ReviewWriter interface {
 	AddCardsReviews(
 		ctx context.Context,
-		user entity.UserId,
-		group entity.GroupId,
-		cardsProgress []entity.CardReview,
+		user model.UserId,
+		group model.GroupId,
+		cardsProgress []model.CardReview,
 	) error
 	DeleteNotUsedReviews(
-		ctx context.Context, userId entity.UserId, groupId entity.GroupId,
+		ctx context.Context, userId model.UserId, groupId model.GroupId,
 	) error
 }
 
-type ReviewServiceDeps struct {
+type ReviewsDeps struct {
 	ReviewReader ReviewReader
 	ReviewWriter ReviewWriter
 	UserVerifier UserVerifier
@@ -51,19 +51,19 @@ type ReviewServiceDeps struct {
 	Config       config.ReviewsService
 }
 
-type ReviewService struct {
-	ReviewServiceDeps
+type Reviews struct {
+	ReviewsDeps
 }
 
-func NewReviewService(deps ReviewServiceDeps) *ReviewService {
-	return &ReviewService{deps}
+func NewReviews(deps ReviewsDeps) *Reviews {
+	return &Reviews{deps}
 }
 
-func (r *ReviewService) GetReviewCards(
+func (r *Reviews) GetReviewCards(
 	ctx context.Context,
-	groupId entity.GroupId, settings entity.ReviewSettings,
+	groupId model.GroupId, settings model.ReviewSettings,
 ) (
-	[]entity.Card,
+	[]*model.Card,
 	error,
 ) {
 	userId, err := r.UserVerifier.VerifyUserByContext(ctx)
@@ -76,8 +76,8 @@ func (r *ReviewService) GetReviewCards(
 		return nil, err
 	}
 
-	reviewCards := make([]entity.Card, 0)
-	usedCards := make(map[entity.CardId]struct{})
+	reviewCards := make([]*model.Card, 0)
+	usedCards := make(map[model.CardId]struct{})
 	// AddCard new cards
 	for cardId, cardReviews := range cardsReviews {
 		if len(cardReviews) == 0 {
@@ -125,10 +125,10 @@ func (r *ReviewService) GetReviewCards(
 	return reviewCards, nil
 }
 
-func (r *ReviewService) GetCardsMarks(
+func (r *Reviews) GetCardsMarks(
 	ctx context.Context,
-	groupId entity.GroupId,
-) ([]entity.CardMark, error) {
+	groupId model.GroupId,
+) ([]model.CardMark, error) {
 	userId, err := r.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return nil, err
@@ -142,21 +142,21 @@ func (r *ReviewService) GetCardsMarks(
 	return r.getMarks(progress), nil
 }
 
-func (r *ReviewService) getCardsAndReviews(
+func (r *Reviews) getCardsAndReviews(
 	ctx context.Context,
-	userId entity.UserId, groupId entity.GroupId,
+	userId model.UserId, groupId model.GroupId,
 ) (
-	map[entity.CardId]entity.
-		Card, map[entity.CardId][]entity.CardReview, error,
+	map[model.CardId]*model.
+		Card, map[model.CardId][]*model.CardReview, error,
 ) {
 	cardsProgressRow, err := r.ReviewReader.GetCardsReviews(ctx, userId, groupId)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error getting card progress: %w", err)
 	}
-	cardsProgress := make(map[entity.CardId][]entity.CardReview)
+	cardsProgress := make(map[model.CardId][]*model.CardReview)
 	for _, pr := range cardsProgressRow {
 		if _, ok := cardsProgress[pr.CardId]; !ok {
-			cardsProgress[pr.CardId] = make([]entity.CardReview, 0)
+			cardsProgress[pr.CardId] = make([]*model.CardReview, 0)
 		}
 		cardsProgress[pr.CardId] = append(cardsProgress[pr.CardId], pr)
 	}
@@ -164,14 +164,14 @@ func (r *ReviewService) getCardsAndReviews(
 	if err != nil {
 		return nil, nil, fmt.Errorf("error getting list of cards: %w", err)
 	}
-	cards := make(map[entity.CardId]entity.Card)
+	cards := make(map[model.CardId]*model.Card)
 	for _, card := range cardsRow {
 		cards[card.Id] = card
 	}
 	if len(cards) > len(cardsProgress) {
 		for _, card := range cards {
 			if _, ok := cardsProgress[card.Id]; !ok {
-				cardsProgress[card.Id] = make([]entity.CardReview, 0)
+				cardsProgress[card.Id] = make([]*model.CardReview, 0)
 			}
 		}
 	}
@@ -179,24 +179,24 @@ func (r *ReviewService) getCardsAndReviews(
 }
 
 func removeUniqueCards[TCards any](
-	cards map[entity.CardId]TCards,
-	uniqueCards map[entity.CardId]struct{},
-) map[entity.CardId]TCards {
+	cards map[model.CardId]TCards,
+	uniqueCards map[model.CardId]struct{},
+) map[model.CardId]TCards {
 	for id := range uniqueCards {
 		delete(cards, id)
 	}
 	return cards
 }
 
-func (r *ReviewService) getSortedCardsByScores(
-	reviews map[entity.CardId][]entity.CardReview,
-) []entity.CardId {
-	cards := make([]entity.CardId, 0, len(reviews))
+func (r *Reviews) getSortedCardsByScores(
+	reviews map[model.CardId][]*model.CardReview,
+) []model.CardId {
+	cards := make([]model.CardId, 0, len(reviews))
 	for id := range reviews {
 		cards = append(cards, id)
 	}
 	marks := r.getMarks(reviews)
-	marksMap := make(map[entity.CardId]entity.CardMark)
+	marksMap := make(map[model.CardId]model.CardMark)
 	for _, mark := range marks {
 		marksMap[mark.Id] = mark
 	}
@@ -208,33 +208,33 @@ func (r *ReviewService) getSortedCardsByScores(
 	return cards
 }
 
-func (r *ReviewService) getMarks(cardsReviews map[entity.CardId][]entity.CardReview) []entity.CardMark {
-	marks := make([]entity.CardMark, 0, len(cardsReviews))
+func (r *Reviews) getMarks(cardsReviews map[model.CardId][]*model.CardReview) []model.CardMark {
+	marks := make([]model.CardMark, 0, len(cardsReviews))
 	durationScores := getCardsDurationScores(cardsReviews)
 	for id, cardReviews := range cardsReviews {
-		var mark entity.Mark
+		var mark model.Mark
 		if len(cardReviews) > 0 {
 			answerScore := getCardAnswerScore(r.Config.ReviewStepWeight, cardReviews)
 			durationScore := durationScores[id]
 			score := float32(answerScore)*r.Config.AnswerInfluencePercent + float32(durationScore)*r.Config.SelectDurationInfluencePercent
 			switch {
 			case score > MARK_A_START:
-				mark = entity.MARK_A
+				mark = model.MARK_A
 			case score > MARK_B_START:
-				mark = entity.MARK_B
+				mark = model.MARK_B
 			case score > MARK_C_START:
-				mark = entity.MARK_C
+				mark = model.MARK_C
 			case score > MARK_D_START:
-				mark = entity.MARK_D
+				mark = model.MARK_D
 			default:
-				mark = entity.MARK_E
+				mark = model.MARK_E
 			}
 		} else {
-			mark = entity.MARK_NULL
+			mark = model.MARK_NULL
 		}
 
 		marks = append(
-			marks, entity.CardMark{
+			marks, model.CardMark{
 				Mark: mark,
 				Id:   id,
 			},
@@ -243,10 +243,10 @@ func (r *ReviewService) getMarks(cardsReviews map[entity.CardId][]entity.CardRev
 	return marks
 }
 
-func getCardsDurationScores(cardReviews map[entity.CardId][]entity.CardReview) map[entity.CardId]float64 {
+func getCardsDurationScores(cardReviews map[model.CardId][]*model.CardReview) map[model.CardId]float64 {
 	minArg := time.Duration(-1 << 63)
 	maxArg := time.Duration(int64(1<<63 - 1))
-	argDurations := make(map[entity.CardId]time.Duration)
+	argDurations := make(map[model.CardId]time.Duration)
 	for id, reviews := range cardReviews {
 		if len(reviews) == 0 {
 			argDurations[id] = 0
@@ -265,7 +265,7 @@ func getCardsDurationScores(cardReviews map[entity.CardId][]entity.CardReview) m
 		}
 		argDurations[id] = argDuration
 	}
-	scores := make(map[entity.CardId]float64)
+	scores := make(map[model.CardId]float64)
 	for id, reviews := range cardReviews {
 		if len(reviews) == 0 {
 			scores[id] = 0
@@ -278,10 +278,10 @@ func getCardsDurationScores(cardReviews map[entity.CardId][]entity.CardReview) m
 	return scores
 }
 
-func getCardAnswerScore(weightStep float64, reviews []entity.CardReview) float64 {
+func getCardAnswerScore(weightStep float64, reviews []*model.CardReview) float64 {
 	scores := 0.0
 	slices.SortFunc(
-		reviews, func(a, b entity.CardReview) int {
+		reviews, func(a, b *model.CardReview) int {
 			return a.Time.Compare(b.Time)
 		},
 	)
@@ -294,34 +294,34 @@ func getCardAnswerScore(weightStep float64, reviews []entity.CardReview) float64
 	return scores / weights
 }
 
-func getAnswerScore(answer entity.Answer) int {
+func getAnswerScore(answer model.Answer) int {
 	switch answer {
-	case entity.ANSWER_EASY:
+	case model.ANSWER_EASY:
 		return ANSWER_EASY_SCORE
-	case entity.ANSWER_GOOD:
+	case model.ANSWER_GOOD:
 		return ANSWER_GOOD_SCORE
-	case entity.ANSWER_HARD:
+	case model.ANSWER_HARD:
 		return ANSWER_HARD_SCORE
-	case entity.ANSWER_FAIL:
+	case model.ANSWER_FAIL:
 		return ANSWER_FAIL_SCORE
 	}
 	return 0
 }
 
-func (r *ReviewService) AddReviewResults(
+func (r *Reviews) AddReviewResults(
 	ctx context.Context,
-	groupId entity.GroupId, answers []entity.ReviewCardResult,
+	groupId model.GroupId, answers []model.ReviewCardResult,
 ) error {
 	userId, err := r.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
 	}
 
-	reviews := make([]entity.CardReview, 0, len(answers))
-	reviewedCards := make([]entity.CardId, 0, len(answers))
+	reviews := make([]model.CardReview, 0, len(answers))
+	reviewedCards := make([]model.CardId, 0, len(answers))
 	for _, answer := range answers {
 		reviews = append(
-			reviews, entity.CardReview{
+			reviews, model.CardReview{
 				UserId:   userId,
 				GroupId:  groupId,
 				CardId:   answer.CardId,

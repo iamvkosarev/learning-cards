@@ -3,8 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"github.com/iamvkosarev/learning-cards/internal/domain/constants"
-	"github.com/iamvkosarev/learning-cards/internal/domain/entity"
+	"github.com/iamvkosarev/learning-cards/internal/model"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"slices"
 	"strings"
@@ -21,8 +20,8 @@ func NewReviewRepository(pool *pgxpool.Pool) *ReviewRepository {
 
 func (p *ReviewRepository) DeleteNotUsedReviews(
 	ctx context.Context,
-	userId entity.UserId,
-	groupId entity.GroupId,
+	userId model.UserId,
+	groupId model.GroupId,
 ) error {
 	op := "postgres.ReviewRepository.DeleteNotUsedReviews"
 
@@ -31,31 +30,31 @@ func (p *ReviewRepository) DeleteNotUsedReviews(
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	cardReviewsMap := make(map[entity.CardId][]entity.CardReview)
+	cardReviewsMap := make(map[model.CardId][]*model.CardReview)
 	for _, review := range reviews {
 		cardReviewsMap[review.CardId] = append(cardReviewsMap[review.CardId], review)
 	}
 
 	var toDelete []struct {
-		CardId entity.CardId
+		CardId model.CardId
 		Time   time.Time
 	}
 
 	for _, cardReviews := range cardReviewsMap {
-		if len(cardReviews) <= constants.MaxReviewsPerCard {
+		if len(cardReviews) <= model.MaxReviewsPerCard {
 			continue
 		}
 
 		slices.SortFunc(
-			cardReviews, func(a, b entity.CardReview) int {
+			cardReviews, func(a, b *model.CardReview) int {
 				return b.Time.Compare(a.Time)
 			},
 		)
 
-		for _, r := range cardReviews[constants.MaxReviewsPerCard:] {
+		for _, r := range cardReviews[model.MaxReviewsPerCard:] {
 			toDelete = append(
 				toDelete, struct {
-					CardId entity.CardId
+					CardId model.CardId
 					Time   time.Time
 				}{
 					CardId: r.CardId,
@@ -98,9 +97,9 @@ func (p *ReviewRepository) DeleteNotUsedReviews(
 
 func (p *ReviewRepository) GetCardsReviews(
 	ctx context.Context,
-	user entity.UserId,
-	group entity.GroupId,
-) ([]entity.CardReview, error) {
+	user model.UserId,
+	group model.GroupId,
+) ([]*model.CardReview, error) {
 	op := "postgres.ReviewRepository.GetCardsMarks"
 
 	rows, err := p.db.Query(
@@ -112,10 +111,10 @@ func (p *ReviewRepository) GetCardsReviews(
 		return nil, fmt.Errorf("%s: query error: %w", op, err)
 	}
 	defer rows.Close()
-	var cards []entity.CardReview
+	cards := make([]*model.CardReview, 0)
 	var duration float64
 	for rows.Next() {
-		var review entity.CardReview
+		review := &model.CardReview{}
 		err = rows.Scan(
 			&review.CardId,
 			&review.Time,
@@ -138,9 +137,9 @@ func (p *ReviewRepository) GetCardsReviews(
 
 func (p *ReviewRepository) AddCardsReviews(
 	ctx context.Context,
-	user entity.UserId,
-	group entity.GroupId,
-	cardsProgress []entity.CardReview,
+	user model.UserId,
+	group model.GroupId,
+	cardsProgress []model.CardReview,
 ) error {
 	op := "postgres.ReviewRepository.AddCardsReviews"
 

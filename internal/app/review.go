@@ -6,8 +6,8 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/client"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
+	"github.com/iamvkosarev/learning-cards/internal/module"
 	"github.com/iamvkosarev/learning-cards/internal/repository/postgres"
-	"github.com/iamvkosarev/learning-cards/internal/service"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log/slog"
@@ -68,8 +68,8 @@ func prepareReviewServer(ctx context.Context, cfg *config.ReviewsConfig, logger 
 
 	verifier := server.VerifyFunc(verification.GetUserId)
 
-	var reviewService = service.NewReviewService(
-		service.ReviewServiceDeps{
+	var reviewService = module.NewReviews(
+		module.ReviewsDeps{
 			ReviewWriter: reviewRepo,
 			ReviewReader: reviewRepo,
 			UserVerifier: verifier,
