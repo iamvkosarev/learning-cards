@@ -16,7 +16,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o cards ./cmd/cards
+RUN go build -tags=mecab -o cards ./cmd/cards
 
 # ==== Runtime stage ====
 FROM debian:bullseye AS cards

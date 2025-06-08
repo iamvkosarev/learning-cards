@@ -1,4 +1,6 @@
-package service
+//go:build mecab
+
+package japanese
 
 import (
 	"context"
@@ -11,12 +13,12 @@ import (
 	"unicode"
 )
 
-type JapaneseReader struct {
+type Reader struct {
 	Config config.JapaneseReading
 }
 
-func NewJapaneseReader(config config.JapaneseReading) *JapaneseReader {
-	return &JapaneseReader{
+func NewReader(config config.JapaneseReading) *Reader {
+	return &Reader{
 		Config: config,
 	}
 }
@@ -26,8 +28,8 @@ type readingPairsResult struct {
 	err   error
 }
 
-func (j *JapaneseReader) GetCardReading(ctx context.Context, text string) ([]model.ReadingPair, error) {
-	op := "service.JapaneseReader.GetCardReading"
+func (j *Reader) GetCardReading(ctx context.Context, text string) ([]model.ReadingPair, error) {
+	op := "service.Reader.GetCardReading"
 	ch := make(chan *readingPairsResult)
 	go func() {
 		pairs, err := j.analyzeWithHiragana(text)
@@ -47,7 +49,7 @@ func (j *JapaneseReader) GetCardReading(ctx context.Context, text string) ([]mod
 	return nil, nil
 }
 
-func (j *JapaneseReader) analyzeWithHiragana(text string) ([]model.ReadingPair, error) {
+func (j *Reader) analyzeWithHiragana(text string) ([]model.ReadingPair, error) {
 	mecabModel, err := mecab.NewModel(
 		map[string]string{
 			"dicdir": j.Config.MecabDicDir,

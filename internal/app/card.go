@@ -8,7 +8,7 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/model"
 	"github.com/iamvkosarev/learning-cards/internal/module"
 	"github.com/iamvkosarev/learning-cards/internal/repository/postgres"
-	"github.com/iamvkosarev/learning-cards/internal/service"
+	"github.com/iamvkosarev/learning-cards/internal/service/japanese"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"log/slog"
@@ -59,7 +59,7 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 	userRepo := postgres.NewUserRepository(dbPool)
 	cardRepo := postgres.NewCardRepository(dbPool)
 
-	japaneseReader := service.NewJapaneseReader(cfg.JapaneseReading)
+	japaneseReader := japanese.NewReader(cfg.JapaneseReading)
 
 	verifier := server.VerifyFunc(verification.GetUserId)
 
