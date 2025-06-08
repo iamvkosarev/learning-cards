@@ -81,7 +81,7 @@ func (gr *GroupRepository) AddGroup(ctx context.Context, group *model.Group) (mo
 	err := gr.db.QueryRow(
 		ctx,
 		`INSERT INTO groups (user_id, name, description, visibility, updated_at, first_side_type, second_side_type)
-		 VALUES ($1, $2, $3, $4, $5)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7)
 		 RETURNING id`,
 		group.OwnerId,
 		group.Name,
