@@ -10,6 +10,7 @@ import (
 	"github.com/shogo82148/go-mecab"
 	"strings"
 	"time"
+
 	"unicode"
 )
 
@@ -48,7 +49,6 @@ func (j *Reader) GetCardReading(ctx context.Context, text string) ([]model.Readi
 	}
 	return nil, nil
 }
-
 func (j *Reader) analyzeWithHiragana(text string) ([]model.ReadingPair, error) {
 	mecabModel, err := mecab.NewModel(
 		map[string]string{
@@ -70,6 +70,7 @@ func (j *Reader) analyzeWithHiragana(text string) ([]model.ReadingPair, error) {
 	if err != nil {
 		return nil, err
 	}
+	lastReadingIndex := 0
 
 	var result []model.ReadingPair
 	for ; !node.IsZero(); node = node.Next() {
@@ -85,24 +86,46 @@ func (j *Reader) analyzeWithHiragana(text string) ([]model.ReadingPair, error) {
 		} else {
 			reading = surface
 		}
-		var base string
+		var dicForm string
 		if len(features) >= 7 && features[6] != "*" {
-			base = features[6]
+			dicForm = features[6]
 		} else {
-			base = surface
+			dicForm = surface
 		}
-		if !containsKanji(base) {
+		if !containsKanji(dicForm) {
+			lastReadingIndex += len(dicForm)
 			continue
 		}
 
+		originForm := trimHiraganaFromNotEqualEnd(text[lastReadingIndex:lastReadingIndex+len(dicForm)], reading)
+		lastReadingIndex += len(dicForm)
+
 		result = append(
 			result, model.ReadingPair{
-				Text:    base,
+				Text:    originForm,
 				Reading: reading,
 			},
 		)
 	}
 	return result, nil
+}
+
+func trimHiraganaFromNotEqualEnd(text string, reading string) string {
+	textRunes := []rune(text)
+	if unicode.In(textRunes[len(textRunes)-1], unicode.Han) {
+		return text
+	}
+	readingRunes := []rune(reading)
+	lastIndex := len(textRunes) - 1
+	readingRunesIndex := len(readingRunes) - 1
+	for i := len(textRunes) - 1; i >= 0; i-- {
+		if textRunes[i] != readingRunes[readingRunesIndex] {
+			lastIndex = i + 1
+		} else {
+			readingRunesIndex--
+		}
+	}
+	return string(textRunes[:lastIndex+1])
 }
 
 func KatakanaToHiragana(input string) string {
