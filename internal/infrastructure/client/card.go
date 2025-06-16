@@ -91,7 +91,7 @@ func (c *CardsClient) GetCard(ctx context.Context, cardId model.CardId) (*model.
 	return &model.Card{
 		Id:         model.CardId(resp.Card.Id),
 		GroupId:    model.GroupId(resp.Card.GroupId),
-		Sides:      model.NewCardSides(resp.Card.FrontText, resp.Card.BackText),
+		Sides:      parseCardSides(resp.Card.Sides),
 		CreateTime: createAt,
 	}, nil
 }
@@ -111,11 +111,29 @@ func (c *CardsClient) ListCards(ctx context.Context, groupId model.GroupId) ([]*
 		cards[i] = &model.Card{
 			Id:         model.CardId(card.Id),
 			GroupId:    model.GroupId(card.GroupId),
-			Sides:      model.NewCardSides(card.FrontText, card.BackText),
+			Sides:      parseCardSides(card.Sides),
 			CreateTime: createAt,
 		}
 	}
 	return cards, nil
+}
+
+func parseCardSides(sides []*pb.CardSide) []model.CardSide {
+	parsedSides := make([]model.CardSide, len(sides))
+	for i, side := range sides {
+		readingPairs := make([]model.ReadingPair, len(side.ReadingPairs))
+		for j, readingPair := range side.ReadingPairs {
+			readingPairs[j] = model.ReadingPair{
+				Text:    readingPair.Text,
+				Reading: readingPair.Reading,
+			}
+		}
+		parsedSides[i] = model.CardSide{
+			Text:         side.Text,
+			ReadingPairs: readingPairs,
+		}
+	}
+	return parsedSides
 }
 
 func (c *CardsClient) GetGroup(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
