@@ -90,7 +90,6 @@ func (r *Reviews) GetReviewCards(
 		}
 	}
 	// AddCard long time no reviewed cards
-	longTimeDuration := time.Hour * 24 * 3
 	for cardId, cardReviews := range cardsReviews {
 		if _, ok := usedCards[cardId]; ok || len(cardReviews) == 0 {
 			continue
@@ -101,7 +100,7 @@ func (r *Reviews) GetReviewCards(
 				lastReviewTime = card.Time
 			}
 		}
-		if time.Now().After(lastReviewTime.Add(longTimeDuration)) {
+		if time.Now().After(lastReviewTime.Add(model.NeedToDoReviewDuration)) {
 			reviewCards = append(reviewCards, cards[cardId])
 			usedCards[cardId] = struct{}{}
 
@@ -147,7 +146,7 @@ func (r *Reviews) getCardsAndReviews(
 	userId model.UserId, groupId model.GroupId,
 ) (
 	map[model.CardId]*model.
-		Card, map[model.CardId][]*model.CardReview, error,
+	Card, map[model.CardId][]*model.CardReview, error,
 ) {
 	cardsProgressRow, err := r.ReviewReader.GetCardsReviews(ctx, userId, groupId)
 	if err != nil {
@@ -202,7 +201,7 @@ func (r *Reviews) getSortedCardsByScores(
 	}
 	sort.Slice(
 		cards, func(i, j int) bool {
-			return marksMap[cards[i]].Mark < marksMap[cards[j]].Mark
+			return marksMap[cards[i]].Mark > marksMap[cards[j]].Mark
 		},
 	)
 	return cards
