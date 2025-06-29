@@ -30,7 +30,7 @@ vps-deploy-cards:
 vps-deploy-reviews:
 	@echo "Uploading .env, docker-compose.yml and config.yaml to VPS..."
 	ssh $(VPS_USER)@$(VPS_HOST) "mkdir -p $(REVIEWS_REMOTE_DIR)/config"
-	scp cmd/reviews/.env  $(VPS_USER)@$(VPS_HOST):$(CARDS_REMOTE_DIR)/
+	scp cmd/reviews/.env  $(VPS_USER)@$(VPS_HOST):$(REVIEWS_REMOTE_DIR)/
 	scp cmd/reviews/docker-compose.yml $(VPS_USER)@$(VPS_HOST):$(REVIEWS_REMOTE_DIR)/
 	scp cmd/reviews/config.yaml $(VPS_USER)@$(VPS_HOST):$(REVIEWS_REMOTE_DIR)/
 	@echo "Injecting IMAGE_NAME=$(REVIEWS_IMAGE_NAME) into .env..."
