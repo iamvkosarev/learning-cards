@@ -29,7 +29,8 @@ type SSO struct {
 }
 
 type Database struct {
-	ConnectionStringKey string `yaml:"connection_string_key"`
+	ConnectionStringKey string        `yaml:"connection_string_key"`
+	PingDuration        time.Duration `yaml:"ping_duration"`
 }
 
 type Config struct {

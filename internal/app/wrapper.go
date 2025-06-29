@@ -186,7 +186,7 @@ func selectVerifier(ssoConfig config.SSO) (verification.Verifier, error) {
 
 func connectToDbPool(ctx context.Context, database config.Database) (*pgxpool.Pool, error) {
 	dns := os.Getenv(database.ConnectionStringKey)
-	dbPool, err := postgres.NewPostgresPool(ctx, dns)
+	dbPool, err := postgres.NewPostgresPool(ctx, dns, database.PingDuration)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to database: %w", err)
 	}

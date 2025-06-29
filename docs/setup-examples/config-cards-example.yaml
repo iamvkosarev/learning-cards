@@ -17,6 +17,7 @@ common:
     local_user_id: 0
 database:
   connection_string_key: "DB_DNS"
+  ping_duration: 5s
 japanese_reading:
   search_timeout: 5s
   mecab_dic_dir: "/var/lib/mecab/dic/debian"

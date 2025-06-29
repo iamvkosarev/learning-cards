@@ -146,7 +146,7 @@ func (r *Reviews) getCardsAndReviews(
 	userId model.UserId, groupId model.GroupId,
 ) (
 	map[model.CardId]*model.
-	Card, map[model.CardId][]*model.CardReview, error,
+		Card, map[model.CardId][]*model.CardReview, error,
 ) {
 	cardsProgressRow, err := r.ReviewReader.GetCardsReviews(ctx, userId, groupId)
 	if err != nil {
