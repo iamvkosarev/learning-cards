@@ -5,17 +5,22 @@ import (
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/model"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"slices"
 	"strings"
 	"time"
 )
 
+const reviewTracerName = "postgres.CardRepository"
+
 type ReviewRepository struct {
-	db *pgxpool.Pool
+	db     *pgxpool.Pool
+	tracer trace.Tracer
 }
 
 func NewReviewRepository(pool *pgxpool.Pool) *ReviewRepository {
-	return &ReviewRepository{db: pool}
+	return &ReviewRepository{db: pool, tracer: otel.Tracer(reviewTracerName)}
 }
 
 func (p *ReviewRepository) DeleteNotUsedReviews(
@@ -23,6 +28,9 @@ func (p *ReviewRepository) DeleteNotUsedReviews(
 	userId model.UserId,
 	groupId model.GroupId,
 ) error {
+	ctx, span := p.tracer.Start(ctx, "DeleteNotUsedReviews")
+	defer span.End()
+
 	op := "postgres.ReviewRepository.DeleteNotUsedReviews"
 
 	reviews, err := p.GetCardsReviews(ctx, userId, groupId)
@@ -100,6 +108,9 @@ func (p *ReviewRepository) GetCardsReviews(
 	user model.UserId,
 	group model.GroupId,
 ) ([]*model.CardReview, error) {
+	ctx, span := p.tracer.Start(ctx, "GetCardsReviews")
+	defer span.End()
+
 	op := "postgres.ReviewRepository.GetCardsMarks"
 
 	rows, err := p.db.Query(
@@ -141,6 +152,9 @@ func (p *ReviewRepository) AddCardsReviews(
 	group model.GroupId,
 	cardsProgress []model.CardReview,
 ) error {
+	ctx, span := p.tracer.Start(ctx, "AddCardsReviews")
+	defer span.End()
+
 	op := "postgres.ReviewRepository.AddCardsReviews"
 
 	tx, err := p.db.Begin(ctx)

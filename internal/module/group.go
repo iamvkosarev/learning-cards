@@ -5,7 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/model"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 )
+
+const groupsTraceName = "module.groups"
 
 //go:generate minimock -i UserVerifier -o ./mocks/user_verifier_mock.go -n NewUserVerifierMock -p mocks
 type UserVerifier interface {
@@ -45,11 +49,13 @@ type GroupsDeps struct {
 
 type Groups struct {
 	GroupsDeps
+	tracer trace.Tracer
 }
 
 func NewGroups(deps GroupsDeps) *Groups {
 	return &Groups{
 		GroupsDeps: deps,
+		tracer:     otel.Tracer(groupsTraceName),
 	}
 }
 
@@ -58,6 +64,9 @@ func (g *Groups) CreateGroup(
 	name, description string,
 	visibility model.GroupVisibility, cardSideTypes []model.CardSideType,
 ) (model.GroupId, error) {
+	ctx, span := g.tracer.Start(ctx, "CreateGroup")
+	defer span.End()
+
 	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return 0, err
@@ -99,6 +108,8 @@ func (g *Groups) CreateGroup(
 }
 
 func (g *Groups) GetGroup(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
+	ctx, span := g.tracer.Start(ctx, "GetGroup")
+	defer span.End()
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 	if err != nil {
 		return nil, err
@@ -110,6 +121,8 @@ func (g *Groups) GetGroup(ctx context.Context, groupId model.GroupId) (*model.Gr
 }
 
 func (g *Groups) List(ctx context.Context) ([]*model.Group, error) {
+	ctx, span := g.tracer.Start(ctx, "List")
+	defer span.End()
 	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return nil, err
@@ -123,6 +136,8 @@ func (g *Groups) List(ctx context.Context) ([]*model.Group, error) {
 }
 
 func (g *Groups) UpdateGroup(ctx context.Context, updateGroup model.UpdateGroup) error {
+	ctx, span := g.tracer.Start(ctx, "UpdateGroup")
+	defer span.End()
 	op := "module.Groups.UpdateGroup"
 	group, err := g.GroupReader.GetGroup(ctx, updateGroup.Id)
 
@@ -171,6 +186,8 @@ func (g *Groups) UpdateGroup(ctx context.Context, updateGroup model.UpdateGroup)
 }
 
 func (g *Groups) DeleteGroup(ctx context.Context, groupId model.GroupId) error {
+	ctx, span := g.tracer.Start(ctx, "DeleteGroup")
+	defer span.End()
 	if _, err := g.CheckWriteGroupAccess(ctx, groupId); err != nil {
 		return err
 	}
@@ -181,6 +198,8 @@ func (g *Groups) DeleteGroup(ctx context.Context, groupId model.GroupId) error {
 }
 
 func (g *Groups) CheckReadGroupAccess(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
+	ctx, span := g.tracer.Start(ctx, "CheckReadGroupAccess")
+	defer span.End()
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 
 	if err != nil {
@@ -190,6 +209,8 @@ func (g *Groups) CheckReadGroupAccess(ctx context.Context, groupId model.GroupId
 }
 
 func (g *Groups) GetReadGroupAccessByGroup(ctx context.Context, group *model.Group) error {
+	ctx, span := g.tracer.Start(ctx, "GetReadGroupAccessByGroup")
+	defer span.End()
 	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
@@ -203,6 +224,8 @@ func (g *Groups) GetReadGroupAccessByGroup(ctx context.Context, group *model.Gro
 }
 
 func (g *Groups) CheckWriteGroupAccess(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
+	ctx, span := g.tracer.Start(ctx, "CheckWriteGroupAccess")
+	defer span.End()
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 
 	if err != nil {
@@ -212,6 +235,8 @@ func (g *Groups) CheckWriteGroupAccess(ctx context.Context, groupId model.GroupI
 }
 
 func (g *Groups) getWriteGroupAccessByGroup(ctx context.Context, group *model.Group) error {
+	ctx, span := g.tracer.Start(ctx, "getWriteGroupAccessByGroup")
+	defer span.End()
 	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err

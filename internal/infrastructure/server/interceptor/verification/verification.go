@@ -6,11 +6,14 @@ import (
 	"github.com/iamvkosarev/go-shared-utils/logger/sl"
 	"github.com/iamvkosarev/learning-cards/internal/model"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
+	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"log/slog"
 	"strings"
 )
+
+const traceName = "interceptor.verification"
 
 const (
 	userIdKey   = "user-id"
@@ -30,22 +33,23 @@ func Interceptor(log *slog.Logger, verificationService Verifier) grpc.UnaryServe
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
+		verificationCtx, span := otel.Tracer(traceName).Start(ctx, "Verifying")
 		if info.FullMethod == pb.CardService_HealthCheck_FullMethodName {
 			return nil, nil
 		}
-		token, err := GetTokenFormContext(ctx)
+		token, err := GetTokenFormContext(verificationCtx)
 		if err != nil {
 			return nil, err
 		}
 
-		userId, err := verificationService.VerifyToken(ctx, token)
+		userId, err := verificationService.VerifyToken(verificationCtx, token)
 		if err != nil {
 			log.Error("failed to verify token", sl.Err(err))
 			return nil, fmt.Errorf("verification err: %w", err)
 		}
 
 		ctx = setUserId(ctx, model.UserId(userId))
-
+		span.End()
 		return handler(ctx, req)
 	}
 }

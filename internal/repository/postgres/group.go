@@ -8,21 +8,29 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/model"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+const groupTracerName = "postgres.group"
+
 type GroupRepository struct {
-	db *pgxpool.Pool
+	db     *pgxpool.Pool
+	tracer trace.Tracer
 }
 
 func NewGroupRepository(pool *pgxpool.Pool) *GroupRepository {
-	return &GroupRepository{db: pool}
+	return &GroupRepository{db: pool, tracer: otel.Tracer(groupTracerName)}
 }
 
 func (gr *GroupRepository) ListGroups(ctx context.Context, userId model.UserId) ([]*model.Group, error) {
+	ctx, span := gr.tracer.Start(ctx, "ListGroups")
+	defer span.End()
+
 	const op = "postgres.GroupRepository.ListGroups"
 
 	rows, err := gr.db.Query(
@@ -75,6 +83,9 @@ func (gr *GroupRepository) ListGroups(ctx context.Context, userId model.UserId) 
 }
 
 func (gr *GroupRepository) AddGroup(ctx context.Context, group *model.Group) (model.GroupId, error) {
+	ctx, span := gr.tracer.Start(ctx, "AddGroup")
+	defer span.End()
+
 	const op = "postgres.GroupRepository.AddGroup"
 
 	var id int64
@@ -109,6 +120,9 @@ func (gr *GroupRepository) AddGroup(ctx context.Context, group *model.Group) (mo
 }
 
 func (gr *GroupRepository) GetGroup(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
+	ctx, span := gr.tracer.Start(ctx, "GetGroup")
+	defer span.End()
+
 	const op = "postgres.GroupRepository.GetGroup"
 
 	group := &model.Group{
@@ -151,6 +165,9 @@ func (gr *GroupRepository) GetGroup(ctx context.Context, groupId model.GroupId) 
 }
 
 func (gr *GroupRepository) UpdateGroup(ctx context.Context, group *model.Group) error {
+	ctx, span := gr.tracer.Start(ctx, "UpdateGroup")
+	defer span.End()
+
 	const op = "postgres.GroupRepository.UpdateGroup"
 
 	cmdTag, err := gr.db.Exec(
@@ -184,6 +201,9 @@ func (gr *GroupRepository) UpdateGroup(ctx context.Context, group *model.Group) 
 }
 
 func (gr *GroupRepository) DeleteGroup(ctx context.Context, groupId model.GroupId) error {
+	ctx, span := gr.tracer.Start(ctx, "DeleteGroup")
+	defer span.End()
+
 	const op = "postgres.GroupRepository.DeleteGroup"
 
 	cmdTag, err := gr.db.Exec(

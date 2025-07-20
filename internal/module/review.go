@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/config"
 	"github.com/iamvkosarev/learning-cards/internal/model"
+	"go.opentelemetry.io/otel"
 	"slices"
 	"sort"
 	"time"
@@ -23,6 +24,8 @@ const (
 	MARK_C_START
 	MARK_D_START
 )
+
+const reviewsTraceName = "module.reviews"
 
 //go:generate minimock -i ReviewReader -o ./mocks/review_reader_mock.go -n ReviewReaderMock -p mocks
 type ReviewReader interface {
@@ -66,6 +69,9 @@ func (r *Reviews) GetReviewCards(
 	[]*model.Card,
 	error,
 ) {
+	ctx, span := otel.Tracer(reviewsTraceName).Start(ctx, "GetReviewCards")
+	defer span.End()
+
 	userId, err := r.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return nil, err
@@ -128,6 +134,9 @@ func (r *Reviews) GetCardsMarks(
 	ctx context.Context,
 	groupId model.GroupId,
 ) ([]model.CardMark, error) {
+	ctx, span := otel.Tracer(reviewsTraceName).Start(ctx, "GetCardsMarks")
+	defer span.End()
+
 	userId, err := r.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return nil, err

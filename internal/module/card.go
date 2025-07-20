@@ -3,7 +3,11 @@ package module
 import (
 	"context"
 	"github.com/iamvkosarev/learning-cards/internal/model"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 )
+
+const cardsTraceName = "module.cards"
 
 //go:generate minimock -i CardReader -o ./mocks/card_reader_mock.go -n CardReaderMock -p mocks
 type CardReader interface {
@@ -39,11 +43,13 @@ type CardsDeps struct {
 
 type Cards struct {
 	CardsDeps
+	tracer trace.Tracer
 }
 
 func NewCards(deps CardsDeps) *Cards {
 	return &Cards{
 		CardsDeps: deps,
+		tracer:    otel.Tracer(cardsTraceName),
 	}
 }
 
@@ -53,6 +59,8 @@ func (c *Cards) AddCard(
 	model.CardId,
 	error,
 ) {
+	ctx, span := c.tracer.Start(ctx, "AddCard")
+	defer span.End()
 	if _, err := c.GroupAccessChecker.CheckWriteGroupAccess(ctx, groupId); err != nil {
 		return 0, err
 	}
@@ -73,6 +81,8 @@ func (c *Cards) AddCard(
 }
 
 func (c *Cards) GetCard(ctx context.Context, cardId model.CardId) (*model.Card, error) {
+	ctx, span := c.tracer.Start(ctx, "GetCard")
+	defer span.End()
 	card, err := c.CardReader.GetCard(ctx, cardId)
 	if err != nil {
 		return nil, err
@@ -95,6 +105,8 @@ func (c *Cards) ListCards(ctx context.Context, groupId model.GroupId) (
 	[]*model.Card,
 	error,
 ) {
+	ctx, span := c.tracer.Start(ctx, "ListCards")
+	defer span.End()
 	group, err := c.GroupAccessChecker.CheckReadGroupAccess(ctx, groupId)
 	if err != nil {
 		return nil, err
@@ -104,6 +116,9 @@ func (c *Cards) ListCards(ctx context.Context, groupId model.GroupId) (
 	if err != nil {
 		return nil, err
 	}
+
+	decorateCtx, span := c.tracer.Start(ctx, "DecorateCards")
+	defer span.End()
 	for _, card := range cards {
 		if err = c.CardDecorator.DecorateCard(ctx, card); err != nil {
 			return nil, err
@@ -114,6 +129,8 @@ func (c *Cards) ListCards(ctx context.Context, groupId model.GroupId) (
 }
 
 func (c *Cards) UpdateCard(ctx context.Context, updateCard model.UpdateCard) error {
+	ctx, span := c.tracer.Start(ctx, "UpdateCard")
+	defer span.End()
 	card, err := c.CardReader.GetCard(ctx, updateCard.Id)
 	if err != nil {
 		return err
@@ -139,6 +156,8 @@ func (c *Cards) UpdateCard(ctx context.Context, updateCard model.UpdateCard) err
 }
 
 func (c *Cards) DeleteCard(ctx context.Context, id model.CardId) error {
+	ctx, span := c.tracer.Start(ctx, "DeleteCard")
+	defer span.End()
 	card, err := c.CardReader.GetCard(ctx, id)
 	if err != nil {
 		return err

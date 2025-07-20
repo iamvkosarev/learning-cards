@@ -8,19 +8,25 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/config"
 	"github.com/iamvkosarev/learning-cards/internal/model"
 	"github.com/shogo82148/go-mecab"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"strings"
 	"time"
 
 	"unicode"
 )
 
+const mecabReaderTracerName = "mecab.reader"
+
 type Reader struct {
 	Config config.JapaneseReading
+	tracer trace.Tracer
 }
 
 func NewReader(config config.JapaneseReading) *Reader {
 	return &Reader{
 		Config: config,
+		tracer: otel.Tracer(mecabReaderTracerName),
 	}
 }
 
@@ -30,6 +36,9 @@ type readingPairsResult struct {
 }
 
 func (j *Reader) GetCardReading(ctx context.Context, text string) ([]model.ReadingPair, error) {
+	ctx, span := j.tracer.Start(ctx, "GetCardReading")
+	defer span.End()
+
 	op := "service.Reader.GetCardReading"
 	ch := make(chan *readingPairsResult)
 	go func() {

@@ -17,7 +17,6 @@ func NewPostgresPool(ctx context.Context, dsn string, pingDuration time.Duration
 	if err != nil {
 		return nil, fmt.Errorf("failed to create connection pool: %w", err)
 	}
-
 	ctx, cancel := context.WithTimeout(ctx, pingDuration)
 	defer cancel()
 	if err = pool.Ping(ctx); err != nil {
