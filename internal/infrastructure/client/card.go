@@ -6,6 +6,7 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
 	"github.com/iamvkosarev/learning-cards/internal/model"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
@@ -25,6 +26,7 @@ func NewCardsClient(ctx context.Context, address string) (*CardsClient, error) {
 		address,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithUnaryInterceptor(AuthInterceptor()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error creating client to cards service: %w", err)

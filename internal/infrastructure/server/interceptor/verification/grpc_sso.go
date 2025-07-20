@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	sso_pb "github.com/iamvkosarev/sso/pkg/proto/sso/v1"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -14,7 +15,10 @@ type GRPCSSOVerifier struct {
 }
 
 func NewGRPCVerifier(hostAddress string) (*GRPCSSOVerifier, error) {
-	ssoConn, err := grpc.NewClient(hostAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	ssoConn, err := grpc.NewClient(
+		hostAddress, grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("error creating gRPC client: %w", err)
 	}
