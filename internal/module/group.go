@@ -103,7 +103,7 @@ func (g *Groups) GetGroup(ctx context.Context, groupId model.GroupId) (*model.Gr
 	if err != nil {
 		return nil, err
 	}
-	if err = g.getReadGroupAccessByGroup(ctx, group); err != nil {
+	if err = g.GetReadGroupAccessByGroup(ctx, group); err != nil {
 		return nil, err
 	}
 	return group, nil
@@ -171,7 +171,7 @@ func (g *Groups) UpdateGroup(ctx context.Context, updateGroup model.UpdateGroup)
 }
 
 func (g *Groups) DeleteGroup(ctx context.Context, groupId model.GroupId) error {
-	if err := g.CheckWriteGroupAccess(ctx, groupId); err != nil {
+	if _, err := g.CheckWriteGroupAccess(ctx, groupId); err != nil {
 		return err
 	}
 	if err := g.GroupWriter.DeleteGroup(ctx, groupId); err != nil {
@@ -180,16 +180,16 @@ func (g *Groups) DeleteGroup(ctx context.Context, groupId model.GroupId) error {
 	return nil
 }
 
-func (g *Groups) CheckReadGroupAccess(ctx context.Context, groupId model.GroupId) error {
+func (g *Groups) CheckReadGroupAccess(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return g.getReadGroupAccessByGroup(ctx, group)
+	return group, g.GetReadGroupAccessByGroup(ctx, group)
 }
 
-func (g *Groups) getReadGroupAccessByGroup(ctx context.Context, group *model.Group) error {
+func (g *Groups) GetReadGroupAccessByGroup(ctx context.Context, group *model.Group) error {
 	userId, err := g.UserVerifier.VerifyUserByContext(ctx)
 	if err != nil {
 		return err
@@ -202,13 +202,13 @@ func (g *Groups) getReadGroupAccessByGroup(ctx context.Context, group *model.Gro
 	return nil
 }
 
-func (g *Groups) CheckWriteGroupAccess(ctx context.Context, groupId model.GroupId) error {
+func (g *Groups) CheckWriteGroupAccess(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
 	group, err := g.GroupReader.GetGroup(ctx, groupId)
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return g.getWriteGroupAccessByGroup(ctx, group)
+	return group, g.getWriteGroupAccessByGroup(ctx, group)
 }
 
 func (g *Groups) getWriteGroupAccessByGroup(ctx context.Context, group *model.Group) error {

@@ -20,18 +20,19 @@ type CardWriter interface {
 
 //go:generate minimock -i GroupAccessChecker -o ./mocks/group_access_checker_mock.go -n GroupAccessCheckerMock -p mocks
 type GroupAccessChecker interface {
-	CheckReadGroupAccess(ctx context.Context, groupId model.GroupId) error
-	CheckWriteGroupAccess(ctx context.Context, groupId model.GroupId) error
+	CheckReadGroupAccess(ctx context.Context, groupId model.GroupId) (*model.Group, error)
+	CheckWriteGroupAccess(ctx context.Context, groupId model.GroupId) (*model.Group, error)
 }
 
 //go:generate minimock -i CardDecorator -o ./mocks/card_decorator_mock.go -n CardDecoratorMock -p mocks
 type CardDecorator interface {
-	DecorateCard(ctx context.Context, card *model.Card) error
+	DecorateCard(ctx context.Context, card *model.Card, group *model.Group) error
 }
 
 type CardsDeps struct {
 	CardReader         CardReader
 	CardWriter         CardWriter
+	GroupReader        GroupReader
 	GroupAccessChecker GroupAccessChecker
 	CardDecorator      CardDecorator
 }
@@ -52,7 +53,7 @@ func (c *Cards) AddCard(
 	model.CardId,
 	error,
 ) {
-	if err := c.GroupAccessChecker.CheckWriteGroupAccess(ctx, groupId); err != nil {
+	if _, err := c.GroupAccessChecker.CheckWriteGroupAccess(ctx, groupId); err != nil {
 		return 0, err
 	}
 
@@ -77,7 +78,8 @@ func (c *Cards) GetCard(ctx context.Context, cardId model.CardId) (*model.Card, 
 		return nil, err
 	}
 
-	if err = c.GroupAccessChecker.CheckReadGroupAccess(ctx, card.GroupId); err != nil {
+	group, err := c.GroupAccessChecker.CheckReadGroupAccess(ctx, card.GroupId)
+	if err != nil {
 		return nil, err
 	}
 
@@ -93,7 +95,8 @@ func (c *Cards) ListCards(ctx context.Context, groupId model.GroupId) (
 	[]*model.Card,
 	error,
 ) {
-	if err := c.GroupAccessChecker.CheckReadGroupAccess(ctx, groupId); err != nil {
+	group, err := c.GroupAccessChecker.CheckReadGroupAccess(ctx, groupId)
+	if err != nil {
 		return nil, err
 	}
 
@@ -116,7 +119,7 @@ func (c *Cards) UpdateCard(ctx context.Context, updateCard model.UpdateCard) err
 		return err
 	}
 
-	if err = c.GroupAccessChecker.CheckWriteGroupAccess(ctx, card.GroupId); err != nil {
+	if _, err = c.GroupAccessChecker.CheckWriteGroupAccess(ctx, card.GroupId); err != nil {
 		return err
 	}
 
@@ -141,7 +144,7 @@ func (c *Cards) DeleteCard(ctx context.Context, id model.CardId) error {
 		return err
 	}
 
-	if err = c.GroupAccessChecker.CheckWriteGroupAccess(ctx, card.GroupId); err != nil {
+	if _, err = c.GroupAccessChecker.CheckWriteGroupAccess(ctx, card.GroupId); err != nil {
 		return err
 	}
 
