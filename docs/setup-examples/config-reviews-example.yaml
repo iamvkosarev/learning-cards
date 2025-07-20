@@ -18,6 +18,11 @@ common:
 database:
   connection_string_key: "DB_DNS"
   ping_duration: 5s
+open_telemetry:
+  tracing:
+    always_sample: false
+    service_name: "lc-reviews"
+    trace_grpc_exporter_endpoint: "jaeger:4317"
 cards_server:
   address: "cards-server:50051"
 review_service:

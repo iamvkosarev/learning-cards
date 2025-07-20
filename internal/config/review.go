@@ -13,6 +13,7 @@ type CardsServer struct {
 type ReviewsConfig struct {
 	Common         Config `yaml:"common"`
 	Database       `yaml:"database"`
+	OTel           `yaml:"open_telemetry"`
 	CardsServer    `yaml:"cards_server"`
 	ReviewsService `yaml:"review_service"`
 }

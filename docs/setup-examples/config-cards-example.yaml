@@ -15,6 +15,11 @@ common:
     host_address: "sso:50052"
     use_local: false
     local_user_id: 0
+open_telemetry:
+  tracing:
+    always_sample: false
+    service_name: "lc-cards"
+    trace_grpc_exporter_endpoint: "jaeger:4317"
 database:
   connection_string_key: "DB_DNS"
   ping_duration: 5s

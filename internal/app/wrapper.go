@@ -12,6 +12,8 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
 	"github.com/iamvkosarev/learning-cards/internal/repository/postgres"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -26,7 +28,7 @@ import (
 
 type app interface {
 	start() error
-	shutdown(context.Context)
+	shutdown(context.Context) error
 }
 
 type newServerFunc[TServer any, TAppDeps any] func(context.Context, *slog.Logger) (TServer, TAppDeps, error)
@@ -59,7 +61,10 @@ func (w *grpcAppWrapper) Run(
 	<-shutdown
 	log.Println("Shutting down gracefully")
 
-	w.shutdown(ctx)
+	err := w.shutdown(ctx)
+	if err != nil {
+		log.Printf("Failed to gracefully shutdown server: %v", err)
+	}
 	log.Println("app stopped")
 }
 
@@ -96,6 +101,7 @@ func buildApp[TServer any, TApp app, TAppDeps any](
 			verification.Interceptor(logger, verifier),
 			interceptor.ValidationInterceptor(logger),
 		),
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
 	)
 
 	registerServerFunc(grpcServer, service)
@@ -119,7 +125,7 @@ func buildApp[TServer any, TApp app, TAppDeps any](
 
 	httpServer := &http.Server{
 		Addr:    httpAddr,
-		Handler: corsHandler,
+		Handler: otelhttp.NewHandler(corsHandler, "http-gateway"),
 	}
 
 	server := &grpcAppWrapper{
@@ -163,7 +169,7 @@ func (w *grpcAppWrapper) start() error {
 	return nil
 }
 
-func (w *grpcAppWrapper) shutdown(ctx context.Context) {
+func (w *grpcAppWrapper) shutdown(ctx context.Context) error {
 	shutdownCtx, cancel := context.WithTimeout(ctx, w.serverConfig.ShutdownTimeout)
 	defer cancel()
 
@@ -174,7 +180,7 @@ func (w *grpcAppWrapper) shutdown(ctx context.Context) {
 		w.logger.Error("HTTP server shutdown error", sl.Err(err))
 	}
 
-	w.app.shutdown(shutdownCtx)
+	return w.app.shutdown(shutdownCtx)
 }
 
 func selectVerifier(ssoConfig config.SSO) (verification.Verifier, error) {

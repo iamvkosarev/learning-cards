@@ -12,5 +12,6 @@ type JapaneseReading struct {
 type CardsConfig struct {
 	Common          Config `yaml:"common"`
 	Database        `yaml:"database"`
+	OTel            `yaml:"open_telemetry"`
 	JapaneseReading JapaneseReading `yaml:"japanese_reading"`
 }

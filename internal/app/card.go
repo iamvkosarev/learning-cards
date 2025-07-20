@@ -7,31 +7,34 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
 	"github.com/iamvkosarev/learning-cards/internal/model"
 	"github.com/iamvkosarev/learning-cards/internal/module"
+	"github.com/iamvkosarev/learning-cards/internal/otel/tracing"
 	"github.com/iamvkosarev/learning-cards/internal/repository/postgres"
 	"github.com/iamvkosarev/learning-cards/internal/service/japanese"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"go.opentelemetry.io/otel/sdk/trace"
 	"log/slog"
 )
 
 type cardsAppDeps struct {
-	dbPool *pgxpool.Pool
+	dbPool        *pgxpool.Pool
+	traceProvider *trace.TracerProvider
 }
 type cardsApp struct {
-	cardsAppDeps
+	*cardsAppDeps
 }
 
 func NewCardsApp(ctx context.Context, cfg *config.CardsConfig) (*grpcAppWrapper, error) {
 	return buildApp(
 		ctx, cfg.Common,
-		func(ctx context.Context, logger *slog.Logger) (pb.CardServiceServer, cardsAppDeps, error) {
+		func(ctx context.Context, logger *slog.Logger) (pb.CardServiceServer, *cardsAppDeps, error) {
 			return prepareCardServer(ctx, cfg, logger)
 		}, pb.RegisterCardServiceServer, pb.RegisterCardServiceHandlerFromEndpoint, newCardsApp,
 	)
 }
 
 func newCardsApp(
-	serviceDeps cardsAppDeps,
+	serviceDeps *cardsAppDeps,
 ) *cardsApp {
 	return &cardsApp{
 		cardsAppDeps: serviceDeps,
@@ -42,17 +45,23 @@ func (c *cardsApp) start() error {
 	return nil
 }
 
-func (c *cardsApp) shutdown(context.Context) {
+func (c *cardsApp) shutdown(ctx context.Context) error {
 	c.cardsAppDeps.dbPool.Close()
+	return c.traceProvider.Shutdown(ctx)
 }
 
 func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slog.Logger) (
 	pb.CardServiceServer,
-	cardsAppDeps, error,
+	*cardsAppDeps, error,
 ) {
+	traceProvider, err := tracing.SetupTracingProvider(ctx, cfg.Tracing)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	dbPool, err := connectToDbPool(ctx, cfg.Database)
 	if err != nil {
-		return nil, cardsAppDeps{}, err
+		return nil, nil, err
 	}
 
 	groupRepo := postgres.NewGroupRepository(dbPool)
@@ -87,6 +96,7 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 			CardWriter:         cardRepo,
 			CardReader:         cardRepo,
 			GroupAccessChecker: groupsService,
+			GroupReader:        groupRepo,
 			CardDecorator:      cardDecorator,
 		},
 	)
@@ -100,8 +110,9 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 		},
 	)
 
-	appDeps := cardsAppDeps{
-		dbPool: dbPool,
+	appDeps := &cardsAppDeps{
+		dbPool:        dbPool,
+		traceProvider: traceProvider,
 	}
 	return server, appDeps, nil
 }

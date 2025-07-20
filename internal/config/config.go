@@ -33,6 +33,16 @@ type Database struct {
 	PingDuration        time.Duration `yaml:"ping_duration"`
 }
 
+type OTelTracing struct {
+	AlwaysSample              bool   `yaml:"always_sample"`
+	ServiceName               string `yaml:"service_name"`
+	TraceGRPCExporterEndpoint string `yaml:"trace_grpc_exporter_endpoint"`
+}
+
+type OTel struct {
+	Tracing OTelTracing `yaml:"tracing"`
+}
+
 type Config struct {
 	Env    string `yaml:"env" env-default:"development"`
 	Server `yaml:"server"`
