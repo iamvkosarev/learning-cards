@@ -24,11 +24,8 @@ func NewDecorator(deps DecoratorDeps) *Decorator {
 	}
 }
 
-func (c *Decorator) DecorateCard(ctx context.Context, card *model.Card) error {
-	group, err := c.GroupReader.GetGroup(ctx, card.GroupId)
-	if err != nil {
-		return err
-	}
+func (c *Decorator) DecorateCard(ctx context.Context, card *model.Card, group *model.Group) error {
+	var err error
 	for i, side := range card.Sides {
 		switch group.CardSideTypes[i] {
 		case model.CARD_SIDE_TYPE_JAPANESE:

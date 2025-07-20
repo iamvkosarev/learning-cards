@@ -19,9 +19,9 @@ type CardDecoratorMock struct {
 	t          minimock.Tester
 	finishOnce sync.Once
 
-	funcDecorateCard          func(ctx context.Context, card *model.Card) (err error)
+	funcDecorateCard          func(ctx context.Context, card *model.Card, group *model.Group) (err error)
 	funcDecorateCardOrigin    string
-	inspectFuncDecorateCard   func(ctx context.Context, card *model.Card)
+	inspectFuncDecorateCard   func(ctx context.Context, card *model.Card, group *model.Group)
 	afterDecorateCardCounter  uint64
 	beforeDecorateCardCounter uint64
 	DecorateCardMock          mCardDecoratorMockDecorateCard
@@ -69,14 +69,16 @@ type CardDecoratorMockDecorateCardExpectation struct {
 
 // CardDecoratorMockDecorateCardParams contains parameters of the CardDecorator.DecorateCard
 type CardDecoratorMockDecorateCardParams struct {
-	ctx  context.Context
-	card *model.Card
+	ctx   context.Context
+	card  *model.Card
+	group *model.Group
 }
 
 // CardDecoratorMockDecorateCardParamPtrs contains pointers to parameters of the CardDecorator.DecorateCard
 type CardDecoratorMockDecorateCardParamPtrs struct {
-	ctx  *context.Context
-	card **model.Card
+	ctx   *context.Context
+	card  **model.Card
+	group **model.Group
 }
 
 // CardDecoratorMockDecorateCardResults contains results of the CardDecorator.DecorateCard
@@ -86,9 +88,10 @@ type CardDecoratorMockDecorateCardResults struct {
 
 // CardDecoratorMockDecorateCardOrigins contains origins of expectations of the CardDecorator.DecorateCard
 type CardDecoratorMockDecorateCardExpectationOrigins struct {
-	origin     string
-	originCtx  string
-	originCard string
+	origin      string
+	originCtx   string
+	originCard  string
+	originGroup string
 }
 
 // Marks this method to be optional. The default behavior of any method with Return() is '1 or more', meaning
@@ -102,7 +105,7 @@ func (mmDecorateCard *mCardDecoratorMockDecorateCard) Optional() *mCardDecorator
 }
 
 // Expect sets up expected params for CardDecorator.DecorateCard
-func (mmDecorateCard *mCardDecoratorMockDecorateCard) Expect(ctx context.Context, card *model.Card) *mCardDecoratorMockDecorateCard {
+func (mmDecorateCard *mCardDecoratorMockDecorateCard) Expect(ctx context.Context, card *model.Card, group *model.Group) *mCardDecoratorMockDecorateCard {
 	if mmDecorateCard.mock.funcDecorateCard != nil {
 		mmDecorateCard.mock.t.Fatalf("CardDecoratorMock.DecorateCard mock is already set by Set")
 	}
@@ -115,7 +118,7 @@ func (mmDecorateCard *mCardDecoratorMockDecorateCard) Expect(ctx context.Context
 		mmDecorateCard.mock.t.Fatalf("CardDecoratorMock.DecorateCard mock is already set by ExpectParams functions")
 	}
 
-	mmDecorateCard.defaultExpectation.params = &CardDecoratorMockDecorateCardParams{ctx, card}
+	mmDecorateCard.defaultExpectation.params = &CardDecoratorMockDecorateCardParams{ctx, card, group}
 	mmDecorateCard.defaultExpectation.expectationOrigins.origin = minimock.CallerInfo(1)
 	for _, e := range mmDecorateCard.expectations {
 		if minimock.Equal(e.params, mmDecorateCard.defaultExpectation.params) {
@@ -172,8 +175,31 @@ func (mmDecorateCard *mCardDecoratorMockDecorateCard) ExpectCardParam2(card *mod
 	return mmDecorateCard
 }
 
+// ExpectGroupParam3 sets up expected param group for CardDecorator.DecorateCard
+func (mmDecorateCard *mCardDecoratorMockDecorateCard) ExpectGroupParam3(group *model.Group) *mCardDecoratorMockDecorateCard {
+	if mmDecorateCard.mock.funcDecorateCard != nil {
+		mmDecorateCard.mock.t.Fatalf("CardDecoratorMock.DecorateCard mock is already set by Set")
+	}
+
+	if mmDecorateCard.defaultExpectation == nil {
+		mmDecorateCard.defaultExpectation = &CardDecoratorMockDecorateCardExpectation{}
+	}
+
+	if mmDecorateCard.defaultExpectation.params != nil {
+		mmDecorateCard.mock.t.Fatalf("CardDecoratorMock.DecorateCard mock is already set by Expect")
+	}
+
+	if mmDecorateCard.defaultExpectation.paramPtrs == nil {
+		mmDecorateCard.defaultExpectation.paramPtrs = &CardDecoratorMockDecorateCardParamPtrs{}
+	}
+	mmDecorateCard.defaultExpectation.paramPtrs.group = &group
+	mmDecorateCard.defaultExpectation.expectationOrigins.originGroup = minimock.CallerInfo(1)
+
+	return mmDecorateCard
+}
+
 // Inspect accepts an inspector function that has same arguments as the CardDecorator.DecorateCard
-func (mmDecorateCard *mCardDecoratorMockDecorateCard) Inspect(f func(ctx context.Context, card *model.Card)) *mCardDecoratorMockDecorateCard {
+func (mmDecorateCard *mCardDecoratorMockDecorateCard) Inspect(f func(ctx context.Context, card *model.Card, group *model.Group)) *mCardDecoratorMockDecorateCard {
 	if mmDecorateCard.mock.inspectFuncDecorateCard != nil {
 		mmDecorateCard.mock.t.Fatalf("Inspect function is already set for CardDecoratorMock.DecorateCard")
 	}
@@ -198,7 +224,7 @@ func (mmDecorateCard *mCardDecoratorMockDecorateCard) Return(err error) *CardDec
 }
 
 // Set uses given function f to mock the CardDecorator.DecorateCard method
-func (mmDecorateCard *mCardDecoratorMockDecorateCard) Set(f func(ctx context.Context, card *model.Card) (err error)) *CardDecoratorMock {
+func (mmDecorateCard *mCardDecoratorMockDecorateCard) Set(f func(ctx context.Context, card *model.Card, group *model.Group) (err error)) *CardDecoratorMock {
 	if mmDecorateCard.defaultExpectation != nil {
 		mmDecorateCard.mock.t.Fatalf("Default expectation is already set for the CardDecorator.DecorateCard method")
 	}
@@ -214,14 +240,14 @@ func (mmDecorateCard *mCardDecoratorMockDecorateCard) Set(f func(ctx context.Con
 
 // When sets expectation for the CardDecorator.DecorateCard which will trigger the result defined by the following
 // Then helper
-func (mmDecorateCard *mCardDecoratorMockDecorateCard) When(ctx context.Context, card *model.Card) *CardDecoratorMockDecorateCardExpectation {
+func (mmDecorateCard *mCardDecoratorMockDecorateCard) When(ctx context.Context, card *model.Card, group *model.Group) *CardDecoratorMockDecorateCardExpectation {
 	if mmDecorateCard.mock.funcDecorateCard != nil {
 		mmDecorateCard.mock.t.Fatalf("CardDecoratorMock.DecorateCard mock is already set by Set")
 	}
 
 	expectation := &CardDecoratorMockDecorateCardExpectation{
 		mock:               mmDecorateCard.mock,
-		params:             &CardDecoratorMockDecorateCardParams{ctx, card},
+		params:             &CardDecoratorMockDecorateCardParams{ctx, card, group},
 		expectationOrigins: CardDecoratorMockDecorateCardExpectationOrigins{origin: minimock.CallerInfo(1)},
 	}
 	mmDecorateCard.expectations = append(mmDecorateCard.expectations, expectation)
@@ -256,17 +282,17 @@ func (mmDecorateCard *mCardDecoratorMockDecorateCard) invocationsDone() bool {
 }
 
 // DecorateCard implements mm_module.CardDecorator
-func (mmDecorateCard *CardDecoratorMock) DecorateCard(ctx context.Context, card *model.Card) (err error) {
+func (mmDecorateCard *CardDecoratorMock) DecorateCard(ctx context.Context, card *model.Card, group *model.Group) (err error) {
 	mm_atomic.AddUint64(&mmDecorateCard.beforeDecorateCardCounter, 1)
 	defer mm_atomic.AddUint64(&mmDecorateCard.afterDecorateCardCounter, 1)
 
 	mmDecorateCard.t.Helper()
 
 	if mmDecorateCard.inspectFuncDecorateCard != nil {
-		mmDecorateCard.inspectFuncDecorateCard(ctx, card)
+		mmDecorateCard.inspectFuncDecorateCard(ctx, card, group)
 	}
 
-	mm_params := CardDecoratorMockDecorateCardParams{ctx, card}
+	mm_params := CardDecoratorMockDecorateCardParams{ctx, card, group}
 
 	// Record call args
 	mmDecorateCard.DecorateCardMock.mutex.Lock()
@@ -285,7 +311,7 @@ func (mmDecorateCard *CardDecoratorMock) DecorateCard(ctx context.Context, card 
 		mm_want := mmDecorateCard.DecorateCardMock.defaultExpectation.params
 		mm_want_ptrs := mmDecorateCard.DecorateCardMock.defaultExpectation.paramPtrs
 
-		mm_got := CardDecoratorMockDecorateCardParams{ctx, card}
+		mm_got := CardDecoratorMockDecorateCardParams{ctx, card, group}
 
 		if mm_want_ptrs != nil {
 
@@ -297,6 +323,11 @@ func (mmDecorateCard *CardDecoratorMock) DecorateCard(ctx context.Context, card 
 			if mm_want_ptrs.card != nil && !minimock.Equal(*mm_want_ptrs.card, mm_got.card) {
 				mmDecorateCard.t.Errorf("CardDecoratorMock.DecorateCard got unexpected parameter card, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
 					mmDecorateCard.DecorateCardMock.defaultExpectation.expectationOrigins.originCard, *mm_want_ptrs.card, mm_got.card, minimock.Diff(*mm_want_ptrs.card, mm_got.card))
+			}
+
+			if mm_want_ptrs.group != nil && !minimock.Equal(*mm_want_ptrs.group, mm_got.group) {
+				mmDecorateCard.t.Errorf("CardDecoratorMock.DecorateCard got unexpected parameter group, expected at\n%s:\nwant: %#v\n got: %#v%s\n",
+					mmDecorateCard.DecorateCardMock.defaultExpectation.expectationOrigins.originGroup, *mm_want_ptrs.group, mm_got.group, minimock.Diff(*mm_want_ptrs.group, mm_got.group))
 			}
 
 		} else if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
@@ -311,9 +342,9 @@ func (mmDecorateCard *CardDecoratorMock) DecorateCard(ctx context.Context, card 
 		return (*mm_results).err
 	}
 	if mmDecorateCard.funcDecorateCard != nil {
-		return mmDecorateCard.funcDecorateCard(ctx, card)
+		return mmDecorateCard.funcDecorateCard(ctx, card, group)
 	}
-	mmDecorateCard.t.Fatalf("Unexpected call to CardDecoratorMock.DecorateCard. %v %v", ctx, card)
+	mmDecorateCard.t.Fatalf("Unexpected call to CardDecoratorMock.DecorateCard. %v %v %v", ctx, card, group)
 	return
 }
 

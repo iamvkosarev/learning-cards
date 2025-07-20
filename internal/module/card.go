@@ -93,7 +93,7 @@ func (c *Cards) GetCard(ctx context.Context, cardId model.CardId) (*model.Card, 
 		return nil, err
 	}
 
-	if err = c.CardDecorator.DecorateCard(ctx, card); err != nil {
+	if err = c.CardDecorator.DecorateCard(ctx, card, group); err != nil {
 		return nil, err
 	}
 
@@ -120,7 +120,7 @@ func (c *Cards) ListCards(ctx context.Context, groupId model.GroupId) (
 	decorateCtx, span := c.tracer.Start(ctx, "DecorateCards")
 	defer span.End()
 	for _, card := range cards {
-		if err = c.CardDecorator.DecorateCard(ctx, card); err != nil {
+		if err = c.CardDecorator.DecorateCard(decorateCtx, card, group); err != nil {
 			return nil, err
 		}
 	}
