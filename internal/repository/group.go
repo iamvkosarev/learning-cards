@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -16,22 +16,22 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-const groupTracerName = "postgres.group"
+const groupTracerName = "repository.group"
 
-type GroupRepository struct {
+type Group struct {
 	db     *pgxpool.Pool
 	tracer trace.Tracer
 }
 
-func NewGroupRepository(pool *pgxpool.Pool) *GroupRepository {
-	return &GroupRepository{db: pool, tracer: otel.Tracer(groupTracerName)}
+func NewGroupRepository(pool *pgxpool.Pool) *Group {
+	return &Group{db: pool, tracer: otel.Tracer(groupTracerName)}
 }
 
-func (gr *GroupRepository) ListGroups(ctx context.Context, userId model.UserId) ([]*model.Group, error) {
+func (gr *Group) ListGroups(ctx context.Context, userId model.UserId) ([]*model.Group, error) {
 	ctx, span := gr.tracer.Start(ctx, "ListGroups")
 	defer span.End()
 
-	const op = "postgres.GroupRepository.ListGroups"
+	const op = "repository.Group.ListGroups"
 
 	rows, err := gr.db.Query(
 		ctx,
@@ -82,11 +82,11 @@ func (gr *GroupRepository) ListGroups(ctx context.Context, userId model.UserId) 
 	return groups, nil
 }
 
-func (gr *GroupRepository) AddGroup(ctx context.Context, group *model.Group) (model.GroupId, error) {
+func (gr *Group) AddGroup(ctx context.Context, group *model.Group) (model.GroupId, error) {
 	ctx, span := gr.tracer.Start(ctx, "AddGroup")
 	defer span.End()
 
-	const op = "postgres.GroupRepository.AddGroup"
+	const op = "repository.Group.AddGroup"
 
 	var id int64
 	err := gr.db.QueryRow(
@@ -119,11 +119,11 @@ func (gr *GroupRepository) AddGroup(ctx context.Context, group *model.Group) (mo
 	return model.GroupId(id), nil
 }
 
-func (gr *GroupRepository) GetGroup(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
+func (gr *Group) GetGroup(ctx context.Context, groupId model.GroupId) (*model.Group, error) {
 	ctx, span := gr.tracer.Start(ctx, "GetGroup")
 	defer span.End()
 
-	const op = "postgres.GroupRepository.GetGroup"
+	const op = "repository.Group.GetGroup"
 
 	group := &model.Group{
 		CardSideTypes: make([]model.CardSideType, 2),
@@ -164,11 +164,11 @@ func (gr *GroupRepository) GetGroup(ctx context.Context, groupId model.GroupId) 
 	return group, nil
 }
 
-func (gr *GroupRepository) UpdateGroup(ctx context.Context, group *model.Group) error {
+func (gr *Group) UpdateGroup(ctx context.Context, group *model.Group) error {
 	ctx, span := gr.tracer.Start(ctx, "UpdateGroup")
 	defer span.End()
 
-	const op = "postgres.GroupRepository.UpdateGroup"
+	const op = "repository.Group.UpdateGroup"
 
 	cmdTag, err := gr.db.Exec(
 		ctx,
@@ -200,11 +200,11 @@ func (gr *GroupRepository) UpdateGroup(ctx context.Context, group *model.Group) 
 	return nil
 }
 
-func (gr *GroupRepository) DeleteGroup(ctx context.Context, groupId model.GroupId) error {
+func (gr *Group) DeleteGroup(ctx context.Context, groupId model.GroupId) error {
 	ctx, span := gr.tracer.Start(ctx, "DeleteGroup")
 	defer span.End()
 
-	const op = "postgres.GroupRepository.DeleteGroup"
+	const op = "repository.Group.DeleteGroup"
 
 	cmdTag, err := gr.db.Exec(
 		ctx,

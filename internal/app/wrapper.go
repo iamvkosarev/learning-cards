@@ -10,7 +10,7 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/http/middleware"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor"
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
-	"github.com/iamvkosarev/learning-cards/internal/repository/postgres"
+	"github.com/iamvkosarev/learning-cards/internal/repository"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
@@ -192,7 +192,7 @@ func selectVerifier(ssoConfig config.SSO) (verification.Verifier, error) {
 
 func connectToDbPool(ctx context.Context, database config.Database) (*pgxpool.Pool, error) {
 	dns := os.Getenv(database.ConnectionStringKey)
-	dbPool, err := postgres.NewPostgresPool(ctx, dns, database.PingDuration)
+	dbPool, err := repository.NewPostgresPool(ctx, dns, database.PingDuration)
 	if err != nil {
 		return nil, fmt.Errorf("error connecting to database: %w", err)
 	}

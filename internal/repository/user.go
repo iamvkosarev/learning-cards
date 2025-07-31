@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -10,16 +10,16 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-type UserRepository struct {
+type User struct {
 	db *pgxpool.Pool
 }
 
-func NewUserRepository(pool *pgxpool.Pool) *UserRepository {
-	return &UserRepository{db: pool}
+func NewUserRepository(pool *pgxpool.Pool) *User {
+	return &User{db: pool}
 }
 
-func (u *UserRepository) GetUser(ctx context.Context, id model.UserId) (model.User, error) {
-	op := "postgres.UserRepository.GetUser"
+func (u *User) GetUser(ctx context.Context, id model.UserId) (model.User, error) {
+	op := "repository.User.GetUser"
 
 	var user model.User
 
@@ -41,8 +41,8 @@ func (u *UserRepository) GetUser(ctx context.Context, id model.UserId) (model.Us
 	return user, nil
 }
 
-func (u *UserRepository) AddUser(ctx context.Context, user model.User) error {
-	const op = "postgres.UserRepository.AddUser"
+func (u *User) AddUser(ctx context.Context, user model.User) error {
+	const op = "repository.User.AddUser"
 
 	var id int64
 	err := u.db.QueryRow(

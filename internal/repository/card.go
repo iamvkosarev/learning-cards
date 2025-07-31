@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -12,22 +12,22 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-const cardsTracerName = "postgres.card"
+const cardsTracerName = "repository.card"
 
-type CardRepository struct {
+type Card struct {
 	db     *pgxpool.Pool
 	tracer trace.Tracer
 }
 
-func NewCardRepository(pool *pgxpool.Pool) *CardRepository {
-	return &CardRepository{db: pool, tracer: otel.Tracer(cardsTracerName)}
+func NewCardRepository(pool *pgxpool.Pool) *Card {
+	return &Card{db: pool, tracer: otel.Tracer(cardsTracerName)}
 }
 
-func (cr *CardRepository) AddCard(ctx context.Context, card *model.Card) (model.CardId, error) {
+func (cr *Card) AddCard(ctx context.Context, card *model.Card) (model.CardId, error) {
 	ctx, span := cr.tracer.Start(ctx, "AddCard")
 	defer span.End()
 
-	const op = "postgres.CardRepository.AddCard"
+	const op = "repository.Card.AddCard"
 
 	var id int64
 	err := cr.db.QueryRow(
@@ -48,11 +48,11 @@ func (cr *CardRepository) AddCard(ctx context.Context, card *model.Card) (model.
 	return model.CardId(id), nil
 }
 
-func (cr *CardRepository) GetCard(ctx context.Context, cardId model.CardId) (*model.Card, error) {
+func (cr *Card) GetCard(ctx context.Context, cardId model.CardId) (*model.Card, error) {
 	ctx, span := cr.tracer.Start(ctx, "GetCard")
 	defer span.End()
 
-	op := "postgres.CardRepository.GetCard"
+	op := "repository.Card.GetCard"
 
 	card := &model.Card{
 		Sides: make([]model.CardSide, 2),
@@ -84,11 +84,11 @@ func (cr *CardRepository) GetCard(ctx context.Context, cardId model.CardId) (*mo
 	return card, nil
 }
 
-func (cr *CardRepository) ListCards(ctx context.Context, groupId model.GroupId) ([]*model.Card, error) {
+func (cr *Card) ListCards(ctx context.Context, groupId model.GroupId) ([]*model.Card, error) {
 	ctx, span := cr.tracer.Start(ctx, "ListCards")
 	defer span.End()
 
-	op := "postgres.CardRepository.ListCards"
+	op := "repository.Card.ListCards"
 
 	rows, err := cr.db.Query(
 		ctx,
@@ -128,11 +128,11 @@ func (cr *CardRepository) ListCards(ctx context.Context, groupId model.GroupId) 
 	return cards, nil
 }
 
-func (cr *CardRepository) UpdateCard(ctx context.Context, card *model.Card) error {
+func (cr *Card) UpdateCard(ctx context.Context, card *model.Card) error {
 	ctx, span := cr.tracer.Start(ctx, "UpdateCard")
 	defer span.End()
 
-	op := "postgres.CardRepository.UpdateCard"
+	op := "repository.Card.UpdateCard"
 
 	cmdTag, err := cr.db.Exec(
 		ctx,
@@ -158,11 +158,11 @@ func (cr *CardRepository) UpdateCard(ctx context.Context, card *model.Card) erro
 	return nil
 }
 
-func (cr *CardRepository) DeleteCard(ctx context.Context, cardId model.CardId) error {
+func (cr *Card) DeleteCard(ctx context.Context, cardId model.CardId) error {
 	ctx, span := cr.tracer.Start(ctx, "DeleteCard")
 	defer span.End()
 
-	const op = "postgres.CardRepository.DeleteCard"
+	const op = "repository.Card.DeleteCard"
 
 	cmdTag, err := cr.db.Exec(
 		ctx,

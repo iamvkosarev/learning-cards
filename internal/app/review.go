@@ -8,7 +8,7 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/infrastructure/server/interceptor/verification"
 	"github.com/iamvkosarev/learning-cards/internal/module"
 	"github.com/iamvkosarev/learning-cards/internal/otel/tracing"
-	"github.com/iamvkosarev/learning-cards/internal/repository/postgres"
+	"github.com/iamvkosarev/learning-cards/internal/repository"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.opentelemetry.io/otel/sdk/trace"
@@ -68,7 +68,7 @@ func prepareReviewServer(ctx context.Context, cfg *config.ReviewsConfig, logger 
 		return nil, nil, err
 	}
 
-	reviewRepo := postgres.NewReviewRepository(dbPool)
+	reviewRepo := repository.NewReviewRepository(dbPool)
 
 	cardsServerClient, err := client.NewCardsClient(ctx, cfg.CardsServer.Address)
 	if err != nil {

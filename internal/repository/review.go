@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -12,18 +12,18 @@ import (
 	"time"
 )
 
-const reviewTracerName = "postgres.CardRepository"
+const reviewTracerName = "repository.Card"
 
-type ReviewRepository struct {
+type Review struct {
 	db     *pgxpool.Pool
 	tracer trace.Tracer
 }
 
-func NewReviewRepository(pool *pgxpool.Pool) *ReviewRepository {
-	return &ReviewRepository{db: pool, tracer: otel.Tracer(reviewTracerName)}
+func NewReviewRepository(pool *pgxpool.Pool) *Review {
+	return &Review{db: pool, tracer: otel.Tracer(reviewTracerName)}
 }
 
-func (p *ReviewRepository) DeleteNotUsedReviews(
+func (p *Review) DeleteNotUsedReviews(
 	ctx context.Context,
 	userId model.UserId,
 	groupId model.GroupId,
@@ -31,7 +31,7 @@ func (p *ReviewRepository) DeleteNotUsedReviews(
 	ctx, span := p.tracer.Start(ctx, "DeleteNotUsedReviews")
 	defer span.End()
 
-	op := "postgres.ReviewRepository.DeleteNotUsedReviews"
+	op := "repository.Review.DeleteNotUsedReviews"
 
 	reviews, err := p.GetCardsReviews(ctx, userId, groupId)
 	if err != nil {
@@ -103,7 +103,7 @@ func (p *ReviewRepository) DeleteNotUsedReviews(
 	return nil
 }
 
-func (p *ReviewRepository) GetCardsReviews(
+func (p *Review) GetCardsReviews(
 	ctx context.Context,
 	user model.UserId,
 	group model.GroupId,
@@ -111,7 +111,7 @@ func (p *ReviewRepository) GetCardsReviews(
 	ctx, span := p.tracer.Start(ctx, "GetCardsReviews")
 	defer span.End()
 
-	op := "postgres.ReviewRepository.GetCardsMarks"
+	op := "repository.Review.GetCardsMarks"
 
 	rows, err := p.db.Query(
 		ctx,
@@ -146,7 +146,7 @@ func (p *ReviewRepository) GetCardsReviews(
 	return cards, nil
 }
 
-func (p *ReviewRepository) AddCardsReviews(
+func (p *Review) AddCardsReviews(
 	ctx context.Context,
 	user model.UserId,
 	group model.GroupId,
@@ -155,7 +155,7 @@ func (p *ReviewRepository) AddCardsReviews(
 	ctx, span := p.tracer.Start(ctx, "AddCardsReviews")
 	defer span.End()
 
-	op := "postgres.ReviewRepository.AddCardsReviews"
+	op := "repository.Review.AddCardsReviews"
 
 	tx, err := p.db.Begin(ctx)
 	if err != nil {

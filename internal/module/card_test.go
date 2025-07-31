@@ -16,6 +16,7 @@ func TestCardsService_AddCard(t *testing.T) {
 	ctxCorrectUser := metadata.NewOutgoingContext(ctxNotCorrectUser, md)
 	cardId := model.CardId(200)
 	groupId := model.GroupId(200)
+	group := &model.Group{Id: groupId}
 	tests := []struct {
 		name      string
 		ctx       context.Context
@@ -49,8 +50,10 @@ func TestCardsService_AddCard(t *testing.T) {
 	cardsWriterMock.AddCardMock.Return(cardId, nil)
 
 	groupAccessChecker := mocks.NewGroupAccessCheckerMock(mc)
-	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxCorrectUser, groupId).Then(nil)
-	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(model.ErrGroupWriteAccessDenied)
+	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxCorrectUser, groupId).Then(group, nil)
+	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(
+		group, model.ErrGroupWriteAccessDenied,
+	)
 	cardService := NewCards(
 		CardsDeps{
 			CardWriter:         cardsWriterMock,
@@ -82,6 +85,9 @@ func TestCardsService_DeleteCard(t *testing.T) {
 		Id: correctCardId,
 	}
 	groupId := model.GroupId(0)
+	group := &model.Group{
+		Id: groupId,
+	}
 	tests := []struct {
 		name   string
 		ctx    context.Context
@@ -118,8 +124,10 @@ func TestCardsService_DeleteCard(t *testing.T) {
 	cardsWriterMock.DeleteCardMock.When(minimock.AnyContext, correctCardId).Then(nil)
 
 	groupAccessChecker := mocks.NewGroupAccessCheckerMock(mc)
-	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxCorrectUser, groupId).Then(nil)
-	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(model.ErrGroupWriteAccessDenied)
+	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxCorrectUser, groupId).Then(group, nil)
+	groupAccessChecker.CheckWriteGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(
+		group, model.ErrGroupWriteAccessDenied,
+	)
 	cardService := NewCards(
 		CardsDeps{
 			CardReader:         cardsReaderMock,
@@ -149,6 +157,9 @@ func TestCardsService_GetCard(t *testing.T) {
 		Id: correctCardId,
 	}
 	groupId := model.GroupId(0)
+	group := &model.Group{
+		Id: groupId,
+	}
 	tests := []struct {
 		name   string
 		ctx    context.Context
@@ -187,8 +198,10 @@ func TestCardsService_GetCard(t *testing.T) {
 	cardsReaderMock.GetCardMock.When(minimock.AnyContext, notExistCardId).Then(correctCard, model.ErrCardNotFound)
 
 	groupAccessChecker := mocks.NewGroupAccessCheckerMock(mc)
-	groupAccessChecker.CheckReadGroupAccessMock.When(ctxCorrectUser, groupId).Then(nil)
-	groupAccessChecker.CheckReadGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(model.ErrGroupWriteAccessDenied)
+	groupAccessChecker.CheckReadGroupAccessMock.When(ctxCorrectUser, groupId).Then(group, nil)
+	groupAccessChecker.CheckReadGroupAccessMock.When(ctxNotCorrectUser, groupId).Then(
+		group, model.ErrGroupWriteAccessDenied,
+	)
 	cardService := NewCards(
 		CardsDeps{
 			CardReader:         cardsReaderMock,
@@ -215,6 +228,9 @@ func TestCardsService_ListCards(t *testing.T) {
 	md := metadata.Pairs("authorization", "Bearer correct-user-token")
 	ctx := metadata.NewOutgoingContext(ctxNotCorrectUser, md)
 	groupId := model.GroupId(200)
+	group := &model.Group{
+		Id: groupId,
+	}
 	notExistGroupId := model.GroupId(1)
 	correctCards := []*model.Card{
 		{},
@@ -257,11 +273,11 @@ func TestCardsService_ListCards(t *testing.T) {
 	cardsReaderMock.ListCardsMock.When(minimock.AnyContext, notExistGroupId).Then(nil, model.ErrGroupNotFound)
 
 	groupAccessChecker := mocks.NewGroupAccessCheckerMock(mc)
-	groupAccessChecker.CheckReadGroupAccessMock.When(ctx, groupId).Then(nil)
-	groupAccessChecker.CheckReadGroupAccessMock.When(ctx, notExistGroupId).Then(nil)
+	groupAccessChecker.CheckReadGroupAccessMock.When(ctx, groupId).Then(group, nil)
+	groupAccessChecker.CheckReadGroupAccessMock.When(ctx, notExistGroupId).Then(group, nil)
 	groupAccessChecker.CheckReadGroupAccessMock.When(
 		ctxNotCorrectUser, groupId,
-	).Then(model.ErrGroupWriteAccessDenied)
+	).Then(group, model.ErrGroupWriteAccessDenied)
 	cardService := NewCards(
 		CardsDeps{
 			CardReader:         cardsReaderMock,

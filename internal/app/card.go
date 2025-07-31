@@ -8,7 +8,7 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/model"
 	"github.com/iamvkosarev/learning-cards/internal/module"
 	"github.com/iamvkosarev/learning-cards/internal/otel/tracing"
-	"github.com/iamvkosarev/learning-cards/internal/repository/postgres"
+	"github.com/iamvkosarev/learning-cards/internal/repository"
 	"github.com/iamvkosarev/learning-cards/internal/service/japanese"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -64,9 +64,9 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 		return nil, nil, err
 	}
 
-	groupRepo := postgres.NewGroupRepository(dbPool)
-	userRepo := postgres.NewUserRepository(dbPool)
-	cardRepo := postgres.NewCardRepository(dbPool)
+	groupRepo := repository.NewGroupRepository(dbPool)
+	userRepo := repository.NewUserRepository(dbPool)
+	cardRepo := repository.NewCardRepository(dbPool)
 
 	japaneseReader := japanese.NewReader(cfg.JapaneseReading)
 
