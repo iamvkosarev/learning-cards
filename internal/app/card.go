@@ -12,6 +12,7 @@ import (
 	"github.com/iamvkosarev/learning-cards/internal/service/japanese"
 	pb "github.com/iamvkosarev/learning-cards/pkg/proto/learning_cards/v1"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/redis/go-redis/v9"
 	"go.opentelemetry.io/otel/sdk/trace"
 	"log/slog"
 )
@@ -64,6 +65,12 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 		return nil, nil, err
 	}
 
+	rdb := redis.NewClient(
+		&redis.Options{
+			Addr: cfg.Redis.Endpoint,
+		},
+	)
+
 	groupRepo := repository.NewGroupRepository(dbPool)
 	userRepo := repository.NewUserRepository(dbPool)
 	cardRepo := repository.NewCardRepository(dbPool)
@@ -98,6 +105,7 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 			GroupAccessChecker: groupsService,
 			GroupReader:        groupRepo,
 			CardDecorator:      cardDecorator,
+			Rdb:                rdb,
 		},
 	)
 

@@ -36,6 +36,13 @@ services:
       retries: 3
     networks:
       - net
+  redis:
+    image: redis:8.0
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - net
   cards:
     container_name: cards-server
     image: ${IMAGE_NAME:-learning-cards:local}

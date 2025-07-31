@@ -33,6 +33,10 @@ type Database struct {
 	PingDuration        time.Duration `yaml:"ping_duration"`
 }
 
+type Redis struct {
+	Endpoint string `yaml:"endpoint"`
+}
+
 type OTelTracing struct {
 	AlwaysSample              bool   `yaml:"always_sample"`
 	ServiceName               string `yaml:"service_name"`

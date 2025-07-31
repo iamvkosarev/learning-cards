@@ -2,9 +2,14 @@ package module
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/model"
+	"github.com/redis/go-redis/v9"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
+	"strings"
 )
 
 const cardsTraceName = "module.cards"
@@ -39,6 +44,7 @@ type CardsDeps struct {
 	GroupReader        GroupReader
 	GroupAccessChecker GroupAccessChecker
 	CardDecorator      CardDecorator
+	Rdb                *redis.Client
 }
 
 type Cards struct {
@@ -77,6 +83,10 @@ func (c *Cards) AddCard(
 		return 0, err
 	}
 
+	_, err = c.Rdb.Del(ctx, getListCardsKey(groupId)).Result()
+	if err != nil && !errors.Is(err, redis.Nil) {
+		return 0, err
+	}
 	return cardId, nil
 }
 
@@ -107,6 +117,23 @@ func (c *Cards) ListCards(ctx context.Context, groupId model.GroupId) (
 ) {
 	ctx, span := c.tracer.Start(ctx, "ListCards")
 	defer span.End()
+
+	lcRdbKey := getListCardsKey(groupId)
+
+	lcString, err := c.Rdb.Get(ctx, lcRdbKey).Result()
+	if err == nil {
+		lcStrings := strings.Split(lcString, "@")
+		cards := make([]*model.Card, len(lcStrings))
+		for i, s := range lcStrings {
+			var card *model.Card
+			if err = json.NewDecoder(strings.NewReader(s)).Decode(&card); err != nil {
+				return nil, err
+			}
+			cards[i] = card
+		}
+		return cards, nil
+	}
+
 	group, err := c.GroupAccessChecker.CheckReadGroupAccess(ctx, groupId)
 	if err != nil {
 		return nil, err
@@ -119,12 +146,25 @@ func (c *Cards) ListCards(ctx context.Context, groupId model.GroupId) (
 
 	decorateCtx, span := c.tracer.Start(ctx, "DecorateCards")
 	defer span.End()
-	for _, card := range cards {
+
+	lcRdbStrings := make([]string, len(cards))
+
+	for i, card := range cards {
 		if err = c.CardDecorator.DecorateCard(decorateCtx, card, group); err != nil {
 			return nil, err
 		}
+		var lcBytes []byte
+		lcBytes, err = json.Marshal(card)
+		if err != nil {
+			return nil, err
+		}
+		lcRdbStrings[i] = string(lcBytes)
 	}
 
+	_, err = c.Rdb.Set(ctx, lcRdbKey, strings.Join(lcRdbStrings, "@"), 0).Result()
+	if err != nil {
+		return nil, err
+	}
 	return cards, nil
 }
 
@@ -152,6 +192,11 @@ func (c *Cards) UpdateCard(ctx context.Context, updateCard model.UpdateCard) err
 		return err
 	}
 
+	_, err = c.Rdb.Del(ctx, getListCardsKey(card.GroupId)).Result()
+	if err != nil && !errors.Is(err, redis.Nil) {
+		return err
+	}
+
 	return nil
 }
 
@@ -172,5 +217,13 @@ func (c *Cards) DeleteCard(ctx context.Context, id model.CardId) error {
 		return err
 	}
 
+	_, err = c.Rdb.Del(ctx, getListCardsKey(card.GroupId)).Result()
+	if err != nil && !errors.Is(err, redis.Nil) {
+		return err
+	}
 	return nil
+}
+
+func getListCardsKey(groupId model.GroupId) string {
+	return fmt.Sprintf("list-cards-%s", groupId)
 }

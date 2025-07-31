@@ -23,6 +23,8 @@ open_telemetry:
 database:
   connection_string_key: "DB_DNS"
   ping_duration: 5s
+redis:
+  endpoint: "redis:6379"
 japanese_reading:
   search_timeout: 5s
   mecab_dic_dir: "/var/lib/mecab/dic/debian"
