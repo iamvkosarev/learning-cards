@@ -6,6 +6,7 @@ import (
 	"context"
 	"github.com/iamvkosarev/learning-cards/internal/config"
 	"github.com/iamvkosarev/learning-cards/internal/model"
+	"log/slog"
 )
 
 type Reader struct {
