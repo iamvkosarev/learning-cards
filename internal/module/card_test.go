@@ -191,7 +191,6 @@ func TestCardsService_GetCard(t *testing.T) {
 	mc := minimock.NewController(t)
 
 	cardDecorator := mocks.NewCardDecoratorMock(mc)
-	cardDecorator.DecorateCardMock.Return(nil)
 
 	cardsReaderMock := mocks.NewCardReaderMock(mc)
 	cardsReaderMock.GetCardMock.When(minimock.AnyContext, correctCardId).Then(correctCard, nil)
@@ -266,7 +265,6 @@ func TestCardsService_ListCards(t *testing.T) {
 	mc := minimock.NewController(t)
 
 	cardDecorator := mocks.NewCardDecoratorMock(mc)
-	cardDecorator.DecorateCardMock.Return(nil)
 
 	cardsReaderMock := mocks.NewCardReaderMock(mc)
 	cardsReaderMock.ListCardsMock.When(minimock.AnyContext, groupId).Then(correctCards, nil)

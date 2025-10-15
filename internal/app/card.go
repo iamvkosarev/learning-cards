@@ -95,6 +95,7 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 			CardReadingProviders: map[model.CardSideType]module.CardReadingProvider{
 				model.CARD_SIDE_TYPE_JAPANESE: japaneseReader,
 			},
+			Logger: logger,
 		},
 	)
 

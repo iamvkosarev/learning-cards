@@ -35,7 +35,7 @@ type GroupAccessChecker interface {
 
 //go:generate minimock -i CardDecorator -o ./mocks/card_decorator_mock.go -n CardDecoratorMock -p mocks
 type CardDecorator interface {
-	DecorateCard(ctx context.Context, card *model.Card, group *model.Group) error
+	TryDecorateCard(ctx context.Context, card *model.Card, group *model.Group)
 }
 
 type CardsDeps struct {
@@ -103,10 +103,7 @@ func (c *Cards) GetCard(ctx context.Context, cardId model.CardId) (*model.Card, 
 		return nil, err
 	}
 
-	if err = c.CardDecorator.DecorateCard(ctx, card, group); err != nil {
-		return nil, err
-	}
-
+	c.CardDecorator.TryDecorateCard(ctx, card, group)
 	return card, nil
 
 }
@@ -150,9 +147,7 @@ func (c *Cards) ListCards(ctx context.Context, groupId model.GroupId) (
 	lcRdbStrings := make([]string, len(cards))
 
 	for i, card := range cards {
-		if err = c.CardDecorator.DecorateCard(decorateCtx, card, group); err != nil {
-			return nil, err
-		}
+		c.CardDecorator.TryDecorateCard(decorateCtx, card, group)
 		var lcBytes []byte
 		lcBytes, err = json.Marshal(card)
 		if err != nil {
