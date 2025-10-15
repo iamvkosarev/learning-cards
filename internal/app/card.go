@@ -75,7 +75,7 @@ func prepareCardServer(ctx context.Context, cfg *config.CardsConfig, logger *slo
 	userRepo := repository.NewUserRepository(dbPool)
 	cardRepo := repository.NewCardRepository(dbPool)
 
-	japaneseReader := japanese.NewReader(cfg.JapaneseReading)
+	japaneseReader := japanese.NewReader(cfg.JapaneseReading, logger)
 
 	verifier := server.VerifyFunc(verification.GetUserId)
 

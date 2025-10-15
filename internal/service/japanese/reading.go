@@ -4,12 +4,15 @@ package japanese
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/iamvkosarev/learning-cards/internal/config"
 	"github.com/iamvkosarev/learning-cards/internal/model"
 	"github.com/shogo82148/go-mecab"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
+	"log/slog"
+	"runtime/debug"
 	"strings"
 	"time"
 
@@ -18,15 +21,19 @@ import (
 
 const mecabReaderTracerName = "mecab.reader"
 
+var ErrFailedToAnalyzeHiragana = errors.New("failed to analyze hiragana")
+
 type Reader struct {
 	Config config.JapaneseReading
 	tracer trace.Tracer
+	logger *slog.Logger
 }
 
-func NewReader(config config.JapaneseReading) *Reader {
+func NewReader(config config.JapaneseReading, logger *slog.Logger) *Reader {
 	return &Reader{
 		Config: config,
 		tracer: otel.Tracer(mecabReaderTracerName),
+		logger: logger,
 	}
 }
 
@@ -42,6 +49,18 @@ func (j *Reader) GetCardReading(ctx context.Context, text string) ([]model.Readi
 	op := "service.Reader.GetCardReading"
 	ch := make(chan *readingPairsResult)
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				j.logger.Error(
+					"failed to analyze hiragana", slog.String("reason", fmt.Sprintf("%v", r)),
+					slog.String("stack", string(debug.Stack())), slog.String("input", text),
+				)
+				ch <- &readingPairsResult{
+					pairs: nil,
+					err:   ErrFailedToAnalyzeHiragana,
+				}
+			}
+		}()
 		pairs, err := j.analyzeWithHiragana(text)
 		ch <- &readingPairsResult{
 			pairs: pairs,
