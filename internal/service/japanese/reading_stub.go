@@ -12,7 +12,7 @@ type Reader struct {
 	Config config.JapaneseReading
 }
 
-func NewReader(config config.JapaneseReading) *Reader {
+func NewReader(config config.JapaneseReading, logger *slog.Logger) *Reader {
 	return &Reader{
 		Config: config,
 	}
