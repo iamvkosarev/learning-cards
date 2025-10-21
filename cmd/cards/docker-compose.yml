@@ -37,12 +37,21 @@ services:
     networks:
       - net
   redis:
-    image: redis:8.0
+    image: redis:7.4-alpine
     container_name: redis
+    command: ["redis-server","--appendonly","yes"]
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     networks:
       - net
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "PING" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
   cards:
     container_name: cards-server
     image: ${IMAGE_NAME:-learning-cards:local}
@@ -66,12 +75,15 @@ services:
         condition: service_healthy
       jaeger:
         condition: service_healthy
+      redis:
+        condition: service_started
     command: [ "/cards" ]
     networks:
       - net
 
 volumes:
   postgres_data:
+  redis-data:
 
 networks:
   net:
